@@ -1,3 +1,5 @@
 [submodule "src"]
 	path = src
 	url = git@github.com:cflb/django_project_boilerplate
+[submodule "DbConnector"]
+	branch = application_rope
