@@ -1,0 +1,347 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}Guarnição {{ guarnicao.id }}{% endblock %}
+
+{% block content %}
+<style>
+.short-text { display: none; }
+
+@media (max-width: 480px) {
+    .short-text { display: inline-block; }
+    .full-text { display: none; }
+}
+</style>
+<div id="modal-bloquear" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <div class="row">
+            <div class="col s12 l12 m12">
+                <h5><strong>Bloquear Guarnição - {{ guarnicao.comandante }}</strong></h5>
+            </div>
+        </div>
+        
+        <form id="block-form">{% csrf_token %}
+        <input type="hidden" id="id_guarnicao" name="id_guarnicao" value="{{ guarnicao.id }}" />
+        <div class="row">
+            <div class="input-field col l12 m12 s12">
+                <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}" name="{{ observacao.observacao.name }}" required></textarea>
+                <label for="{{ observacao.observacao.auto_id }}" class="active">{{ observacao.observacao.label }}</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 right">
+                    <button class="btn waves-effect waves-light right" type="submit">Bloquear
+                        <i class="material-icons left">block</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-close waves-effect waves-light btn">
+            <i class="material-icons right">close</i>Cancelar
+        </a>
+    </div>
+</div>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <div class="row">
+                        <div class="col l8 m8 s12">
+                            Guarnição {{ guarnicao.comandante }}
+                        </div>
+                        <div class="col l4 m4 s12 right-align">
+                            {% if guarnicao.datafechamento %}
+                                <a href="{% url 'guarnicao:geraemostrapdfguarnicao' id=guarnicao.id %}" target="_blank">
+                                    <button class="btn waves-effect waves-light right">
+                                        <i class="material-icons left">pageview</i>PDF
+                                    </button>
+                                </a>
+                            {% else %}
+                                {% if request.user|has_group:"CPO" %}
+                                    {% if guarnicao.ativo %}
+                                        <button data-target="modal-bloquear" class="btn red waves-effect waves-light right modal-trigger">
+                                            <i class="material-icons right">block</i>Bloquear
+                                        </button>
+                                    {% else %}
+                                        <button class="btn red waves-effect waves-light right disabled">
+                                            <i class="material-icons right">block</i>Bloqueada
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </span>
+
+                <div class="divider"></div>
+
+                <div class="right-align">
+                    <h6><strong>Abertura:</strong> {{ guarnicao.dataabertura }}</h6>
+                </div>
+                {% if guarnicao.datafechamento %}
+                    <div class="right-align">
+                        <h6><strong>Fechamento:</strong> {{ guarnicao.datafechamento }}</h6>
+                    </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">Viaturas</span>
+                                <div id="listarviaturas">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">Policiais</span>
+                                <div id="listarpoliciais">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if guarnicao.datafechamento is not None %}
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div class="card blue-grey darken-1">
+                                <div class="card-content white-text">
+                                    <span class="card-title">AITs</span>
+                                    <div id="listaraits">
+                                        <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div class="card blue-grey darken-1">
+                                <div class="card-content white-text">
+                                    <span class="card-title">RRDs</span>
+                                    <div id="listarrrds">
+                                        <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div class="card blue-grey darken-1">
+                                <div class="card-content white-text">
+                                    <span class="card-title">TRAVs</span>
+                                    <div id="listartravs">
+                                        <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">Ocorrências {% if guarnicao.datafechamento is not None %}da guarnição{% else %}atuais{% endif %}</span>
+                                <div id="listarocorrencias">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">RATs {% if guarnicao.datafechamento is not None %}da guarnição{% else %}atuais{% endif %}</span>
+                                <div id="listarrats">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Relatório de Guarnição</strong></h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l12 m12 s12">
+                        <textarea class="materialize-textarea" id="id_relatorio" disabled readonly>{% if guarnicao.relatorio is None %}Guarnição ainda não finalizada!{% else %}{{ guarnicao.relatorio }}{% endif %}</textarea>
+                        <label for="id_relatorio">Relatório de Guarnição</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light right" onclick="history.go(-1);">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#block-form").submit(function(event){
+        event.stopPropagation();
+
+        $("#block-form button[type=submit]").html("Aguarde...");
+        $("#block-form button[type=submit]").prop("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'guarnicao:bloqueia_guarnicao' %}",
+            data: $(this).serialize(),
+            async: false,
+            success: (response) => {
+                M.toast({
+                    html: "Guarnição bloqueada com sucesso!",
+                    classes: "green",
+                    completeCallback: function() {
+                        location.reload(true);
+                    }
+                });
+            }
+        });
+        return false;
+    });
+
+    {% include "gestao/includes/js/get_viaturas.js" %}
+
+    getViaturas("listarviaturas", "{{ guarnicao.id }}");
+
+    {% include "gestao/includes/js/get_policialviatura.js" %}
+
+    getPoliciaisViaturas("listarpoliciais", "{{ guarnicao.id }}");
+
+    {% include "gestao/includes/js/get_aits.js" %}
+
+    getAits("listaraits", "{{ guarnicao.id }}");
+
+    {% include "gestao/includes/js/get_rrds.js" %}
+
+    getRrds("listarrrds", "{{ guarnicao.id }}");
+
+    {% include "gestao/includes/js/get_travs.js" %}
+
+    getTravs("listartravs", "{{ guarnicao.id }}");
+
+    $.ajax({
+        url: "{% url 'guarnicao:get_ocorrencias_guarnicao' %}",
+        data: {"guarnicao": "{{ guarnicao.id }}"},
+        success: function(data){
+            if(!data["ocorrencias"]){
+                $("#listarocorrencias").append(`<p>Nenhuma ocorrência registrada.</p>`);
+            } else {
+                $("#listarocorrencias ul").css("display", "block");
+
+                let rows = "";
+    
+                data.ocorrencias.forEach(ocorrencia => {
+                    let url = `{% url 'ocorrencia:mostrar' id=0 %}`.replace('0', ocorrencia["id"]);
+
+                    rows += `<li>
+                        <div class="collapsible-header" style="position: relative;">
+                            <i class="material-icons">info</i>${ocorrencia["id"]||""}
+                        </div>
+                        <div class="collapsible-body" style="position: relative;">
+                            <p class="right-align" style="float: right;">
+                                <a href="${url||""}" class="btn waves-effect waves-light">
+                                    <span class="full-text">
+                                        <i class="material-icons right">description</i>Visualizar 
+                                    </span>
+                                    <span class="short-text">
+                                        <i class="material-icons">remove_red_eye</i>
+                                    </span>
+                                </a>
+                            </p>
+                            <p>
+                                <strong class="full-text">Número da Ocorrência:</strong>
+                                <strong class="short-text">Nº.:</strong> ${ocorrencia["id"]||""}
+                            </p>
+                            <p>
+                                <strong class="full-text">Tipo:</strong>
+                                <strong class="short-text">Tipo:</strong> ${ocorrencia["infracao"]["tipo"]||""}
+                            </p>
+                        </div>
+                    </li>`;
+                });
+                $("#listarocorrencias ul").append(rows);
+            }
+        }
+    });
+
+    $.ajax({
+        url: "{% url 'guarnicao:get_rats_guarnicao' %}",
+        data: {"guarnicao": "{{ guarnicao.id }}"},
+        success: function(data){
+            if(!data["rats"]){
+                $("#listarrats").append(`<p>Nenhuma RAT registrada.</p>`);
+            } else {
+                $("#listarrats ul").css("display", "block");
+
+                let rows = "";
+    
+                data.rats.forEach(rat => {
+                    let url = `{% url 'rat:mostrar' id=0 %}`.replace('0', rat["id"]);
+
+                    rows += `<li>
+                        <div class="collapsible-header" style="position: relative;">
+                            <i class="material-icons">info</i>${rat["id"]||""}
+                        </div>
+                        <div class="collapsible-body" style="position: relative;">
+                            <p class="right-align" style="float: right;">
+                                <a href="${url||""}" class="btn waves-effect waves-light">
+                                    <span class="full-text">
+                                        <i class="material-icons right">description</i>Visualizar 
+                                    </span>
+                                    <span class="short-text">
+                                        <i class="material-icons">remove_red_eye</i>
+                                    </span>
+                                </a>
+                            </p>
+                            <p>
+                                <strong class="full-text">Número da RAT:</strong>
+                                <strong class="short-text">Nº.:</strong> ${rat["id"]||""}
+                            </p>
+                            <p>
+                                <strong class="full-text">Tipo de colisão:</strong>
+                                <strong class="short-text">Colisão:</strong> ${rat["tipoacidente"]["tipo"]||""}
+                            </p>
+                        </div>
+                    </li>`;
+                });
+                $("#listarrats ul").append(rows);
+            }
+        }
+    });
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,140 @@
+{% extends "opo/edits/base.html" %}
+{% load ropd_extras %}
+
+{% block title %}Atribuir SubOPO {{ oporelatorio.id }}{% endblock title %}
+
+{% block content %}
+<style>
+    .short-text { display: none; }
+
+    @media (max-width: 450px) {
+        .short-text { display: inline-block; }
+        .full-text { display: none; }
+    }
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">Atribuir SubOPO &lt;{{ oporelatorio.dataexecucao|date:"d/m/Y H:i" }}></span>
+
+                {% if guarnicoes %}
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Guarnições ativas</strong></h5>
+                        <hr>
+                    </div>
+                </div>
+                <table class="highlight responsive-table centered" id="guarnicoes">
+                    <thead>
+                        <tr>
+                            <th>Comandante</th>
+                            <th>Companhia</th>
+                            <th>Atribuir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for guarnicao in guarnicoes %}
+                        <tr>
+                            <td>
+                                <span class="full-text">{{ guarnicao.comandante }}</span>
+                                <span class="short-text center">{{ guarnicao.comandante }}</span>
+                            </td>
+                            <td>
+                                <span class="full-text">{{ guarnicao.companhia }}</span>
+                                <span class="short-text center">{{ guarnicao.companhia }}</span>
+                            </td>
+                            <td>
+                                <a data-guarnicao="{{ guarnicao.id }}" class="btn waves-effect waves-light">
+                                    <i class="material-icons right">announcement</i>Atribuir
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        
+                {% if guarnicoes.has_other_pages %}
+                    <ul class="pagination center">
+                        {% if guarnicoes.has_previous %}
+                            <li class="waves-effect">
+                                <a href="{% my_url guarnicoes.previous_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_left</i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in guarnicoes.paginator.page_range %}
+                            {% if guarnicoes.number == num %}
+                                <li class="active">
+                                    <a href="#!">{{ num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if guarnicoes.has_next %}
+                            <li class="waves-effect">
+                                <a href="{% my_url guarnicoes.next_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_right</i></a>
+                                </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_right</i></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+
+                {% else %}
+                    <p>Não existem guarnições ativas.</p>
+                {% endif %}
+            </div>
+
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#guarnicoes").children("tbody").children("tr").children("td").on("click", "a", function(event){
+        $.ajax({
+            url: "{% url 'opo:atribuir_guarnicao_subopo' %}",
+            method: "POST",
+            data: {
+                "oporelatorio": "{{ oporelatorio.id }}",
+                "guarnicao": $(this).data("guarnicao")
+            },
+            success: (response) => {
+                M.toast({
+                    html: response.message,
+                    classes: "green",
+                    completeCallback: callBack
+                });
+            },
+            error: (response) => {
+                var erros = response.responseJSON;
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red", completeCallback: () => { location.reload(true); }});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

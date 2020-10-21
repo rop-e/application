@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Anexos</strong></h5>
+    </div>
+</div>
+
+<form id="anexo-form" enctype="multipart/form-data">{% csrf_token %}
+<input type="hidden" id="{{ anexo.policial.auto_id }}" name="{{ anexo.policial.name }}" value="{{ user.policial.id }}" />
+<input type="hidden" id="{{ anexo.rat.auto_id }}" name="{{ anexo.rat.name }}" value="{{ rat.id }}" />
+<div class="row">
+    <div class="file-field input-field col l12 m6 s12">
+        <div class="waves-effect waves-light btn-small">
+            <input type="file" accept="image/*" name="{{ anexo.anexo.name }}" id="{{ anexo.anexo.auto_id }}">
+            <i class="material-icons right">file_upload</i>Anexo
+        </div>
+        <div class="file-path-wrapper">
+            <input class="file-path" id="id_foto_path" type="text" value="{% if anexo.anexo.value is not None %}{{ anexo.anexo.value }}{% else %}Selecione um anexo!{% endif %}" disabled readonly>
+        </div>
+    </div>
+    <div class="input-field col l12 m12 s12">
+        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}_anexo" name="{{ observacao.observacao.name }}" required></textarea>
+        <label for="{{ observacao.observacao.auto_id }}_anexo" class="active">Observação do anexo</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'rat/includes/js/anexos.js' %}
+});
+</script>
+{% endblock javascript %}

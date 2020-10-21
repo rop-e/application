@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>AITs</strong></h5>
+    </div>
+</div>
+
+<form id="ait-form">{% csrf_token %}
+<input type="hidden" id="{{ ait.guarnicao.auto_id }}_ait" name="{{ ait.guarnicao.name }}" value="{{ guarnicao.id }}" />
+<div class="row">
+    <div class="input-field col l5 m6 s12">
+        <input type="text" class="validate" id="{{ ait.codigo.auto_id }}_ait" maxlength="20" name="{{ ait.codigo.name }}" required>
+        <label for="{{ ait.codigo.auto_id }}_ait" class="active">{{ ait.codigo.label }}</label>
+    </div>
+    <div class="col l3 m6 s12">
+        <label>{{ ait.tipoveiculo.label }}</label>
+        <select class="browser-default" name="{{ ait.tipoveiculo.name }}" id="{{ ait.tipoveiculo.auto_id }}_ait">
+            {% for opcao in ait.tipoveiculo %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'gestao/includes/js/aits.js' %}
+});
+</script>
+{% endblock javascript %}

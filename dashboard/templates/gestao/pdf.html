@@ -1,0 +1,451 @@
+{% load static %}
+<html>
+<head>
+<meta charset="utf-8">
+    <title>ROP-E - Relatório - Guarnição nº {{ guarnicao.id }}</title>
+    <style type="text/css">
+        @page { size: A4;
+            @frame paginacao_frame { -pdf-frame-content: paginacao; top: 25pt; right: 25pt; width: 20pt; }
+            @frame content_frame { left: 40pt; width: 512pt; top: 65pt; height: 692pt; }
+        }
+        div.cabecalho { border: 6px solid #000; padding: 11px; text-align: center; }
+        div.cabecalho span { font-size: 1.2em; font-weight: bold; }
+        table.table { -pdf-keep-with-next: false; font-size: 1.2em; }
+        table.table, th, td { border: 1px solid #000; text-align: left; }
+        table.table th, td { padding: 5px; }
+        table.table th { width: 40%; }
+        table.table tr { page-break-inside: avoid !important; page-break-after: auto; }
+        h3 { font-size: 1.5em; }
+        h4 { font-size: 1.1em; }
+        p { font-size: 1em; }
+        div.assinaturas { text-align: center; font-size: 1.5em; }
+        div.assinaturas p { margin: 180px auto 0 auto; }
+    </style>
+</head>
+
+<body>
+<div id="paginacao" style="font-size: 1.5em;"><pdf:pagenumber> </div>
+
+<div class="cabecalho">
+    <img src="{% static 'assets/img/LogoBTM17.png' %}" width="50" /><br><br>
+    <span>POLÍCIA MILITAR DA BAHIA</span><br>
+    <span>COMANDO DE OPERAÇÕES POLICIAIS MILITARES</span><br>
+    <span>COMANDO DE POLICIAMENTO DA REGIÃO SUDOESTE</span><br>
+    <span>{{ guarnicao.comandante.batalhao }}</span><br>
+    <span>{{ guarnicao.companhia }}</span><br>
+</div><br>
+
+<table class="table">
+    <thead>
+        <td style="text-align: center;">
+            <h3>REGISTRO DE OCORRÊNCIA POLICIAL - DIGITAL<br>Nº {{ guarnicao.id }}</h3>
+        </td>
+    </thead>
+</table><br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>PROTOCOLO</h3>
+            </td>    
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>DATA DE ABERTURA</th>
+            <td>{{ guarnicao.dataabertura }}</td>
+        </tr>
+        <tr>
+            <th>DATA DE FECHAMENTO</th>
+            <td>{{ guarnicao.datafechamento }}</td>
+        </tr>
+    </tbody>
+</table><br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>EFETIVO DE SERVIÇO</h4>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>COMPANHIA</th>
+            <td>{{ guarnicao.companhia }}</td>
+        </tr>
+        <tr>
+            <th>COMANDANTE</th>
+            <td>{{ guarnicao.comandante }}</td>
+        </tr>
+        <tr>
+            <th>E-MAIL</th>
+            <td>{{ guarnicao.comandante.matricula.email }}</td>
+        </tr>
+    </tbody>
+</table>
+{% if pms %}
+<table class="table">
+    <thead>
+        <tr>
+            <td style="background-color: #ddd; text-align: center;">
+                <h4>POLICIAIS</h4>
+            </td>    
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                {% for pm in pms %}
+                    {% if pm.viatura is not None %}
+                        {% ifchanged pm.viatura %}
+                            VIATURA: <b>{{ pm.viatura }}</b> ({{ pm.viatura.placa }}) - {{ pm.viatura.modelo }} - <b>KM Inicial</b>: {{ pm.kmsaida }} - <b>KM Final</b>: {{ pm.kmvolta }}<br>
+                        {% endifchanged %}
+                        - {{ pm.policial }} - {{ pm.funcao }}<br>
+                    {%else %}
+                        - {{ pm.policial }} - {{ pm.funcao }}<br>
+                    {% endif %}
+                    <br>
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+<br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>TIPO DE RELATÓRIO</h4>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>TIPO</th>
+            <td>ENCERRAMENTO DE SERVIÇO</td>
+        </tr>
+        <tr>
+            <th>DATA</th>
+            <td>{{ guarnicao.datafechamento | date }}</td>
+        </tr>
+        <tr>
+            <th>HORÁRIO</th>
+            <td>{{ guarnicao.datafechamento | time }}</td>
+        </tr>
+        <tr>
+            <th>MUNICÍPIO</th>
+            <td>{{ guarnicao.municipio.nome }}</td>
+        </tr>
+    </tbody>
+</table><br>
+
+{% if ocorrencias %}
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>OCORRÊNCIAS</h3>
+            </td>
+        </tr>
+    </thead>
+</table>
+    {% for ocorrencia in ocorrencias %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">Ocorrência {{ forloop.counter }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>TIPO</th>
+                    <td>{{ ocorrencia.tipoocorrencia.tipoocorrencia }}</td>
+                </tr>
+                <tr>
+                    <th>INFRAÇÃO PENAL/ORDEM JUDICIAL</th>
+                    <td>{{ ocorrencia.infracao.tipo }}</td>
+                </tr>
+                <tr>
+                    <th>DATA</th>
+                    <td>{{ ocorrencia.dataocorrencia | date }}</td>
+                </tr>
+                <tr>
+                    <th>HORÁRIO</th>
+                    <td>{{ ocorrencia.dataocorrencia | time }}</td>
+                </tr>
+                <tr>
+                    <th>RUA</th>
+                    <td>{{ ocorrencia.endereco.rua }}</td>
+                </tr>
+                <tr>
+                    <th>BAIRRO/POVOADO/DISTRITO</th>
+                    <td>{{ ocorrencia.endereco.bairro }}</td>
+                </tr>
+                <tr>
+                    <th>MUNICÍPIO</th>
+                    <td>{{ ocorrencia.endereco.municipio.nome }}</td>
+                </tr>
+                <td colspan="2" style="background-color: #ddd; text-align: center;">
+                    <h4>Relatório da Ocorrência {{ forloop.counter }}</h4>
+                </td>
+                <tr>
+                    <td colspan="2">{{ ocorrencia.relatorio }}</td>
+                </tr>
+            </tbody>
+        </table><br>
+    {% endfor %}
+{% endif %}
+<br>
+
+{% if rats %}
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>REGISTROS DE ACIDENTE DE TRÂNSITO</h3>
+            </td>
+        </tr>
+    </thead>
+</table>
+    {% for rat in rats %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">Registro de Acidente de Trânsito {{ forloop.counter }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>TIPO DE ACIDENTE</th>
+                    <td>{{ rat.tipoacidente }}</td>
+                </tr>
+                <tr>
+                    <th>DATA</th>
+                    <td>{{ rat.dataocorrencia | date }}</td>
+                </tr>
+                <tr>
+                    <th>HORÁRIO</th>
+                    <td>{{ rat.dataocorrencia | time }}</td>
+                </tr>
+                <tr>
+                    <th>RUA</th>
+                    <td>{{ rat.endereco.rua }}</td>
+                </tr>
+                <tr>
+                    <th>BAIRRO/POVOADO/DISTRITO</th>
+                    <td>{{ rat.endereco.bairro }}</td>
+                </tr>
+                <tr>
+                    <th>MUNICÍPIO</th>
+                    <td>{{ rat.endereco.municipio.nome }}</td>
+                </tr>
+                <td colspan="2" style="background-color: #ddd; text-align: center;">
+                    <h4>Relatório do Registro de Acidente Trânsito {{ forloop.counter }}</h4>
+                </td>
+                <tr>
+                    <td colspan="2">{{ rat.relatorio }}</td>
+                </tr>
+            </tbody>
+        </table><br>
+    {% endfor %}
+{% endif %}
+<br>
+
+{% if opos %}
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>OPOs</h3>
+            </td>
+        </tr>
+    </thead>
+</table><br>
+    {% for opo in opos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">OPO {{ opo.opo.numeroopo }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>SOLICITANTE</th>
+                    <td>{{ opo.opo.solicitantenome }}{% if opo.opo.solicitantecontato %} - CONTATO: {{ opo.opo.solicitantecontato }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>LOCAL</th>
+                    <td>{{ opo.local }}</td>
+                </tr>
+                <tr>
+                    <th>DATA DE EXECUÇÃO</th>
+                    <td>{{ opo.dataexecucao }}</td>
+                </tr>
+                <tr>
+                    <th>DATA DE FINALIZAÇÃO</th>
+                    <td>{{ opo.datafinalizacao }}</td>
+                </tr>
+                <td colspan="2" style="background-color: #ddd; text-align: center;">
+                    <h4>Relatório da OPO {{ opo.opo.numeroopo }}</h4>
+                </td>
+                <tr>
+                    <td colspan="2">{{ opo.relatorio }}</td>
+                </tr>
+            </tbody>
+        </table><br>
+    {% endfor %}
+{% endif %}
+
+{% if aits %}
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>AITs EXTRAÍDOS</h3>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <h4>AIT</h4>
+            </td>
+            <td>
+                <h4>TIPO DE VEÍCULO</h4>
+            </td>
+        </tr>
+        {% for ait in aits %}
+            <tr>
+                <td>{{ ait.codigo }}</td>
+                <td>{{ ait.tipoveiculo|upper }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>TOTAL</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>CARROS: {{ aitscarros }}</h4>
+            </td>
+            <td>
+                <h4>MOTOS: {{ aitsmotos }}</h4>
+            </td>
+        </tr>
+    </tbody>
+</table><br>
+{% endif %}
+
+{% if rrds %}
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>RRDs EXTRAÍDOS</h3>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <h4>RRD</h4>
+            </td>
+            <td>
+                <h4>TIPO DE VEÍCULO</h4>
+            </td>
+        </tr>
+        {% for rrd in rrds %}
+            <tr>
+                <td>{{ rrd.codigo }}</td>
+                <td>{{ rrd.tipoveiculo|upper }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>TOTAL</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>CARROS: {{ rrdscarros }}</h4>
+            </td>
+            <td>
+                <h4>MOTOS: {{ rrdsmotos }}</h4>
+            </td>
+        </tr>
+    </tbody>
+</table><br>
+{% endif %}
+
+{% if travs %}
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>TRAVs EXTRAÍDOS</h3>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <h4>TRAV</h4>
+            </td>
+            <td>
+                <h4>TIPO DE VEÍCULO</h4>
+            </td>
+        </tr>
+        {% for trav in travs %}
+            <tr>
+                <td>{{ trav.codigo }}</td>
+                <td>{{ trav.tipoveiculo|upper }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>TOTAL</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>CARROS: {{ travscarros }}</h4>
+            </td>
+            <td>
+                <h4>MOTOS: {{ travsmotos }}</h4>
+            </td>
+        </tr>
+    </tbody>
+</table><br>
+{% endif %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="1" style="background-color: #ddd; text-align: center;">
+                <h3>RELATÓRIO DE SERVIÇO</h3>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ guarnicao.relatorio }}</td>
+        </tr>
+    </tbody>
+</table><br>
+
+<p style="text-align: right; font-size: 1.5em;"></p>
+
+<div class="assinaturas">
+    <p>Comandante da Guarnição:<br><br>
+        <hr width="75%">
+        {{ guarnicao.comandante }}
+    </p>
+</div>
+</body>
+</html>

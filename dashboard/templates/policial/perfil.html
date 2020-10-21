@@ -1,0 +1,237 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block content %}
+<style>
+    .img { width: 180px; height: 180px; }
+    .red { background-color: red; }
+    .blue { background-color: blue; }
+</style>
+
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+            <div class="col l4 m12 s12">
+                <h5><strong>Olá {{ policial.postograduacao }} {{ policial.nomeguerra }}</strong></h5>
+                <div class="row center">
+                    <img class="img circle" src="{{ user.policial.foto.url }}">
+                </div>
+                <div class="row">
+                    <div class="file-field input-field">
+                        <div class="waves-effect waves-light btn-small">
+                            <input title="Altere sua foto" type="file" accept="image/*" name="foto" id="id_foto">
+                            <i class="material-icons right">file_upload</i>Foto
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path" id="id_foto_path" type="text" value="{{ foto.foto.value }}" disabled readonly>
+                        </div>
+                    </div>
+                </div>
+                <h5><strong>Dados de Usuário</strong></h5>
+                <div class="row">
+                    <div class="center">
+                        <a id="mostrarSenha" class="btn waves-effect waves-light"><i class="material-icons left">lock</i>Redefinir Senha</a>
+                    </div>
+
+                    <form id="form_change_pass">
+                        <div id="inputs_change_pass">
+                            <div class="input-field col l12 m12 s12">
+                                <input type="password" id="{{ senha.password.auto_id}}" name="{{ senha.password.name }}">
+                                <label for="{{ senha.password.auto_id}}" class="active">Senha atual</label>
+                            </div>
+                            <div class="input-field col l12 m12 s12">
+                                <input type="password" id="id_new_password1" name="new_password1">
+                                <label for="id_new_password1" class="active">Nova senha</label>
+                            </div>
+                            <div class="input-field col l12 m12 s12">
+                                <input type="password" id="id_new_password2" name="new_password2">
+                                <label for="id_new_password2" class="active">Insira novamente</label>
+                            </div>
+                            <div class="input-field col l6 m6 s6 right">
+                                <button class="btn waves-effect waves-light right" type="submit">Alterar
+                                    <i class="material-icons right">check</i>
+                                </button>
+                            </div>
+                            <div class="input-field col l6 m6 s6">
+                                <button class="btn waves-effect waves-light left" id="cancel_change_pass">Cancelar
+                                    <i class="material-icons left">cancel</i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+                <div class="col l8 m12 s12">
+                    <div class="row">
+                        <div class="col l12 m12 s12">
+                            <h5><strong>Dados Pessoais</strong></h5>
+                        </div>
+                        <div class="input-field col l6 m6 s12">
+                            <input type="text" id="id_nome" value="{{ policial.matricula.nome }}" disabled>
+                            <label for="id_nome">Nome Completo</label>
+                        </div>
+                        <div class="input-field col l2 m6 s12">
+                            <input type="text" id="id_tiposanguineo" value="{{ policial.tiposanguineo }}" disabled>
+                            <label for="id_tiposanguineo" class="active">Tipo Sanguineo</label>
+                        </div>
+                        <div class="input-field col l4 m6 s12">
+                            <input type="text" id="id_cpf" value="{{ policial.matricula.cpf }}" disabled>
+                            <label for="id_cpf" class="active">CPF</label>
+                        </div>
+                        <div class="input-field col l6 m6 s12">
+                            <input type="text" id="id_dtnascimento" value="{{ policial.matricula.dtnascimento }}" disabled>
+                            <label for="id_dtnascimento" class="active">Data de Nascimento</label>
+                        </div>
+                            <div class="input-field col l6 m6 s12">
+                                <input id="id_email" type="text" class="validate" name="email" value="{{ email.email.value }}">
+                                <label for="id_email" class="active">{{ email.email.label }}</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="col s12 l12 m12">
+                            <h5><strong>Dados Policiais</strong></h5>
+                        </div>
+                        <div class="input-field col l3 m6 s12">
+                            <input type="text" id="id_matricula" value="{{ policial.matricula.matricula }}" disabled>
+                            <label for="id_matricula" class="active">Matrícula</label>
+                        </div>
+                        <div class="input-field col l5 m6 s12">
+                            <input type="text" id="id_cargo" value="{{ policial.cargo }} - {{ policial.postograduacao }}" disabled>
+                            <label for="id_cargo" class="active">Cargo - Posto/Graduação</label>
+                        </div>
+                        <div class="input-field col l4 m6 s12">
+                            <input type="text" id="id_dtpraca" value="{{ policial.dtpraca }}" disabled>
+                            <label for="id_dtpraca" class="active">Data de Praça</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col l12 m12 s12">
+                    <div class="input-field row l12 m12 s12">
+                        <button class="btn waves-effect waves-light right" id="submit_alteracoes_policial">Alterar
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    var inputSubmit = $("#submit_alteracoes_policial"),
+    inputsChangePass = $("#inputs_change_pass");
+
+    inputSubmit.attr("disabled", "");
+    inputsChangePass.css("display", "none");
+    
+    function atualizaFoto(){
+        var data = new FormData();
+        data.append("foto", $("#id_foto")[0].files[0]);
+
+        $.ajax({
+            url: "{% url 'policial:atualizar_foto' %}",
+            type: "POST",
+            data: data,
+            cache: false,
+            async: false,
+            contentType: false,
+            processData: false,
+            success: function(response){
+                for(var message in response){
+                    M.toast({html: response[message], classes: "green"});
+                }
+            }
+        });
+        return false;
+    }
+
+    function atualizaEmail(){
+        $.ajax({
+            url: "{% url 'policial:atualizar_email' %}",
+            type: "POST",
+            data: $("#id_email").serialize(),
+            success: function(response){
+                for(var message in response){
+                    M.toast({html: response[message], classes: "green"});
+                }
+            }
+        });
+        return false;
+    }
+    
+    function AtivaSubmit(){
+        if(inputSubmit.is("[disabled=disabled]")){
+            inputSubmit.removeAttr("disabled");
+        }
+        return false;
+    }
+
+    // SENHA
+    $("#mostrarSenha").on("click", () => {
+        $("#mostrarSenha").css("display", "none");
+        inputsChangePass.css("display", "block");
+        $("#cancel_change_pass").css("display", "block");
+        return false;
+    });
+    $("#cancel_change_pass").on("click", () => {
+        $("#cancel_change_pass").css("display", "none");
+        inputsChangePass.css("display", "none");
+        $("#mostrarSenha").css("display", "inline-block");
+        return false;
+    });
+    
+    $("#form_change_pass").submit(function(event){
+        event.stopPropagation();
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'policial:atualizar_senha' %}",
+            data: $(this).serialize(),
+            success: function(response){
+                for(var message in response){
+                    M.toast({html: response[message], classes: "green"});
+                }
+                location.reload();
+            },
+            error: function(response){
+                var response = JSON.parse(response.responseText);
+                M.toast({html: response[message], classes: "red"});
+            }
+        });
+        return false;
+    });
+
+
+    // FOTO / EMAIL
+    var FotoAlterada = false, EmailAlterado = false;
+
+    $("#id_foto_path").on("change", () => { AtivaSubmit(); FotoAlterada = true; });
+
+    $("#id_email").on("input", () => { AtivaSubmit(); EmailAlterado = true; });
+
+    inputSubmit.on("click", function(event){
+        event.stopPropagation();
+
+        if(FotoAlterada){
+            atualizaFoto();
+        }
+        if(EmailAlterado){
+            atualizaEmail();
+        }
+
+        location.reload(true);
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}
+{% endblock content %}

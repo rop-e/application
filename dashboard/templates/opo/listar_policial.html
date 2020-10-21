@@ -1,0 +1,114 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}OPOs{% endblock %}
+
+{% block content %}
+<style>
+    .short-text { display: none; }
+
+    @media (max-width: 450px) {
+        .short-text { display: inline-block; }
+        .full-text { display: none; }
+    }
+    table.highlight>tbody>tr.pendente:hover {
+        background-color: #ffebee;
+    }
+    table.highlight>tbody>tr.pendente {
+        color: #e53935;
+    }
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">OPOs {% if filtros %}{% for x, v in filtros.items %}{{ v }}{% endfor %}{% endif %}</span>
+
+                <div class="divider"></div>
+
+                {% if opos %}
+                <table class="highlight responsive-table centered">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Título</th>
+                            <th>Local</th>
+                            <th>Data de execução</th>
+                            <th>Data de finalização</th>
+                            <th>Visualizar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for opo in opos %}
+                        <tr{%if opo.status == "pendente" %} class="pendente"{% endif %}>
+                            <td>{{ opo.opo.numeroopo }}</td>
+                            <td>{{ opo.opo.titulo }}</td>
+                            <td>{{ opo.local }}</td>
+                            <td>{{ opo.dataexecucao }}</td>
+                            <td>{% if opo.datafinalizacao %}{{ opo.datafinalizacao }}{% else %}Não informado.{% endif %}</td>
+                            <td>
+                                <a href="{% url 'opo:visualizar_oporelatorio' id=opo.id %}" class="btn waves-effect waves-light btn-floating">
+                                    <i class="material-icons right">description</i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                {% if opos.has_other_pages %}
+                    <ul class="pagination center">
+                        {% if opos.has_previous %}
+                            <li class="waves-effect">
+                                <a href="{% my_url opos.previous_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_left</i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in opos.paginator.page_range %}
+                            {% if opos.number == num %}
+                                <li class="active">
+                                    <a href="#!">{{ num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if opos.has_next %}
+                            <li class="waves-effect">
+                                <a href="{% my_url opos.next_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_right</i></a>
+                                </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_right</i></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+
+                {% else %}
+                    <p>Não existem OPOs.</p>
+                {% endif %}
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

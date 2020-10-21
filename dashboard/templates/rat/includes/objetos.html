@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Objetos</strong></h5>
+    </div>
+</div>
+
+<form id="objeto-form">{% csrf_token %}
+<input type="hidden" id="{{ ratobjeto.rat.auto_id }}_objeto" name="{{ ratobjeto.rat.name }}" value="{{ rat.id }}" />
+<div class="row">
+    <div class="input-field col l9 m6 s12">
+        <textarea class="materialize-textarea validate" id="{{ ratobjeto.descricao.auto_id }}" name="{{ ratobjeto.descricao.name }}" required></textarea>
+        <label for="{{ ratobjeto.descricao.auto_id }}" class="active">{{ ratobjeto.descricao.label }}</label>
+    </div>
+    <div class="input-field col l3 m6 s12">
+        <input type="number" class="validate" id="{{ ratobjeto.quantidade.auto_id }}" name="{{ ratobjeto.quantidade.name }}" required>
+        <label for="{{ ratobjeto.quantidade.auto_id }}" class="active">{{ ratobjeto.quantidade.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="input-field col l6 m6 s12">
+        <input type="text" class="validate" id="{{ ratobjeto.localconducao.auto_id }}" maxlength="100" name="{{ ratobjeto.localconducao.name }}" required>
+        <label for="{{ ratobjeto.localconducao.auto_id }}" class="active">{{ ratobjeto.localconducao.label }}</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'rat/includes/js/objetos.js' %}
+});
+</script>
+{% endblock javascript %}

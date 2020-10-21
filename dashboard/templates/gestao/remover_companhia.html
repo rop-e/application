@@ -1,0 +1,40 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Excluir Companhia <{{ companhia.id }}>{% endblock %}
+
+{% block content %}
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Criar Companhia</div>
+
+                <div class="col s12 m12 l12">
+                    <div class="row">
+                        <div class="col s12 l12 m12">
+                            <span>Tem certeza que deseja excluir a Companhia:</span>
+                        </div>
+                        <div class="col s12 l12 m12">
+                            <h5><<strong>{{ companhia.companhia }}</strong>> ?</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-field col l6 m6 s6 right">
+                    <form method="POST">{% csrf_token %}
+                    <button class="btn waves-effect waves-light right" type="submit">Confirmar
+                    </form>
+                        <i class="material-icons right">check</i>
+                    </button>
+                </div>
+                <div class="input-field col l6 m6 s6 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

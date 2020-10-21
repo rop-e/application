@@ -1,0 +1,75 @@
+{% extends "ocorrencia/edits/base.html" %}
+
+{% block title %}Editar Documento {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-doc">{% csrf_token %}
+<input type="hidden" name="id_doc" value="{{ id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar Documento &lt;{% for opcao in doc.tipodoc %}{% if opcao.data.value == doc.tipodoc.value %}{{ opcao.choice_label }}{% endif %}{% endfor %}></div>
+
+                <div class="row">
+                    <div class="col l3 m3 s12">
+                        <label>{{ doc.tipodoc.label }}</label>
+                        <select class="browser-default" name="{{ doc.tipodoc.name }}" id="{{ doc.tipodoc.auto_id }}">
+                            {% for opcao in doc.tipodoc %}
+                                {% if opcao.data.value == doc.tipodoc.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l4 m4 s12">
+                        <input type="text" id="{{ doc.numero.auto_id }}" maxlength="50" name="{{ doc.numero.name }}" value="{% if doc.numero.value is not None %}{{ doc.numero.value }}{% endif %}">
+                        <label for="{{ doc.numero.auto_id }}" class="active">{{ doc.numero.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-doc").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'acessoriosocorrencia:post_edit_doc' %}",
+            data: $(this).serialize(),
+            success: function(response){
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: function(response){
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

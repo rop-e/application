@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Comandantes de CIA</strong></h5>
+    </div>
+</div>
+
+<form id="comandantecia-form">{% csrf_token %}
+<input type="hidden" id="id_hidden" name="{{ form.opo.name }}" value="{{ opo.id }}" />
+<div class="row">
+    <div class="col l6 m6 s12">
+        <label>{{ form.comandante.label }}</label>
+        <select class="browser-default" name="{{ form.comandante.name }}" id="{{ form.comandante.auto_id }}">
+            {% for opcao in form.comandante %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="col l12 m12 s12">
+    <div class="input-field row l12 m12 s12 right">
+        <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">person_add</i>
+        </button>
+    </div>
+</div>
+</form>

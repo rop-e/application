@@ -1,0 +1,62 @@
+from django.urls import path, include
+from .views import dashboard
+from django.views.generic.base import RedirectView
+
+urlpatterns = [
+    path(
+        "",
+        RedirectView.as_view(pattern_name="dashboard"),
+        name="index"),
+    path(
+        "painel/",
+        dashboard,
+        name="dashboard"),
+    path(
+        "policial/",
+        include("dashboard.policial.urls",
+                namespace="policial")),
+    path(
+        "endereco/",
+        include("dashboard.endereco.urls",
+                namespace="endereco")),
+    path(
+        "ocorrencia/",
+        include("dashboard.ocorrencia.urls",
+                namespace="ocorrencia")),
+    path(
+        "opo/",
+        include("dashboard.opo.urls",
+                namespace="opo")),
+    path(
+        "rat/",
+        include("dashboard.rat.urls",
+                namespace="rat")),
+    path(
+        "pessoa/",
+        include("dashboard.pessoa.urls",
+                namespace="pessoa")),
+    path(
+        "anexo/",
+        include("dashboard.anexo.urls",
+                namespace="anexo")),
+    path(
+        "envolvido/",
+        include("dashboard.envolvido.urls",
+                namespace="envolvido")),
+    path(
+        "ocorrencia/acessorios/",
+        include("dashboard.acessoriosocorrencia.urls",
+                namespace="acessoriosocorrencia")),
+    path(
+        "guarnicao/",
+        include("dashboard.guarnicao.urls",
+                namespace="guarnicao")),
+    path(
+        "",
+        include("dashboard.policialviatura.urls",
+                namespace="policialviatura")),
+    path(
+        "",
+        include("dashboard.localrecebedor.urls",
+                namespace="localrecebedor"))
+]

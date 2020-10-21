@@ -1,0 +1,107 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}RATs sem finalizar{% endblock %}
+
+{% block content %}
+<style>
+    table.highlight>tbody>tr.pendente:hover {
+        background-color: #ffebee;
+    }
+    table.highlight>tbody>tr.pendente {
+        color: #e53935;
+    }
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">RATs sem finalizar</span>
+
+                <div class="divider"></div>
+
+                {% if rats %}
+                <table class="highlight responsive-table centered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tipo de Acidente</th>
+                            <th>Local</th>
+                            <th>Data e Hora</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for rat in rats %}
+                        <tr class="pendente">
+                            <td>{{ rat.id }}</td>
+                            <td>{{ rat.tipoacidente }}</td>
+                            <td>{{ rat.endereco.municipio }}, {{ rat.endereco.bairro }}, {{ rat.endereco.rua }}</td>
+                            <td>{{ rat.dataocorrencia }}</td>
+                            <td>
+                                <a href="{% url 'rat:adicionar_veiculos_envolvidos' rat=rat.id %}" class="btn waves-effect waves-light">
+                                    <i class="material-icons right">edit</i>Finalizar
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                    {% if rats.has_other_pages %}
+                        <ul class="pagination center">
+                            {% if rats.has_previous %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url rats.previous_page_number 'pagina' request.GET.urlencode %}">
+                                        <i class="material-icons">chevron_left</i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="disabled">
+                                    <a href="#!"><i class="material-icons">chevron_left</i></a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in rats.paginator.page_range %}
+                                {% if rats.number == num %}
+                                    <li class="active">
+                                        <a href="#!">{{ num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="waves-effect">
+                                        <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if rats.has_next %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url rats.next_page_number 'pagina' request.GET.urlencode %}">
+                                        <i class="material-icons">chevron_right</i></a>
+                                    </li>
+                            {% else %}
+                                <li class="disabled">
+                                    <a href="#!"><i class="material-icons">chevron_right</i></a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+
+                {% else %}
+                    <p>Não existem RATs pendentes.</p>
+                {% endif %}
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

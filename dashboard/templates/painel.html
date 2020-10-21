@@ -1,0 +1,119 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Início{% endblock %}
+
+{% block content %}
+<style>
+    .aplicacoes .aplicacao .card .item a {
+        background:#cfd8dc;
+        color:#263238;
+        display:block;
+        border-radius:5px;
+        margin: 10px 0 10px auto;
+        padding:30px 0;
+        text-align:center;
+        position:relative;
+        height:150px;
+    }
+    .aplicacoes .aplicacao .card .item i{
+        color:#417690;
+    }
+    .app-count-badge{
+        position:absolute;
+        border-radius:100%;
+        background:#417690;
+        top:-7px;
+        right:-7px;
+    }
+    .app-count-badge .badge-content{
+        padding:3px;
+        min-width:25px;
+        color:#fff;
+        font-size:12px;
+        display:none;
+    }
+    .aplicacao:hover .app-count-badge .badge-content{
+        display:block;
+    }
+    .aplicacao:hover .item>a:not(.disabled){
+        box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);
+    }
+    .aplicacoes .item a.disabled{
+        cursor:not-allowed;
+    }
+</style>
+<div class="col l12 m12 s12">
+    <div class="aplicacoes center">
+        <div class="aplicacao">
+            <div class="card darken-1 col l12 m12 s12">
+                <div class="card-content text-darken-4 grey-text">
+                    <span class="card-title"><strong>Ocorrência Criminal</strong></span>
+                    <hr>
+                    <div class="row l12 m12 s12">
+                        <div class="item col l4 m4 s12">
+                            <a id="adicionarOcorrenciaCriminal" class="waves-effect">
+                                <i class="medium material-icons">add</i>
+                                <h6>Adicionar</h6>
+                            </a>
+                        </div>
+                        <div class="item col l4 m4 s12">
+                            <a href="{% url 'ocorrencia:listar' %}" class="waves-effect">
+                                <i class="medium material-icons">list</i>
+                                <h6>Listar</h6>
+                            </a>
+                        </div>
+                        <div class="item col l4 m4 s12">
+                            <a href="{% url 'endereco:index' %}" class="waves-effect">
+                                <i class="medium material-icons">map</i>
+                                <h6>Mapa</h6>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="aplicacoes center">
+        <div class="aplicacao">
+            <div class="card darken-1 col l12 m12 s12">
+                <div class="card-content text-darken-4 grey-text">
+                    <span class="card-title"><strong>Relatório Diário</strong></span>
+                    <hr>
+                    <div class="row">
+                        <div class="item col l4 m4 s12">
+                            <a href="{% url 'ocorrencia:listar' %}">
+                                <div class="card app-count-badge">
+                                    <div class="badge-content">
+                                        {{ ocorrencias }}
+                                    </div>
+                                </div>
+                                <i class="medium material-icons">insert_chart</i>
+                                <h6>OCORRÊNCIAS</h6>
+                            </a>
+                        </div>
+                        {% for infracao in infracoes %}
+                            <div class="item col l4 m4 s12">
+                                <a href="{% url 'ocorrencia:listar' %}?infracao={{ infracao.id }}&data_inicial={% now 'd/m/yy' %}">
+                                    <div class="card app-count-badge">
+                                        <div class="badge-content">
+                                            {% for qtd in ocorrencias_infracao %}
+                                                {% if qtd.tipo == infracao.tipo %}
+                                                    {{ qtd.tipo__count }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <i class="medium material-icons">insert_chart</i>
+                                    <h6>{{ infracao }}</h6>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

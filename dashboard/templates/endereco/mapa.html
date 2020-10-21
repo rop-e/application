@@ -1,0 +1,60 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'assets/css/leaflet.css' %}" />
+    <script src="{% static 'assets/js/leaflet.js' %}"></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+{% endblock head %}
+{% block title %}Mapa{% endblock %}
+
+{% block content %}
+<div class="card darken-1 row l12 m12 s12">
+    <div class="card-content text-darken-4 grey-text">
+        <span class="card-title">Mapa de Ocorrências</span>
+
+        <div class="col l12 m12 s12">
+            <div class="row l12 m12 s12">
+                <label>Selecione uma cidade</label>
+                <select class="browser-default" id="id_municipio">
+                    {% for municipio in municipios %}
+                        {% if municipio.codigo_ibge == querycidade.codigo_ibge %}
+                            <option value="{{ municipio.codigo_ibge }}" selected>{{ municipio.nome }}</option>
+                        {% else %}
+                            <option value="{{ municipio.codigo_ibge }}">{{ municipio.nome }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="row l12 m12 s12">
+                <div id="map" style="width: 100%; height: calc(100vh - 19rem)"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'assets/js/leaflet-heat.js' %}"></script>
+<script>
+var map = L.map("map").setView([{{ cidade }}], 14);
+var tiles = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {attribution: `&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors`}).addTo(map);
+var addressPoints = [{% for coordenada in coordenadas %}{{ coordenada }},{% endfor %}];
+var heat = L.heatLayer(addressPoints, {radius: 10}).addTo(map);
+map.zoomControl.setPosition('topright');
+map.addControl(new L.Control.Fullscreen({
+    title: {
+        'false': 'Ver em Tela Cheia',
+        'true': 'Fechar Tela Cheia'
+    },
+    position: 'topright'
+}));
+
+$("#id_municipio").on("change", function(event){
+    event.stopPropagation();
+
+    var codigo_ibge = $(this).val();
+    window.location.href = "{% url 'endereco:index' %}" + codigo_ibge + "/"; 
+});
+</script>
+{% endblock content %}

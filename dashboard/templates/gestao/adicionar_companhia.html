@@ -1,0 +1,42 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Criar Companhia{% endblock %}
+
+{% block content %}
+<form method="POST" action="">{% csrf_token %}
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Criar Companhia</div>
+
+                <div class="col s12 m12 l12">
+                    <div class="row">
+                        <div class="col s12 l12 m12">
+                            <h5><strong>Nome</strong></h5>
+                        </div>
+                        <div class="input-field col l3 m3 s3">
+                            <input id="{{ adicionar_companhia_form.companhia.auto_id }}" type="text" class="validate" name="{{ adicionar_companhia_form.companhia.name }}" required>
+                            <label class="active">{{ adicionar_companhia_form.companhia.label }}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-field col l6 m6 s6 right">
+                    <button class="btn waves-effect waves-light right" type="submit">Criar
+                    </form>
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+                <div class="input-field col l6 m6 s6 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
