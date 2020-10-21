@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Import materialize CSS -->
+    <link rel='stylesheet' href="{% static 'assets/css/materialize.min.css' %}">
+
+    <link rel='stylesheet' href="{% static 'assets/css/base.css' %}">
+    <style>
+        @font-face {
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-weight: 400;
+            src: url("{% static 'fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2' %}") format('woff2');
+        }
+        .input-field label { pointer-events: all !important; }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+    {% block head %}{% endblock head %}
+    <title>ROP-E - {% block title %}{% endblock title %}</title>
+</head>
+
+<body class="grey lighten-2">
+    <div class="col l12 m12 s12 conteudo container">
+        {% block content %}{% endblock content %}
+    </div>
+
+    <script>
+        function refreshParent() {
+            window.opener.location.reload();
+        }
+
+        function callBack() {
+            window.close();
+            window.onunload = refreshParent;
+        }
+    </script>
+    
+    {% include "snippets/_scripts.html" %}
+</body>
+</html>

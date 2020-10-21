@@ -1,0 +1,137 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Pré-visualização - Ocorrência {{ ocorrencia.id }}{% endblock %}
+
+{% block content %}
+<style>
+    .short-text { display: none; }
+
+    @media (max-width: 470px) {
+        .short-text { display: inline-block; }
+        .full-text { display: none; }
+    }
+</style>
+<div class="col l12 m12 s12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <div class="row">
+                        Número da Ocorrência: <{{ ocorrencia.id }}>
+                        <button id="apagaOcorrencia" style="float: right;" class="btn waves-effect waves-light">
+                            <i class="material-icons right">delete</i>
+                            <span class="full-text">Apagar Ocorrência</span>
+                            <span class="short-text">Apagar</span>
+                        </button>
+                    </div>
+                </span>
+
+                <div class="divider"></div>
+
+                <div class="right-align">
+                    <h6>{{ ocorrencia.dataocorrencia }}</h6>
+                </div>
+                <div class="row">
+                    <div class="col s12 l12 m12">
+                        <h5>
+                            <strong>Endereço
+                                <a title="Editar" onclick="window.open(`{% url 'endereco:edit_endereco' id=ocorrencia.endereco.id %}`, 'Endereço', 'width=600,height=800,scrollbars=no'); return false;" class="waves-effect">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </strong>
+                        </h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l6 m6 s12">
+                        <input type="text" value="{{ ocorrencia.endereco.municipio }}" disabled>
+                        <label>Município</label>
+                    </div>
+                    <div class="input-field col l4 m4 s12">
+                        <input type="text" value="{{ ocorrencia.endereco.bairro }}" disabled>
+                        <label>Bairro</label>
+                    </div>
+                    <div class="input-field col l2 m2 s12">
+                        <input type="text" value="{% if ocorrencia.endereco.numero is None %}-{% else %}{{ ocorrencia.endereco.numero }}{% endif %}" disabled>
+                        <label>Número</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l6 m6 s12">
+                        <input type="text" value="{{ ocorrencia.endereco.rua }}" disabled>
+                        <label>Rua</label>
+                    </div>
+                    <div class="input-field col l6 m6 s12">
+                        <input type="text" value="{{ ocorrencia.endereco.complemento }}" disabled>
+                        <label>Complemento</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Policiais na Guarnição</strong></h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l6 m6 s12">
+                        <input type="text" value="{{ ocorrencia.guarnicao.comandante }}" disabled>
+                        <label>Comandante</label>
+                    </div>
+                    <div class="input-field col l6 m6 s12">
+                        <input type="text" value="{{ ocorrencia.guarnicao.coordenadordearea }}" disabled>
+                        <label>Coordenador de Área</label>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for pm in pms  %}
+                        <div class="input-field col l6 m6 s12">
+                            <input type="text" value="{{ pm.policial }} - {{ pm.funcao }}" disabled>
+                        </div>
+                    {% endfor %}
+                </div>
+                    
+                <div id="apreensoes"></div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5>
+                            <strong>Relatório
+                            <a title="Editar" onclick="window.open(`{% url 'ocorrencia:edit_relatorio' id=ocorrencia.id %}`, 'Relatório {{ ocorrencia.id }}', 'width=600,height=800'); return false;" class="waves-effect">
+                                <i class="material-icons">edit</i>
+                            </a>
+                            </strong>
+                        </h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l12 m12 s12">
+                        <textarea class="materialize-textarea" disabled>{{ ocorrencia.relatorio }}</textarea>
+                        <label>Relatório</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 right">
+                    <button class="btn waves-effect waves-light right" id="finalizarOcorrencia">Finalizar
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)" disabled>Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    {% include 'ocorrencia/includes/js/finalizar_ocorrencia.js' %}
+</script>
+<script>
+    {% include 'ocorrencia/includes/js/deleteelemento.js' %}
+</script>
+{% endblock content %}

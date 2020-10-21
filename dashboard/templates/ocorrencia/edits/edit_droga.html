@@ -1,0 +1,99 @@
+{% extends "ocorrencia/edits/base.html" %}
+
+{% block title %}Editar Droga {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-droga">{% csrf_token %}
+<input type="hidden" name="id_droga" value="{{ id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar Droga &lt;{% for opcao in droga.tipodroga %}{% if opcao.data.value == droga.tipodroga.value %}{{ opcao.choice_label }}{% endif %}{% endfor %}></div>
+
+                <div class="row">
+                    <div class="col l3 m3 s12">
+                        <label>{{ droga.tipodroga.label }}</label>
+                        <select class="browser-default" name="{{ droga.tipodroga.name }}" id="{{ droga.tipodroga.auto_id }}">
+                            {% for opcao in droga.tipodroga %}
+                                {% if opcao.data.value == droga.tipodroga.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l3 m3 s12">
+                        <label>{{ droga.armazenamentodroga.label }}</label>
+                        <select class="browser-default" name="{{ droga.armazenamentodroga.name }}" id="{{ droga.armazenamentodroga.auto_id }}">
+                            {% for opcao in droga.armazenamentodroga %}
+                                {% if opcao.data.value == droga.armazenamentodroga.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l2 m3 s12">
+                        <input type="text" class="validate" id="{{ droga.quantidade.auto_id }}" name="{{ droga.quantidade.name }}" required value="{{ droga.quantidade.value }}">
+                        <label for="{{ droga.quantidade.auto_id }}" class="active">{{ droga.quantidade.label }}</label>
+                    </div>
+                    <div class="col l2 m3 s12">
+                        <label>{{ droga.medida.label }}</label>
+                        <select class="browser-default" name="{{ droga.medida.name }}" id="{{ droga.medida.auto_id }}">
+                            {% for opcao in droga.medida %}
+                                {% if opcao.data.value == droga.medida.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-droga").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'acessoriosocorrencia:post_edit_droga' %}",
+            data: $(this).serialize(),
+            success: function(response){
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: function(response){
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

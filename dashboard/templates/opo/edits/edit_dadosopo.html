@@ -1,0 +1,93 @@
+{% extends "opo/edits/base.html" %}
+{% load static %}
+
+{% block title %}Editar dados da OPO {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-opo">{% csrf_token %}
+<input type="hidden" name="id_opo" value="{{ id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar dados da OPO &lt;{{ opo.numeroopo.value }} - {{ opo.titulo.value }}></div>
+
+                <div class="row">
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" value="{{ opo.numeroopo.value }}" id="{{ opo.numeroopo.auto_id }}" maxlength="50" name="{{ opo.numeroopo.name }}" required>
+                        <label for="{{ opo.numeroopo.auto_id }}" class="active">{{ opo.numeroopo.label }}</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" value="{{ opo.titulo.value }}" id="{{ opo.titulo.auto_id }}" maxlength="100" name="{{ opo.titulo.name }}" required>
+                        <label for="{{ opo.titulo.auto_id }}" class="active">{{ opo.titulo.label }}</label>
+                    </div>
+                    <div class="col l3 m6 s12">
+                        <label>{{ opo.opotipoevento.label }}</label>
+                        <select class="browser-default" name="{{ opo.opotipoevento.name }}" id="{{ opo.opotipoevento.auto_id }}">
+                            {% for opcao in opo.opotipoevento %}
+                                {% if opcao.data.value == opo.opotipoevento.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}    
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" disabled value="{{ opo.datasolicitacao.value|date:'d/m/Y H:i' }}" id="datetime" name="{{ opo.datasolicitacao.name }}" required>
+                        <label for="datetime" class="active">{{ opo.datasolicitacao.label }}</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" value="{{ opo.armamento.value }}" id="{{ opo.armamento.auto_id }}" maxlength="255" name="{{ opo.armamento.name }}" required>
+                        <label for="{{ opo.armamento.auto_id }}" class="active">{{ opo.armamento.label }}</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" value="{{ opo.uniforme.value }}" id="{{ opo.uniforme.auto_id }}" maxlength="255" name="{{ opo.uniforme.name }}" required>
+                        <label for="{{ opo.uniforme.auto_id }}" class="active">{{ opo.uniforme.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'assets/js/datetimepicker.js' %}"></script>
+<script>
+$(document).ready(function(){
+    $("#edit-opo").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'opo:post_edit_dadosopo' %}",
+            data: $(this).serialize(),
+            success: (response) => {
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: (response) => {
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

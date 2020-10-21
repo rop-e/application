@@ -1,0 +1,63 @@
+{% extends "ocorrencia/edits/base.html" %}
+
+{% block title %}Editar Relatório {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-relatorio">{% csrf_token %}
+<input type="hidden" name="id_ocorrencia" value="{{ id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar Relatório<div>
+
+                <div class="row">
+                    <div class="input-field col l3 m6 s12">
+                        <textarea class="materialize-textarea validate" id="{{ ocorrencia.relatorio.auto_id }}" name="{{ ocorrencia.relatorio.name }}" required>{{ ocorrencia.relatorio.value }}</textarea>
+                        <label for="{{ ocorrencia.relatorio.auto_id }}" class="active">{{ ocorrencia.relatorio.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-relatorio").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'ocorrencia:post_edit_relatorio' %}",
+            data: $(this).serialize(),
+            success: function(response){
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: function(response){
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,155 @@
+{% extends "opo/edits/base.html" %}
+{% load ropd_extras %}
+
+{% block title %}Vincular Ocorrência {{ ocorrencia.id }}{% endblock title %}
+
+{% block content %}
+<style>
+    .short-text { display: none; }
+
+    @media (max-width: 450px) {
+        .short-text { display: inline-block; }
+        .full-text { display: none; }
+    }
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">Vincular Ocorrência &lt;{{ ocorrencia.id }}></span>
+
+                {% if ocorrencias %}
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Ocorrências</strong></h5>
+                        <hr>
+                    </div>
+                </div>
+                <table class="highlight responsive-table centered" id="ocorrencias">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tipo</th>
+                            <th>Guarnição</th>
+                            <th>Local</th>
+                            <th>Data e Hora</th>
+                            <th>Vincular</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for x in ocorrencias %}
+                        <tr>
+                            <td>
+                                <span class="full-text">{{ x.id }}</span>
+                                <span class="short-text center">{{ x.id }}</span>
+                            </td>
+                            <td>
+                                <span class="full-text">{{ x.infracao }}</span>
+                                <span class="short-text center">{{ x.infracao }}</span>
+                            </td>
+                            <td>
+                                <span class="full-text">{{ x.guarnicao.comandante }}</span>
+                                <span class="short-text center">{{ x.guarnicao.comandante }}</span>
+                            </td>
+                            <td>
+                                <span class="full-text">{{ x.endereco.municipio }}</span>
+                                <span class="short-text center">{{ x.endereco.municipio }}</span>
+                            </td>
+                            <td>
+                                <span class="full-text">{{ x.dataocorrencia }}</span>
+                                <span class="short-text center">{{ x.dataocorrencia }}</span>
+                            </td>
+                            <td>
+                                <a data-ocorrencia="{{ x.id }}" class="btn waves-effect waves-light">
+                                    <i class="material-icons right">announcement</i>Vincular
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        
+                {% if ocorrencias.has_other_pages %}
+                    <ul class="pagination center">
+                        {% if ocorrencias.has_previous %}
+                            <li class="waves-effect">
+                                <a href="{% my_url ocorrencias.previous_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_left</i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in ocorrencias.paginator.page_range %}
+                            {% if ocorrencias.number == num %}
+                                <li class="active">
+                                    <a href="#!">{{ num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if ocorrencias.has_next %}
+                            <li class="waves-effect">
+                                <a href="{% my_url ocorrencias.next_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_right</i></a>
+                                </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_right</i></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+
+                {% else %}
+                    <p>Não existem ocorrências cadastradas.</p>
+                {% endif %}
+            </div>
+
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#ocorrencias").children("tbody").children("tr").children("td").on("click", "a", function(event){
+        $.ajax({
+            url: "{% url 'ocorrencia:post_vincular_ocorrencia' %}",
+            method: "POST",
+            data: {
+                "ocorrencia": "{{ ocorrencia.id }}",
+                "vinculo": $(this).data("ocorrencia")
+            },
+            success: (response) => {
+                M.toast({
+                    html: response.message,
+                    classes: "green",
+                    completeCallback: callBack
+                });
+            },
+            error: (response) => {
+                var erros = response.responseJSON;
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red", completeCallback: () => { location.reload(true); }});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

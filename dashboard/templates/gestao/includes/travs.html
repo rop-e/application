@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>TRAVs</strong></h5>
+    </div>
+</div>
+
+<form id="trav-form">{% csrf_token %}
+<input type="hidden" id="{{ trav.guarnicao.auto_id }}_trav" name="{{ trav.guarnicao.name }}" value="{{ guarnicao.id }}" />
+<div class="row">
+    <div class="input-field col l5 m6 s12">
+        <input type="text" class="validate" id="{{ trav.codigo.auto_id }}_trav" maxlength="20" name="{{ trav.codigo.name }}" required>
+        <label for="{{ trav.codigo.auto_id }}_trav" class="active">{{ trav.codigo.label }}</label>
+    </div>
+    <div class="col l3 m6 s12">
+        <label>{{ trav.tipoveiculo.label }}</label>
+        <select class="browser-default" name="{{ trav.tipoveiculo.name }}" id="{{ trav.tipoveiculo.auto_id }}_trav">
+            {% for opcao in trav.tipoveiculo %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'gestao/includes/js/travs.js' %}
+});
+</script>
+{% endblock javascript %}

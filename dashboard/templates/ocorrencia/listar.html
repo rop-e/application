@@ -1,0 +1,257 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}Ocorrências{% endblock %}
+
+{% block content %}
+<style>
+    table.highlight>tbody>tr.pendente:hover {
+        background-color: #ffebee;
+    }
+    table.highlight>tbody>tr.pendente {
+        color: #e53935;
+    }
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">Ocorrências</span>
+                
+                <div class="divider"></div>
+
+                <div class="card grey lighten-5">
+                    <div class="card-content white-text">
+                        <span class="card-title black-text">
+                            <strong>Filtrar</strong>
+                            {% if filtros %}
+                                {% for x, v in filtros.items %}
+                                    <div class="chip">
+                                        {{ v }}
+                                        <label>{{ x }}</label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% if checkbox %}
+                                {% for value in checkbox %}
+                                    <div class="chip">{{ value }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </span>
+
+                        <form method="GET">
+                            <div class="row l12 m12 s12">
+                                <div class="input-field col l1 m6 s12">
+                                    <input type="text" id="id_id_exato" name="id_exato" />
+                                    <label for="id_id_exato" class="active">Número</label>
+                                </div>
+                                
+                                <div class="col l3 m6 s12">
+                                    <label>Infração</label>
+                                    <select class="browser-default" name="infracao">
+                                        <option value="" selected>---------</option>
+                                        {% for infracao in infracoes %}
+                                            {% if infracao.id == request.GET.infracao %}
+                                                <option value="{{ infracao.id }}" selected>{{ infracao }}</option>
+                                            {% else %}
+                                                <option value="{{ infracao.id }}">{{ infracao }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col l4 m12 s12">
+                                    <label>Comandante da guarnição</label>
+                                    <select class="browser-default" name="policial">
+                                        <option value="" selected>---------</option>
+                                        {% for policial in policiais %}
+                                            <option value="{{ policial.id }}">{{ policial }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+        
+                                <div class="input-field col l2 m6 s6">
+                                    <input type="text" id="id_data_inicial" class="datepicker" name="data_inicial" placeholder="dd/mm/aaaa" />
+                                    <label for="id_data_inicial" class="active">Data inicial</label>
+                                </div>
+                                <div class="input-field col l2 m6 s6">
+                                    <input type="text" id="id_data_final" class="datepicker" name="data_final" placeholder="dd/mm/aaaa" />
+                                    <label for="id_data_final" class="active">Data final</label>
+                                </div>
+
+                                <div class="col l3 m4 s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" id="fill_envolvido" name="envolvidos" />
+                                        <span>Envolvidos</span>
+                                    </label>
+                                </div>
+                                <div class="col l3 m4 s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" name="armas" />
+                                        <span>Armas</span>
+                                    </label>
+                                </div>
+                                <div class="col l3 m4 s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" name="diversos" />
+                                        <span>Objetos</span>
+                                    </label>
+                                </div>
+                                <div class="col l3 m4 s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" name="docs" />
+                                        <span>Documentos</span>
+                                    </label>
+                                </div>
+                                <div class="col l3 m4 s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" name="drogas" />
+                                        <span>Drogas</span>
+                                    </label>
+                                </div>
+                                <div class="col l3 m4 s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" name="municoes" />
+                                        <span>Munições</span>
+                                    </label>
+                                </div>
+                                <div class="col l3 m4 s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" name="veiculos" />
+                                        <span>Veículos</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col s12 m6 l4">
+                                    <div class="input-field" id="inputEnvolvido" style="display: none;">
+                                        <input type="text" name="envolvido" id="id_envolvido" />
+                                        <label for="id_envolvido" class="active">Envolvido</label>
+                                    </div>
+                                </div>
+                                <div class="col s12 m6 l8 right-align">
+                                    <div class="input-field">
+                                        <button class="btn waves-effect waves-light" id="id_clear_reload_filter" type="reset">Limpar
+                                            <i class="material-icons left">cancel</i>
+                                        </button>
+                                        <button class="btn waves-effect waves-light" type="submit">Pesquisar
+                                            <i class="material-icons left">search</i>
+                                        </button>
+                                    </div>
+                                </div>
+                              </div>
+                        </form>
+                    </div>
+                </div>
+
+                {% if ocorrencias %}
+                <table class="highlight responsive-table centered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tipo</th>
+                            <th>Local</th>
+                            <th>Data e Hora</th>
+                            <th>Visualizar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for ocorrencia in ocorrencias %}
+                        <tr {% if ocorrencia.relatorio is None %}class="pendente"{% endif %}>
+                            <td>{{ ocorrencia.id }}</td>
+                            <td>{{ ocorrencia.infracao }}</td>
+                            <td>{{ ocorrencia.endereco.municipio }}</td>
+                            <td>{{ ocorrencia.dataocorrencia }}</td>
+                            <td>
+                                <a href="{% url 'ocorrencia:mostrar' id=ocorrencia.id %}" class="btn waves-effect waves-light btn-floating">
+                                    <i class="material-icons right">description</i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                    {% if ocorrencias.has_other_pages %}
+                        <ul class="pagination center">
+                            {% if ocorrencias.has_previous %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url ocorrencias.previous_page_number 'pagina' request.GET.urlencode %}">
+                                        <i class="material-icons">chevron_left</i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="disabled">
+                                    <a href="#!"><i class="material-icons">chevron_left</i></a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in ocorrencias.paginator.page_range %}
+                                {% if ocorrencias.number == num %}
+                                    <li class="active">
+                                        <a href="#!">{{ num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="waves-effect">
+                                        <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if ocorrencias.has_next %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url ocorrencias.next_page_number 'pagina' request.GET.urlencode %}">
+                                        <i class="material-icons">chevron_right</i></a>
+                                    </li>
+                            {% else %}
+                                <li class="disabled">
+                                    <a href="#!"><i class="material-icons">chevron_right</i></a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+
+                {% else %}
+                    <p>Não existem ocorrências cadastradas.</p>
+                {% endif %}
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    inputEnvolvido = $("#inputEnvolvido");
+
+    $("#fill_envolvido").change(() => {
+        (inputEnvolvido.css("display") === "none") ? inputEnvolvido.css("display", "block") : inputEnvolvido.css("display", "none");
+    });
+
+    var buttonReset = $("#id_clear_reload_filter");
+
+    buttonReset.attr("disabled", "");
+
+    buttonReset.on("click", () => reload());
+
+    function reload(){
+        window.location = window.location.pathname;
+    }
+
+    if($(".chip").length){
+        buttonReset.removeAttr("disabled");
+    }
+});
+</script>
+{% endblock javascript %}
+{% endblock content %}

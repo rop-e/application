@@ -1,0 +1,136 @@
+{% extends "rat/edits/base.html" %}
+
+{% block title %}Editar RAT {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-rat">{% csrf_token %}
+<input type="hidden" name="id_rat" value="{{ id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar RAT &lt;{% for opcao in rat.tipoacidente %}{% if opcao.data.value == rat.tipoacidente.value %}{{ opcao.choice_label }}{% endif %}{% endfor %}></div>
+
+
+                <div class="row">
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.tipoacidente.label }}</label>
+                        <select class="browser-default" name="{{ rat.tipoacidente.name }}" id="{{ rat.tipoacidente.auto_id }}">
+                            {% for opcao in rat.tipoacidente %}
+                                {% if opcao.data.value == rat.tipoacidente.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.condicaosinalizacao.label }}</label>
+                        <select class="browser-default" name="{{ rat.condicaosinalizacao.name }}" id="{{ rat.condicaosinalizacao.auto_id }}">
+                            {% for opcao in rat.condicaosinalizacao %}
+                                {% if opcao.data.value == rat.condicaosinalizacao.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.condicaovia.label }}</label>
+                        <select class="browser-default" name="{{ rat.condicaovia.name }}" id="{{ rat.condicaovia.auto_id }}">
+                            {% for opcao in rat.condicaovia %}
+                                {% if opcao.data.value == rat.condicaovia.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.condicaometeorologica.label }}</label>
+                        <select class="browser-default" name="{{ rat.condicaometeorologica.name }}" id="{{ rat.condicaometeorologica.auto_id }}">
+                            {% for opcao in rat.condicaometeorologica %}
+                                {% if opcao.data.value == rat.condicaometeorologica.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.pavimentacao.label }}</label>
+                        <select class="browser-default" name="{{ rat.pavimentacao.name }}" id="{{ rat.pavimentacao.auto_id }}">
+                            {% for opcao in rat.pavimentacao %}
+                                {% if opcao.data.value == rat.pavimentacao.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.tracadovia.label }}</label>
+                        <select class="browser-default" name="{{ rat.tracadovia.name }}" id="{{ rat.tracadovia.auto_id }}">
+                            {% for opcao in rat.tracadovia %}
+                                {% if opcao.data.value == rat.tracadovia.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <label class="input-field col l4 m6 s12">
+                        <input type="checkbox" class="filled-in" {% if rat.infracao.value %}checked{% endif %} id="{{ rat.infracao.auto_id }}" name="{{ rat.infracao.name }}" />
+                        <span>{{ rat.infracao.label }}</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-rat").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'rat:post_edit_rat' %}",
+            data: $(this).serialize(),
+            success: (response) => {
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: (response) => {
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

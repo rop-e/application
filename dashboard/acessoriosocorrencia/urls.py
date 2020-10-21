@@ -1,0 +1,189 @@
+from django.urls import path
+from .acessorios_views import (
+    get_armas,
+    post_arma,
+    checar_numero_serie_existente,
+    edit_arma,
+    post_edit_arma,
+    delete_arma,
+    get_drogas,
+    post_droga,
+    edit_droga,
+    post_edit_droga,
+    delete_droga,
+    get_diversos,
+    post_diverso,
+    edit_diverso,
+    post_edit_diverso,
+    delete_diverso,
+    get_docs,
+    post_doc,
+    checar_numero_existente,
+    edit_doc,
+    post_edit_doc,
+    delete_doc,
+    get_municoes,
+    post_municao,
+    edit_municao,
+    post_edit_municao,
+    delete_municao,
+    get_veiculos,
+    post_veiculo,
+    checar_veiculo_placa_existente,
+    checar_veiculo_chassi_existente,
+    edit_veiculo,
+    post_edit_veiculo,
+    delete_veiculo
+)
+
+app_name = "acessoriosocorrencia"
+
+urlpatterns = [
+    # ARMAS
+    path(
+        "get/ajax/armas",
+        get_armas,
+        name="get_armas"),
+    path(
+        "post/ajax/arma",
+        post_arma,
+        name="post_arma"),
+    path(
+        "get/ajax/validar/arma",
+        checar_numero_serie_existente,
+        name="checar_numero_serie_existente"),
+    path(
+        "arma/<int:id>/edit",
+        edit_arma,
+        name="edit_arma"),
+    path(
+        "arma/post/ajax/",
+        post_edit_arma,
+        name="post_edit_arma"),
+    path(
+        "post/ajax/arma/delete",
+        delete_arma,
+        name="delete_arma"),
+
+    # DROGAS
+    path(
+        "get/ajax/drogas",
+        get_drogas,
+        name="get_drogas"),
+    path(
+        "post/ajax/droga",
+        post_droga,
+        name="post_droga"),
+    path(
+        "droga/<int:id>/edit",
+        edit_droga,
+        name="edit_droga"),
+    path(
+        "droga/post/ajax",
+        post_edit_droga,
+        name="post_edit_droga"),
+    path(
+        "post/ajax/droga/delete",
+        delete_droga,
+        name="delete_droga"),
+
+    # ITENS
+    path(
+        "get/ajax/diversos",
+        get_diversos,
+        name="get_diversos"),
+    path(
+        "post/ajax/diverso",
+        post_diverso,
+        name="post_diverso"),
+    path(
+        "diverso/<int:id>/edit",
+        edit_diverso,
+        name="edit_diverso"),
+    path(
+        "diverso/post/ajax/",
+        post_edit_diverso,
+        name="post_edit_diverso"),
+    path(
+        "post/ajax/diverso/delete",
+        delete_diverso,
+        name="delete_diverso"),
+
+    # DOCUMENTOS
+    path(
+        "get/ajax/docs",
+        get_docs,
+        name="get_docs"),
+    path(
+        "post/ajax/doc",
+        post_doc,
+        name="post_doc"),
+    path(
+        "get/ajax/validar/doc",
+        checar_numero_existente,
+        name="checar_numero_existente"),
+    path(
+        "doc/<int:id>/edit",
+        edit_doc,
+        name="edit_doc"),
+    path(
+        "doc/post/ajax/",
+        post_edit_doc,
+        name="post_edit_doc"),
+    path(
+        "post/ajax/doc/delete",
+        delete_doc,
+        name="delete_doc"),
+
+    # MUNIÇÕES
+    path(
+        "get/ajax/municoes",
+        get_municoes,
+        name="get_municoes"),
+    path(
+        "post/ajax/municao",
+        post_municao,
+        name="post_municao"),
+    path(
+        "municao/<int:id>/edit",
+        edit_municao,
+        name="edit_municao"),
+    path(
+        "municao/post/ajax/",
+        post_edit_municao,
+        name="post_edit_municao"),
+    path(
+        "post/ajax/municao/delete",
+        delete_municao,
+        name="delete_municao"),
+
+    # VEÍCULOS
+    path(
+        "get/ajax/veiculos",
+        get_veiculos,
+        name="get_veiculos"),
+    path(
+        "post/ajax/veiculo",
+        post_veiculo,
+        name="post_veiculo"),
+    path(
+        "get/ajax/validar/veiculo/placa",
+        checar_veiculo_placa_existente,
+        name="checar_veiculo_placa_existente"),
+    path(
+        "get/ajax/validar/veiculo/chassi",
+        checar_veiculo_chassi_existente,
+        name="checar_veiculo_chassi_existente"),
+    path(
+        "veiculo/<int:id>/edit",
+        edit_veiculo,
+        name="edit_veiculo"),
+    path(
+        "veiculo/post/ajax",
+        post_edit_veiculo,
+        name="post_edit_veiculo"),
+    path(
+        "post/ajax/veiculo/delete",
+        delete_veiculo,
+        name="delete_veiculo")
+]

@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Veículos</strong></h5>
+    </div>
+</div>
+
+<form id="veiculo-form">{% csrf_token %}
+<input type="hidden" id="{{ ratveiculo.rat.auto_id }}_veiculo" name="{{ ratveiculo.rat.name }}" value="{{ rat.id }}" />
+<div class="row">
+    <div class="col l4 m4 s12">
+        <label>{{ veiculo.categoria.label }}</label>
+        <select class="browser-default" name="{{ veiculo.categoria.name }}" id="{{ veiculo.categoria.auto_id }}">
+            {% for opcao in veiculo.categoria %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col l4 m4 s12">
+        <label>{{ veiculo.marca.label }}</label>
+        <select class="browser-default" name="{{ veiculo.marca.name }}" id="{{ veiculo.marca.auto_id }}">
+            {% for opcao in veiculo.marca %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l4 m3 s12">
+        <input type="text" class="validate" id="{{ veiculo.modelo.auto_id }}_veiculo" maxlength="80" name="{{ veiculo.modelo.name }}" required>
+        <label for="{{ veiculo.modelo.auto_id }}_veiculo" class="active">{{ veiculo.modelo.label }}</label>
+    </div>
+    <div class="input-field col l2 m3 s12">
+        <input type="text" class="validate" id="{{ veiculo.cor.auto_id }}" maxlength="10" name="{{ veiculo.cor.name }}" required>
+        <label for="{{ veiculo.cor.auto_id }}" class="active">{{ veiculo.cor.label }}</label>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="number" id="{{ veiculo.ano.auto_id }}" name="{{ veiculo.ano.name }}">
+        <label for="{{ veiculo.ano.auto_id }}" class="active">{{ veiculo.ano.label }}</label>
+    </div>
+    <div class="input-field col l2 m3 s12">
+        <input type="text" id="{{ veiculo.placa.auto_id }}" maxlength="10" name="{{ veiculo.placa.name }}">
+        <label for="{{ veiculo.placa.auto_id }}" class="active">{{ veiculo.placa.label }}</label>
+    </div>
+    <div class="input-field col l4 m3 s12">
+        <input type="text" id="{{ veiculo.chassi.auto_id }}" maxlength="30" name="{{ veiculo.chassi.name }}">
+        <label for="{{ veiculo.chassi.auto_id }}" class="active">{{ veiculo.chassi.label }}</label>
+    </div>
+    <div class="col l2 m3 s12">
+        <label>
+            <input type="checkbox" class="filled-in" checked id="{{ ratveiculo.condutor.auto_id }}" name="{{ ratveiculo.condutor.name }}" />
+            <span>{{ ratveiculo.condutor.label }}</span>
+        </label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l2 m4 s12">
+        <label>{{ ratveiculo.localrecebedor.label }}</label>
+        <select class="browser-default" name="{{ ratveiculo.localrecebedor.name }}" id="{{ ratveiculo.localrecebedor.auto_id }}_veiculo">
+            {% for opcao in ratveiculo.localrecebedor %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.nome_agente.auto_id }}_veiculo" maxlength="30" name="{{ agenterecebedor.nome_agente.name }}" required>
+        <label for="{{ agenterecebedor.nome_agente.auto_id }}_veiculo" class="active">{{ agenterecebedor.nome_agente.label }}</label>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.cargo.auto_id }}_veiculo" maxlength="20" name="{{ agenterecebedor.cargo.name }}" required>
+        <label for="{{ agenterecebedor.cargo.auto_id }}_veiculo" class="active">{{ agenterecebedor.cargo.label }}</label>
+    </div>
+    <div class="input-field col l6 m12 s12">
+        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}_veiculo" name="{{ observacao.observacao.name }}"></textarea>
+        <label for="{{ observacao.observacao.auto_id }}_veiculo" class="active">Observação do veículo</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'rat/includes/js/veiculos.js' %}
+});
+</script>
+{% endblock javascript %}

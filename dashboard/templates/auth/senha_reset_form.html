@@ -1,0 +1,26 @@
+{% extends "auth/base_reset.html" %}
+
+{% block title %}Esqueceu a senha{% endblock title %}
+
+{% block content %}
+<div class="card">
+    <div class="card-content">
+        <div class="row">
+            <h5><strong>Esqueceu a senha</strong></h5>
+            <label><strong>Você receberá instruções por e-mail para definir uma nova senha.</strong></label>
+        </div>
+        <form method="post">{% csrf_token %}
+            <div class="input-field row l12 m12 s12">
+                {{ form.email.errors }}
+                <input type="email" class="validate" id="{{ form.email.auto_id }}" maxlength="254" name="{{ form.email.name }}" required>
+                <label for="{{ form.email.auto_id }}" class="active">E-mail</label>
+            </div>
+            <div class="input-field row l12 m12 s12">
+                <button class="btn waves-effect waves-light right" type="submit">Resetar senha
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

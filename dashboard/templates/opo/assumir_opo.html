@@ -1,0 +1,184 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Assumir/Atualizar OPO {{ oporelatorio.opo.numeroopo }}{% endblock %}
+
+{% block content %}
+<style>
+.short-text { display: none; }
+
+@media (max-width: 480px) {
+    .short-text { display: inline-block; }
+    .full-text { display: none; }
+}
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">Assumir/Atualizar OPO <{{ oporelatorio.opo.numeroopo }} - {{ oporelatorio.opo.titulo }}></span>
+
+                <div class="divider"></div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Dados da OPO</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.numeroopo }}" disabled>
+                        <label>Número da OPO</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.titulo }}" disabled>
+                        <label>Título</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.opotipoevento }}" disabled>
+                        <label>Tipo de evento</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.datasolicitacao|date:'d/m/Y H:i' }}" disabled>
+                        <label>Data da solicitação</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.armamento }}" disabled>
+                        <label>Armamento</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.uniforme }}" disabled>
+                        <label>Uniforme</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Dados da solicitação</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.solicitantenome }}" disabled>
+                        <label>Solicitante</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{% if oporelatorio.opo.solicitantecontato is None %}-{% else %}{{ oporelatorio.opo.solicitantecontato }}{% endif %}" disabled>
+                        <label>Contato</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.datainicio|date:'d/m/Y H:i' }}" disabled>
+                        <label>Data de início</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{% if oporelatorio.opo.datatermino %}{{ oporelatorio.opo.datatermino|date:'d/m/Y H:i' }}{% else %}Não informado.{% endif %}" disabled>
+                        <label>Data de término</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ oporelatorio.opo.local }}" disabled>
+                        <label>Local</label>
+                    </div>
+                </div>
+            
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Dados de serviço</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l4 m6 s12">
+                        <input type="text" value="{% if oporelatorio.local is None %}-{% else %}{{ oporelatorio.local }}{% endif %}" disabled>
+                        <label>Local</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{{ oporelatorio.dataexecucao }}" disabled>
+                        <label>Data de execução</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{% if opo.datafinalizacao %}{{ opo.datafinalizacao }}{% else %}Não informado.{% endif %}" disabled>
+                        <label>Data de finalização</label>
+                    </div>
+                </div>
+
+                <form id="relatorio-opo">
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Status</strong></h5>
+                        <hr>
+                    </div>
+                    <input type="hidden" id="{{ form_oporelatorio.guarnicao.auto_id }}" name="{{ form_oporelatorio.guarnicao.name }}" value="{{ guarnicao_ativa.id }}" />
+                    <div class="col l3 m6 s12">
+                        <label>{{ form_oporelatorio.status.label }}</label>
+                        <select class="browser-default" name="{{ form_oporelatorio.status.name }}" id="{{ form_oporelatorio.status.auto_id }}">
+                            {% for opcao in form_oporelatorio.status %}
+                                {% if opcao.data.value == form_oporelatorio.status.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l12 m12 s12">
+                        <textarea class="materialize-textarea validate" id="{{ form_oporelatorio.relatorio.auto_id }}" name="{{ form_oporelatorio.relatorio.name }}">{% if form_oporelatorio.relatorio.value is not None %}{{ form_oporelatorio.relatorio.value }}{% endif %}</textarea>
+                        <label for="{{ form_oporelatorio.relatorio.auto_id }}">
+                            <span class="full-text">Relatório da OPO</span>
+                            <span class="short-text">Relatório</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 right">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#relatorio-opo").submit(function(event) {
+        event.stopPropagation();
+
+        if($("#id_status option:selected").html() == "FINALIZADA"){
+            if($("#id_relatorio").val() == ""){
+                M.toast({html: "Informe o relatório da OPO.", classes: "red"});
+                return false;
+            }
+            if(!confirm("Deseja finalizar a OPO?")){
+                return false;
+            }
+        }
+        $.ajax({
+            url: "{% url 'opo:atualiza_opo_relatorio' id=oporelatorio.id %}",
+            type: "POST",
+            data: $(this).serialize(),
+            success: (response) => {
+                M.toast({
+                    html: response.message,
+                    classes: "green",
+                    completeCallback: () => {
+                        (response["redirect"]) ? window.location.href = response["redirect"] : false;
+                    }
+                });
+            },
+            error: (response) => {
+                var erros = response.responseJSON;
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,70 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}OPO {{ oporelatorio.local }}{% endblock %}
+
+{% block content %}
+<style>
+.short-text { display: none; }
+
+@media (max-width: 480px) {
+    .short-text { display: inline-block; }
+    .full-text { display: none; }
+}
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <div class="row">
+                        OPO {{ oporelatorio.local }} - {{ oporelatorio.dataexecucao }}
+                        {% if oporelatorio.guarnicao == guarnicao_ativa %}
+                            <a href="{% url 'opo:assumir_opo' id=oporelatorio.id %}">
+                                <button class="btn waves-effect waves-light right" style="float: right;">
+                                    <i class="material-icons left">flag</i>Assumir/Atualizar
+                                </button>
+                            </a>
+                        {% endif %}
+                    </div>
+                </span>
+
+                <div class="divider"></div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Dados de serviço</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l4 m6 s12">
+                        <input type="text" value="{% if oporelatorio.local is None %}-{% else %}{{ oporelatorio.local }}{% endif %}" disabled>
+                        <label>Local</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ oporelatorio.get_status_display }}" disabled>
+                        <label>Status</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{{ oporelatorio.dataexecucao }}" disabled>
+                        <label>Data de execução</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{% if oporelatorio.datafinalizacao is None %}Não informado.{% else %}{{ oporelatorio.datafinalizacao }}{% endif %}" disabled>
+                        <label>Data de finalização</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" type="reset" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

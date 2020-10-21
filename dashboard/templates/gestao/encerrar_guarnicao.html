@@ -1,0 +1,254 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Encerrar Serviço - {{ guarnicao.comandante }}{% endblock %}
+
+{% block content %}
+<style>
+.short-text { display: none; }
+
+@media (max-width: 480px) {
+    .short-text { display: inline-block; }
+    .full-text { display: none; }
+}
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <strong>Encerrar Serviço</strong>
+                </span>
+
+                <div class="divider"></div>
+                
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">Viaturas</span>
+                                <div id="listarviaturas">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">Ocorrências da guarnição</span>
+                                <div id="listarocorrencias">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">RATs da guarnição</span>
+                                <div id="listarrats">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AIT -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">AITs</span>
+                                <div id="listaraits">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-aits" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir AIT</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-aits" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "gestao/includes/aits.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- FIM TRAV -->
+
+                <!-- RRD -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">RRDs</span>
+                                <div id="listarrrds">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-rrds" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir RRD</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-rrds" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "gestao/includes/rrds.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- FIM RRD -->
+
+                <!-- TRAV -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">TRAVs</span>
+                                <div id="listartravs">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-travs" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir TRAV</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-travs" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "gestao/includes/travs.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- FIM TRAV -->
+
+                <!-- OPOs -->
+                {% if opos %}
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title" style="color: #e53935;"><strong>OPOs</strong></span>
+                                <ul class="collapsible black-text white row l12 m12 s12">
+                                    {% for opo in opos %}
+                                        <li>
+                                            <div class="collapsible-header" style="position: relative;">
+                                                <i class="material-icons">person</i>{{ opo.opo.numeroopo }} - {{ opo.opo.titulo }} - {{ opo.get_status_display }}
+                                            </div>
+                                            <div class="collapsible-body">
+                                                {% if opo.status == "andamento" %}
+                                                <p style="float: right;">
+                                                    <a href="{% url 'opo:assumir_opo' id=opo.id %}" target="_blank" class="btn waves-effect waves-light">
+                                                        <span class="full-text">
+                                                            <i class="material-icons right">description</i>Atualizar 
+                                                        </span>
+                                                        <span class="short-text">
+                                                            <i class="material-icons">remove_red_eye</i>
+                                                        </span>
+                                                    </a>
+                                                </p>
+                                                {% endif %}
+                                                <p>
+                                                    <strong>Número:</strong> {{ opo.opo.numeroopo }}
+                                                </p>
+                                                <p>
+                                                    <strong>Título:</strong> {{ opo.opo.titulo }}
+                                                </p>
+                                                <p>
+                                                    <strong>Tipo:</strong> {{ opo.opo.opotipoevento }}
+                                                </p>
+                                                <p>
+                                                    <strong>Local:</strong> {% if opo.local is None %}-{% else %}{{ opo.local }}{% endif %}
+                                                </p>
+                                                <p>
+                                                    <strong>Status:</strong> {{ opo.get_status_display }}
+                                                </p>
+                                                <p>
+                                                    <strong>Data de execução:</strong> {{ opo.dataexecucao }}
+                                                </p>
+                                                <p>
+                                                    <strong>Data de finalização:</strong> {% if opo.datafinalizacao %}{{ opo.datafinalizacao }}{% else %}Não informado.{% endif %}
+                                                </p>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <!-- FIM OPOs -->
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Relatório de Encerramento de Serviço</strong></h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l12 m12 s12">
+                        <textarea class="materialize-textarea validate" id="id_relatorio" name="relatorio"></textarea>
+                        <label for="id_relatorio">
+                            <span class="full-text">Relatório de Encerramento de Serviço</span>
+                            <span class="short-text">Relatório</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12">
+                    <button class="btn waves-effect waves-light right" id="encerraGuarnicao">Encerrar
+                    <i class="material-icons left">close</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    {% include 'gestao/includes/js/encerrar_guarnicao.js' %}
+</script>
+<script>
+    {% include "ocorrencia/includes/js/deleteelemento.js" %}
+</script>
+{% endblock content %}

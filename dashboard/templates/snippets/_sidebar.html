@@ -1,0 +1,252 @@
+{% load static %}
+{% load ropd_extras %}
+
+<style>
+    .divider { margin: 0 !important; }
+    .opo { display: none; }
+</style>
+
+<ul id="slide-out" class="sidenav sidenav-fixed">
+    <li><div class="user-view">
+        <div class="background">
+            <img class="responsive-img" src="{% static 'assets/images/login-bg-default.jpg' %}" />
+        </div>
+        <img class="responsive-img circle" src="{{ user.policial.foto.url }}" />
+        <span class="black-text name sombra"><strong>{{ user.nome }}</strong></span>
+        <span class="black-text email sombra"><strong>{{ user.email }}</strong></span>
+    </div></li>
+    <li><a class="waves-effect" href="/media/MANUAL_DO_USUARIO.pdf" target="_blank"><i class="material-icons">help</i>Manual de ajuda</a></li>
+    <div class="divider"></div>
+    <li><a class="waves-effect" href="{% url 'index' %}"><i class="material-icons">home</i>Início</a></li>
+    <li><a class="waves-effect" href="{% url 'policial:perfil' %}"><i class="material-icons">account_circle</i>Perfil</a></li>
+    <li><a class="waves-effect" href="{% url 'guarnicao:listar_guarnicoes_comandante' %}" id="menuGuarnicao"><i class="material-icons">group</i>Guarnição</a></li>
+    <div class="divider"></div>
+    <ul class="collapsible opo">
+        <li>
+            <a class="collapsible-header waves-effect header-opo" tabindex="0" style="padding-left: 32px"><i class="material-icons">assignment</i>OPO </a>
+            <div class="collapsible-body">
+                <ul id="OPOMenu">
+                {% if request.user|has_group:"CPO" %}
+                    <style>
+                        .opo { display: block; }
+                    </style>
+                        <li><a class="waves-effect" href="{% url 'opo:adicionar_opo' %}"><i class="material-icons">add</i>Inserir</a></li>
+                        <li><a class="waves-effect" href="{% url 'opo:listar' %}"><i class="material-icons">list</i>Listar</a></li>
+                {% endif %}
+                </ul>
+            </div>
+        </li>
+    </ul>
+    <div class="divider opo"></div>
+    <ul class="collapsible">
+        <li>
+            <a class="collapsible-header waves-effect" tabindex="0" id="HeaderMenuCriminal" style="padding-left: 32px"><i class="material-icons">announcement</i>Criminal</a>
+            <div class="collapsible-body" id="MenuCriminal">
+                <ul>
+                    <li><a class="waves-effect" id="adicionarOcorrenciaCriminal"><i class="material-icons">add</i>Inserir</a></li>
+                    <li><a class="waves-effect" href="{% url 'ocorrencia:listar' %}"><i class="material-icons">list</i>Listar</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+    <div class="divider"></div>
+    <ul class="collapsible">
+        <li>
+            <a class="collapsible-header waves-effect" tabindex="0" id="HeaderMenuRAT" style="padding-left: 32px"><i class="material-icons">directions_car</i>RAT</a>
+            <div class="collapsible-body" id="MenuRAT">
+                <ul>
+                    <li><a class="waves-effect" id="adicionarRAT"><i class="material-icons">add</i>Inserir</a></li>
+                    <li><a class="waves-effect" href="{% url 'rat:listar' %}"><i class="material-icons">list</i>Listar</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+    <div class="divider"></div>
+    {% if user.policial.cargo.cargo == "COORDENADOR DE ÁREA" or user.policial.cargo.cargo == "CICOM" or user.policial.companhia.comandante == user.policial or request.user|has_group:"CPO" %}
+        <ul class="collapsible">
+            <li>
+                <a class="collapsible-header waves-effect" id="menuGuarnicoes" tabindex="0" style="padding-left: 32px"><i class="material-icons">adjust</i>Guarnições</a>
+                <div class="collapsible-body">
+                    <ul>
+                        {% if request.user|has_group:"CPO" %}
+                        <li><a class="waves-effect" href="{% url 'guarnicao:listar_guarnicoes_todas' %}"><i class="material-icons">list</i>Listar</a></li>
+                        {% endif %}
+                        <li><a class="waves-effect" href="{% url 'guarnicao:listar_guarnicoes_ativas' %}" id="menuGuarnicoesAtivas"><i class="material-icons">adjust</i>Ativas</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <script>
+            $.ajax({
+                url: "{% url 'guarnicao:ajax_guarnicoes_ativas' %}",
+                success: (response) => {
+                    $("#menuGuarnicoes").append(`<span class="new badge" data-badge-caption="ativas">${response["ativas"]}</span>`);
+                    $("#menuGuarnicoesAtivas").append(`<span class="new badge" data-badge-caption="ativas">${response["ativas"]}</span>`);
+                }
+            });
+        </script>
+    <div class="divider"></div>
+    {% endif %}
+    <li><a class="waves-effect" href="{% url 'endereco:index' %}"><i class="material-icons">map</i>Mapa</a></li>
+    <div class="divider"></div>
+</ul>
+
+<script>
+$(document).ready(function(){
+    $.ajax({
+        url: "{% url 'ocorrencia:verifica_ocorrencia_nao_finalizada' %}",
+        success: (response) => {
+            if(response["pendentes"] !== 0){
+                $("#HeaderMenuCriminal").append(`<span class="new badge red" data-badge-caption="pendentes">${response["pendentes"]}</span>`);
+
+                $("#MenuCriminal").append(`
+                    <li>
+                        <a class="waves-effect" href="{% url 'ocorrencia:listar_ocorrencias_sem_finalizar' %}">
+                            <span class="new badge red" data-badge-caption="sem finalizar">${response["pendentes"]}</span>
+                            <i class="material-icons">priority_high</i>Pendentes
+                        </a>
+                    </li>
+                `);
+            }
+        }
+    });
+    $.ajax({
+        url: "{% url 'rat:verifica_rat_nao_finalizada' %}",
+        success: (response) => {
+            if(response["pendentes"] !== 0){
+                $("#HeaderMenuRAT").append(`<span class="new badge red" data-badge-caption="pendentes">${response["pendentes"]}</span>`);
+
+                $("#MenuRAT").append(`
+                    <li>
+                        <a class="waves-effect" href="{% url 'rat:listar_rats_sem_finalizar' %}">
+                            <span class="new badge red" data-badge-caption="sem finalizar">${response["pendentes"]}</span>
+                            <i class="material-icons">priority_high</i>Pendentes
+                        </a>
+                    </li>
+                `);
+            }
+        }
+    });
+    $.ajax({
+        url: "{% url 'guarnicao:ajax_verifica_guarnicao_ativa' %}",
+        success: (response) => {
+            if(response["ativa"]){
+                $("#menuGuarnicao").append(`<span class="new badge" data-badge-caption="aberto"></span>`);
+            }
+        }
+    });
+    $.ajax({
+        url: "{% url 'opo:checa_menuopo' %}",
+        method: "GET",
+        success: (response) => {
+            switch (response["tipo"]) {
+                case "coordenadordearea":
+                    $(".header-opo").append(`<sup>COORD. ÁREA</sup>`);
+                    $(".opo").css("display", "block");
+
+                    if(response["opo"] !== 0){
+                        $(".header-opo").append(`<span class="new badge red" data-badge-caption="novos">${response["opo"]}</span>`);
+                    }
+
+                    $("#OPOMenu").append(`
+                        <li>
+                            <a class="waves-effect" href="{% url 'opo:listar' %}">
+                                <i class="material-icons">list</i>Listar
+                            </a>
+                        </li>
+                    `);
+                    if(response["andamento"] !== 0){
+                        $("#OPOMenu").append(`
+                            <li>
+                                <a class="waves-effect" href="{% url 'opo:listar' %}?status=andamento">
+                                    <i class="material-icons">priority_high</i>Em andamento
+                                    <span class="new badge red" data-badge-caption="novos">${response["andamento"]}</span>
+                                </a>
+                            </li>
+                        `);
+                    }
+                    break;
+                case "cicom":
+                    $(".header-opo").append(`<sup>CICOM</sup>`);
+                    $(".opo").css("display", "block");
+
+                    if(response["opo"] !== 0){
+                        $(".header-opo").append(`<span class="new badge red" data-badge-caption="novos">${response["opo"]}</span>`);
+                    }
+
+                    $("#OPOMenu").append(`
+                        <li>
+                            <a class="waves-effect" href="{% url 'opo:listar' %}">
+                                <i class="material-icons">list</i>Listar
+                            </a>
+                        </li>
+                    `);
+                    if(response["andamento"] !== 0){
+                        $("#OPOMenu").append(`
+                            <li>
+                                <a class="waves-effect" href="{% url 'opo:listar' %}?status=andamento">
+                                    <i class="material-icons">priority_high</i>Em andamento
+                                    <span class="new badge red" data-badge-caption="novos">${response["andamento"]}</span>
+                                </a>
+                            </li>
+                        `);
+                    }
+                    break;
+                case "comandantecia":
+                    $(".header-opo").append(`<sup>COMANDANTE CIA</sup>`);
+                    $(".opo").css("display", "block");
+
+                    if(response["opo"] !== 0){
+                        $(".header-opo").append(`<span class="new badge red" data-badge-caption="novos">${response["opo"]}</span>`);
+                    }
+
+                    $("#OPOMenu").append(`
+                        <li>
+                            <a class="waves-effect" href="{% url 'opo:listar' %}">
+                                <i class="material-icons">list</i>Listar
+                            </a>
+                        </li>
+                    `);
+                    if(response["andamento"] !== 0){
+                        $("#OPOMenu").append(`
+                            <li>
+                                <a class="waves-effect" href="{% url 'opo:listar' %}?status=andamento">
+                                    <i class="material-icons">priority_high</i>Em andamento
+                                    <span class="new badge red" data-badge-caption="novos">${response["andamento"]}</span>
+                                </a>
+                            </li>
+                        `);
+                    }
+                    break;
+                case "policial":
+                    if(response["opo"] !== 0){
+                        $(".opo").css("display", "block");
+                        $(".header-opo").append(`<span class="new badge red" data-badge-caption="novos">${response["opo"]}</span>`);
+                        $(".header-opo").append(`<sup>POLICIAL</sup>`);
+                    }
+                    if(response["andamento"]){
+                        $("#OPOMenu").append(`
+                            <li>
+                                <a class="waves-effect" href="{% url 'opo:listar_policial' %}?status=andamento">
+                                    <i class="material-icons">priority_high</i>Andamento
+                                    <span class="new badge red" data-badge-caption="novos">${response["andamento"]}</span>
+                                </a>
+                            </li>
+                        `);
+                    }
+                    if(response["pendente"]){
+                        $("#OPOMenu").append(`
+                            <li>
+                                <a class="waves-effect" href="{% url 'opo:listar_policial' %}?status=pendente">
+                                    <i class="material-icons">priority_high</i>Pendentes
+                                    <span class="new badge red" data-badge-caption="novos">${response["pendente"]}</span>
+                                </a>
+                            </li>
+                        `);
+                    }
+                    break;
+            }
+        }
+    });
+});
+</script>

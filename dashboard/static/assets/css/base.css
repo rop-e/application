@@ -1,0 +1,72 @@
+/* Base */
+body {
+    background-color: pink;
+}
+
+.container {
+    width: 90%;
+}
+
+.conteudo{
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Snippets */
+/* Sidebar */
+.sidenav{
+    top: initial;
+}
+
+.sombra{
+    text-shadow: white 0.1em 0.1em 0.5em;
+}
+
+/* Telas */
+
+/* Login */
+#login{
+    padding-top: 5%;
+}
+
+@media (max-width: 850px) {
+    #login{
+        padding-top: 25%;
+    }        
+}
+
+/* Perfil */
+#areaPerfil{
+    padding-top: 2%;
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+
+@media (max-width: 1300px) {
+    .conteudo {
+        margin-left: 95px;
+        margin-right: auto;
+    }
+
+    #btnServico{
+        margin-bottom: 1%;
+    }
+    #btnPainel{
+        margin-top: 1%;
+    }
+}
+/* Index */
+@media (max-width: 992px) {
+    .conteudo {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #btnServico{
+        margin-bottom: 1%;
+    }
+    #btnPainel{
+        margin-top: 1%;
+    }
+}
+

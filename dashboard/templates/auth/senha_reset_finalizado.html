@@ -1,0 +1,21 @@
+{% extends "auth/base_reset.html" %}
+
+{% block title %}Esqueceu a senha{% endblock title %}
+
+{% block content %}
+<div class="card">
+    <div class="card-content">
+        <div class="row">
+            <h5><strong>E-mail enviado</strong></h5>
+        </div>
+
+        <p>Enviámos-lhe instruções por e-mail para redefinir sua senha, se houver uma conta com o e-mail digitado você deve recebê-lo em breve.</p>
+        <p>Se você não receber um e-mail, verifique se digitou o endereço com o qual se registrou e verifique sua pasta de spam.<p>
+    </div>
+    <div class="card-action center">
+        <a class="btn waves-effect waves-light default white" href="{% url 'index' %}">Início
+            <i class="material-icons right">home</i>
+        </a>
+    </div>
+</div>
+{% endblock %}

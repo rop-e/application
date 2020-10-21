@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Documentos</strong></h5>
+    </div>
+</div>
+
+<form id="doc-form">{% csrf_token %}
+<input type="hidden" id="{{ docacessorio.acessoriosocorrencia.auto_id }}_doc" name="{{ docacessorio.acessoriosocorrencia.name }}" value="{{ acessoriosocorrencia }}" />
+<div class="row">
+    <div class="col l3 m3 s12">
+        <label>{{ docacessorio.tipodoc.label }}</label>
+        <select class="browser-default" name="{{ docacessorio.tipodoc.name }}" id="{{ docacessorio.tipodoc.auto_id }}">
+            {% for opcao in docacessorio.tipodoc %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l4 m4 s12">
+        <input type="text" id="{{ docacessorio.numero.auto_id }}" maxlength="50" name="{{ docacessorio.numero.name }}">
+        <label for="{{ docacessorio.numero.auto_id }}" class="active">{{ docacessorio.numero.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l2 m4 s12">
+        <label>{{ docacessorio.localrecebedor.label }}</label>
+        <select class="browser-default" name="{{ docacessorio.localrecebedor.name }}" id="{{ docacessorio.localrecebedor.auto_id }}_doc">
+            {% for opcao in docacessorio.localrecebedor %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.nome_agente.auto_id }}_doc" maxlength="30" name="{{ agenterecebedor.nome_agente.name }}" required>
+        <label for="{{ agenterecebedor.nome_agente.auto_id }}_doc" class="active">{{ agenterecebedor.nome_agente.label }}</label>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.cargo.auto_id }}_doc" maxlength="20" name="{{ agenterecebedor.cargo.name }}" required>
+        <label for="{{ agenterecebedor.cargo.auto_id }}_doc" class="active">{{ agenterecebedor.cargo.label }}</label>
+    </div>
+    <div class="input-field col l6 m12 s12">
+        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}_doc" name="{{ observacao.observacao.name }}"></textarea>
+        <label for="{{ observacao.observacao.auto_id }}_doc" class="active">{{ observacao.observacao.label }}</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'ocorrencia/includes/js/documentos.js' %}
+});
+</script>
+{% endblock javascript %}

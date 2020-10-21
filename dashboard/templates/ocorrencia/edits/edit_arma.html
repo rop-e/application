@@ -1,0 +1,103 @@
+{% extends "ocorrencia/edits/base.html" %}
+
+{% block title %}Editar Arma {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-arma">{% csrf_token %}
+<input type="hidden" name="id_arma" value="{{ id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar Arma &lt;{{ arma.modelo.value }}></div>
+
+                <div class="row">
+                    <div class="col l3 m6 s12">
+                        <label>{{ arma.tipoarma.label }}</label>
+                        <select class="browser-default" name="{{ arma.tipoarma.name }}" id="{{ arma.tipoarma.auto_id }}">
+                            {% for opcao in arma.tipoarma %}
+                                {% if opcao.data.value == arma.tipoarma.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l2 m6 s12">
+                        <label>{{ arma.fabricantearma.label }}</label>
+                        <select class="browser-default" name="{{ arma.fabricantearma.name }}" id="{{ arma.fabricantearma.auto_id }}">
+                            {% for opcao in arma.fabricantearma %}
+                                {% if opcao.data.value == arma.fabricantearma.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l2 m6 s12">
+                        <label>{{ arma.calibre.label }}</label>
+                        <select class="browser-default" name="{{ arma.calibre.name }}" id="{{ arma.calibre.auto_id }}">
+                            {% for opcao in arma.calibre %}
+                                {% if opcao.data.value == arma.calibre.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" id="{{ arma.modelo.auto_id }}" name="{{ arma.modelo.name }}" maxlength="20" required value="{{ arma.modelo.value }}">
+                        <label for="{{ arma.modelo.auto_id }}" class="active">{{ arma.modelo.label }}</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" id="{{ arma.numeroserie.auto_id }}" name="{{ arma.numeroserie.name }}" maxlength="30" value="{% if arma.numeroserie.value is not None %}{{ arma.numeroserie.value }}{% endif %}">
+                        <label for="{{ arma.numeroserie.auto_id }}" class="active">{{ arma.numeroserie.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-arma").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'acessoriosocorrencia:post_edit_arma' %}",
+            data: $(this).serialize(),
+            success: function(response){
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: function(response){
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}
