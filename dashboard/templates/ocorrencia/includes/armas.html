@@ -1,0 +1,80 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Armas</strong></h5>
+    </div>
+</div>
+
+<form id="arma-form">{% csrf_token %}
+<input type="hidden" id="{{ armaacessorio.acessoriosocorrencia.auto_id }}_arma" name="{{ armaacessorio.acessoriosocorrencia.name }}" value="{{ acessoriosocorrencia }}" />
+<div class="row">
+    <div class="col l3 m6 s12">
+        <label>{{ arma.tipoarma.label }}</label>
+        <select class="browser-default" name="{{ arma.tipoarma.name }}" id="{{ arma.tipoarma.auto_id }}">
+            {% for opcao in arma.tipoarma %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col l2 m6 s12">
+        <label>{{ arma.fabricantearma.label }}</label>
+        <select class="browser-default" name="{{ arma.fabricantearma.name }}" id="{{ arma.fabricantearma.auto_id }}">
+            {% for opcao in arma.fabricantearma %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col l2 m6 s12">
+        <label>{{ arma.calibre.label }}</label>
+        <select class="browser-default" name="{{ arma.calibre.name }}" id="{{ arma.calibre.auto_id }}">
+            {% for opcao in arma.calibre %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l2 m6 s12">
+        <input type="text" class="validate" id="{{ arma.modelo.auto_id }}_arma" name="{{ arma.modelo.name }}" maxlength="20" required>
+        <label for="{{ arma.modelo.auto_id }}_arma" class="active">{{ arma.modelo.label }}</label>
+    </div>
+    <div class="input-field col l3 m6 s12">
+        <input type="text" id="{{ arma.numeroserie.auto_id }}" name="{{ arma.numeroserie.name }}" maxlength="30">
+        <label for="{{ arma.numeroserie.auto_id }}" class="active">{{ arma.numeroserie.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l2 m4 s12">
+        <label>{{ armaacessorio.localrecebedor.label }}</label>
+        <select class="browser-default" name="{{ armaacessorio.localrecebedor.name }}" id="{{ armaacessorio.localrecebedor.auto_id }}_arma">
+            {% for opcao in armaacessorio.localrecebedor %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.nome_agente.auto_id }}_arma" maxlength="30" name="{{ agenterecebedor.nome_agente.name }}" required>
+        <label for="{{ agenterecebedor.nome_agente.auto_id }}_arma" class="active">{{ agenterecebedor.nome_agente.label }}</label>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.cargo.auto_id }}_arma" maxlength="20" name="{{ agenterecebedor.cargo.name }}" required>
+        <label for="{{ agenterecebedor.cargo.auto_id }}_arma" class="active">{{ agenterecebedor.cargo.label }}</label>
+    </div>
+    <div class="input-field col l6 m12 s12">
+        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}_arma" name="{{ observacao.observacao.name }}"></textarea>
+        <label for="{{ observacao.observacao.auto_id }}_arma" class="active">{{ observacao.observacao.label }}</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include "ocorrencia/includes/js/armas.js" %}
+});
+</script>
+{% endblock javascript %}

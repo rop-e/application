@@ -1,0 +1,173 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Adicionar OPO{% endblock %}
+
+{% block content %}
+<form id="opo-form">{% csrf_token %}
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title center">
+                    <strong>Adicionar OPO</strong>
+                </span>
+                
+                <div class="divider"></div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Dados da OPO</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" id="{{ opo.numeroopo.auto_id }}" maxlength="50" name="{{ opo.numeroopo.name }}" required>
+                        <label for="{{ opo.numeroopo.auto_id }}" class="active">{{ opo.numeroopo.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" id="{{ opo.titulo.auto_id }}" maxlength="100" name="{{ opo.titulo.name }}" required>
+                        <label for="{{ opo.titulo.auto_id }}" class="active">{{ opo.titulo.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="col l3 m6 s12">
+                        <label>{{ opo.opotipoevento.label }}</label>
+                        <select class="browser-default" name="{{ opo.opotipoevento.name }}" id="{{ opo.opotipoevento.auto_id }}">
+                            {% for opcao in opo.opotipoevento %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" id="datetime" name="{{ opo.datasolicitacao.name }}" required>
+                        <label for="datetime" class="active">{{ opo.datasolicitacao.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" id="{{ opo.armamento.auto_id }}" maxlength="255" name="{{ opo.armamento.name }}" required>
+                        <label for="{{ opo.armamento.auto_id }}" class="active">{{ opo.armamento.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" id="{{ opo.uniforme.auto_id }}" maxlength="255" name="{{ opo.uniforme.name }}" required>
+                        <label for="{{ opo.uniforme.auto_id }}" class="active">{{ opo.uniforme.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="col l2 m6 s12">
+                        <label>{{ opo.designado.label }}</label>
+                        <select class="browser-default" name="{{ opo.designado.name }}" id="{{ opo.designado.auto_id }}">
+                            {% for opcao in opo.designado %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Dados da solicitação</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" id="{{ opo.solicitantenome.auto_id }}" maxlength="100" name="{{ opo.solicitantenome.name }}" required>
+                        <label for="{{ opo.solicitantenome.auto_id }}">{{ opo.solicitantenome.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" id="{{ opo.solicitantecontato.auto_id }}" maxlength="80" name="{{ opo.solicitantecontato.name }}">
+                        <label for="{{ opo.solicitantecontato.auto_id }}">{{ opo.solicitantecontato.label }}</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" id="datetime1" name="{{ opo.datainicio.name }}" required>
+                        <label for="datetime1" class="active">{{ opo.datainicio.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" id="datetime2" name="{{ opo.datatermino.name }}">
+                        <label for="datetime2" class="active">{{ opo.datatermino.label }}</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" id="{{ opo.local.auto_id }}" maxlength="255" name="{{ opo.local.name }}" required>
+                        <label for="{{ opo.local.auto_id }}" class="active">{{ opo.local.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Observação</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l12 m6 s12">
+                        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}" name="{{ observacao.observacao.name }}"></textarea>
+                        <label for="{{ observacao.observacao.auto_id }}">Observação</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l6 m12 s12 right">
+                    <button class="btn waves-effect waves-light" type="submit">Avançar
+                        <i class="material-icons right">send</i>
+                    </button>
+                    </form>
+                </div>
+                <div class="input-field row l6 m12 s12 left">
+                    <a href="{% url 'index' %}" class="btn waves-effect waves-light">
+                        <i class="material-icons right">cancel</i>Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script src="{% static 'assets/js/datetimepicker.js' %}"></script>
+<script>
+$(document).ready(function() {
+    MaterialDateTimePicker.create($('#datetime1'));
+    MaterialDateTimePicker.create($('#datetime2'));
+
+    var submit = false;
+
+    $("#opo-form").submit(function(event){
+        event.stopPropagation();
+
+        if($("#datetime2").val() === ""){
+            if(confirm("A data de término da OPO não foi preenchida, confirme se isso estiver correto!")){
+                submit = true;
+            } else {
+                return false;
+            }
+        } else {
+            submit = true;
+        }
+
+        if(submit){
+            $.ajax({
+                type: "POST",
+                url: "{% url 'opo:post_opo' %}",
+                data: $(this).serialize(),
+                success: (response) => {
+                    window.location.href = response.redirect;
+                },
+                error: (response) => {
+                    var erros = response.responseJSON;
+                    for(i in erros){
+                        M.toast({html: erros[i], classes: "red"});
+                    }
+                }
+            });
+        } else {
+            return false;
+        }
+        return false;
+    });
+});
+</script>
+{% endblock javascript %}
+{% endblock content %}

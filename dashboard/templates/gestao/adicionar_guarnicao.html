@@ -1,0 +1,113 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Criar Guarnição{% endblock %}
+
+{% block content %}
+<form id="guarnicao-form">{% csrf_token %}
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">Criar Guarnição</span>
+
+                <div class="divider"></div>
+
+                <div class="col s12 m12 l12">
+                    <div class="row">
+                        <h5><strong>Detalhes Técnicos</strong></h5>
+                    </div>
+                    <div class="row">
+                        <div class="col l4 m6 s12">
+                            <label>{{ guarnicao.tiposervico.label }}</label>
+                            <select class="browser-default" name="{{ guarnicao.tiposervico.name }}" id="{{ guarnicao.tiposervico.auto_id }}">
+                                {% for opcao in guarnicao.tiposervico %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col l4 m6 s12">
+                            <label>{{ guarnicao.modalidadepoliciamento.label }}</label>
+                            <select class="browser-default" name="{{ guarnicao.modalidadepoliciamento.name }}" id="{{ guarnicao.modalidadepoliciamento.auto_id }}">
+                                {% for opcao in guarnicao.modalidadepoliciamento %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col l4 m6 s12">
+                            <label>{{ guarnicao.companhia.label }}</label>
+                            <select class="browser-default" name="{{ guarnicao.companhia.name }}" id="{{ guarnicao.companhia.auto_id }}">
+                                {% for opcao in guarnicao.companhia %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col l4 m6 s12">
+                            <label>{{ guarnicao.municipio.label }}</label>
+                            <select class="browser-default" name="{{ guarnicao.municipio.name }}" id="{{ guarnicao.municipio.auto_id }}">
+                                {% for opcao in guarnicao.municipio %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col l4 m6 s12">
+                            <label>{{ guarnicao.coordenadordearea.label }}</label>
+                            <select class="browser-default" name="{{ guarnicao.coordenadordearea.name }}" id="{{ guarnicao.coordenadordearea.auto_id }}">
+                                {% for opcao in guarnicao.coordenadordearea %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 right">
+                    <button class="btn waves-effect waves-light right" type="submit">Avançar
+                        <i class="material-icons right">send</i>
+                    </button>
+                </form>
+                </div>
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" type="reset" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#guarnicao-form").submit(function(event){
+        event.stopPropagation();
+        
+        $("#guarnicao-form button[type=submit]").html("Aguarde...");
+        $("#guarnicao-form button[type=submit]").prop("disabled", true);
+        
+        $.ajax({
+            type: "POST",
+            url: "{% url 'guarnicao:post_guarnicao' %}",
+            async: false,
+            data: $(this).serialize(),
+            success: function(response){
+                window.location.href = response.redirect;
+            },
+            error: function(response){
+                var erros = jQuery.parseJSON(response.responseText);
+                for(let value of Object.values(erros)){
+                    M.toast({html: value, classes: "red"});
+                }
+
+                $("#guarnicao-form button[type=submit]").html(`Avançar
+                    <i class="material-icons right">send</i>
+                `);
+                $("#guarnicao-form button[type=submit]").prop("disabled", false);
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

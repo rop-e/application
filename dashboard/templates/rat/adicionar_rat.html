@@ -1,0 +1,206 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Adicionar RAT{% endblock %}
+
+{% block content %}
+<style>
+    .tabs-content.carousel.carousel-slider .carousel-item.active{
+        position: relative;
+    }
+    .tabs-content.carousel.carousel-slider{
+        height: auto !important;
+    }
+    #datetime {
+        -ms-touch-action: none;
+        touch-action: none;
+    }
+</style>
+<form id="rat-form">{% csrf_token %}
+<input type="hidden" id="{{ rat.guarnicao.auto_id }}" name="{{ rat.guarnicao.name }}" value="{{ guarnicao.id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title center">
+                    <strong>Criar RAT</strong>
+                </span>
+
+                <div class="divider"></div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Dados do Acidente de Trânsito</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.tipoacidente.label }}</label>
+                        <select class="browser-default" name="{{ rat.tipoacidente.name }}" id="{{ rat.tipoacidente.auto_id }}">
+                            {% for opcao in rat.tipoacidente %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.condicaosinalizacao.label }}</label>
+                        <select class="browser-default" name="{{ rat.condicaosinalizacao.name }}" id="{{ rat.condicaosinalizacao.auto_id }}">
+                            {% for opcao in rat.condicaosinalizacao %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.condicaovia.label }}</label>
+                        <select class="browser-default" name="{{ rat.condicaovia.name }}" id="{{ rat.condicaovia.auto_id }}">
+                            {% for opcao in rat.condicaovia %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.condicaometeorologica.label }}</label>
+                        <select class="browser-default" name="{{ rat.condicaometeorologica.name }}" id="{{ rat.condicaometeorologica.auto_id }}">
+                            {% for opcao in rat.condicaometeorologica %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.pavimentacao.label }}</label>
+                        <select class="browser-default" name="{{ rat.pavimentacao.name }}" id="{{ rat.pavimentacao.auto_id }}">
+                            {% for opcao in rat.pavimentacao %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="col l4 m6 s12">
+                        <label>{{ rat.tracadovia.label }}</label>
+                        <select class="browser-default" name="{{ rat.tracadovia.name }}" id="{{ rat.tracadovia.auto_id }}">
+                            {% for opcao in rat.tracadovia %}
+                                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Infração</strong></h5>
+                        <hr>
+                    </div>
+                    <label class="input-field col l4 m6 s12">
+                        <input type="checkbox" class="filled-in" id="{{ rat.infracao.auto_id }}" name="{{ rat.infracao.name }}" />
+                        <span>{{ rat.infracao.label }}</span>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </label>
+                </div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Local da Ocorrência</strong></h5>
+                        <hr>
+                    </div>
+                    <div class="col l3 m6 s12">
+                        <label>{{ endereco.municipio.label }}</label>
+                        <select class="browser-default" name="{{ endereco.municipio.name }}" id="{{ endereco.municipio.auto_id }}">
+                            {% for opcao in endereco.municipio %}
+                                {% if opcao.data.value == guarnicao.municipio.codigo_ibge %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" class="validate" id="{{ endereco.bairro.auto_id }}" name="{{ endereco.bairro.name }}" required>
+                        <label for="{{ endereco.bairro.auto_id }}" class="active">{{ endereco.bairro.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" class="validate" id="{{ endereco.rua.auto_id }}" name="{{ endereco.rua.name }}" required>
+                        <label for="{{ endereco.rua.auto_id }}" class="active">{{ endereco.rua.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                    <div class="input-field col l1 m6 s12">
+                        <input type="text" id="{{ endereco.numero.auto_id }}" name="{{ endereco.numero.name }}">
+                        <label for="{{ endereco.numero.auto_id }}" class="active">{{ endereco.numero.label }}</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" class="validate" id="datetime" name="{{ rat.dataocorrencia.name }}" required>
+                        <label for="datetime" class="active">{{ rat.dataocorrencia.label }}</label>
+                        <span class="helper-text red-text">* Obrigatório</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col l4 m6 s12">
+                        <textarea class="materialize-textarea" id="{{ endereco.complemento.auto_id }}" name="{{ endereco.complemento.name }}"></textarea>
+                        <label for="{{ endereco.complemento.auto_id }}" class="active">{{ endereco.complemento.label }}</label>
+                    </div>
+                    <div class="input-field col l8 m6 s12">
+                        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}" name="{{ observacao.observacao.name }}"></textarea>
+                        <label for="{{ observacao.observacao.auto_id }}">Observação do Endereço</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l6 m12 s12 right">
+                    <button class="btn waves-effect waves-light" type="submit">Avançar
+                        <i class="material-icons right">send</i>
+                    </button>
+                    </form>
+                </div>
+                <div class="input-field row l6 m12 s12 left">
+                    <a href="{% url 'index' %}" class="btn waves-effect waves-light">
+                        <i class="material-icons right">cancel</i>Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'assets/js/datetimepicker.js' %}"></script>
+<script>
+$(document).ready(function(){
+    $("#rat-form").submit(function(event){
+        event.stopPropagation();
+
+        $("#rat-form button[type=submit]").html("Aguarde...");
+        $("#rat-form button[type=submit]").prop("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'rat:post_rat' %}",
+            data: $(this).serialize(),
+            async: false,
+            success: (response) => {
+                window.location.href = response.redirect;
+            },
+            error: (response) => {
+                var erros = response.responseJSON;
+                for(i in erros){
+                    for(j in erros[i]){
+                        M.toast({html: erros[i][j], classes: "red"});
+                    }
+                }
+
+                $("#rat-form button[type=submit]").html(`Avançar
+                    <i class="material-icons right">send</i>
+                `);
+                $("#rat-form button[type=submit]").prop("disabled", false);
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

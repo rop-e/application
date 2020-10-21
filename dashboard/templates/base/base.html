@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel='stylesheet' href="{% static 'assets/css/materialize.min.css' %}">
+
+    <link rel='stylesheet' href="{% static 'assets/css/base.css' %}">
+    <style>
+        @font-face {
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-weight: 400;
+            src: url("{% static 'fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2' %}") format('woff2');
+        }
+        .input-field label { pointer-events: all !important; }
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        main { flex: 1 0 auto; }
+        footer {
+            position: static;
+            bottom: 0;
+        }
+        header, main, footer {
+            padding-left: 300px;
+        }
+        @media only screen and (max-width : 992px) {
+            header, main, footer {
+                padding-left: 0;
+            }
+        }
+        .logo img { height: 80px; }
+        @media (max-width: 600px) {
+            .logo img { height: 60px; }
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+    {% block head %}{% endblock head %}
+    <title>ROP-E - {% block title %}{% endblock title %}</title>
+</head>
+
+<body class="grey lighten-2">
+    <header>
+        {% include "snippets/_navbar.html" %}
+    </header>
+        
+    {% include "snippets/_sidebar.html" %}
+
+    <main>
+        <div class="container">
+            <div class="row">
+                {% block content %}{% endblock content %}
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="logo center">
+                <img class="responsive-img circle" src="https://www.ifbaiano.edu.br/unidades/guanambi/files/2020/07/if-postagens.png" />
+                <img class="responsive-img circle" src="{% static 'assets/img/LogoBTM17.png' %}" />
+            </div>
+        </div>
+    </footer>
+    {% include "snippets/_scripts.html" %}
+</body>
+</html>

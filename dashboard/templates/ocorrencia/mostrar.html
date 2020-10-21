@@ -1,0 +1,186 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}Ocorrência {{ ocorrencia.id }}{% endblock %}
+
+{% block content %}
+<style>
+    .short-text { display: none; }
+
+    @media (max-width: 470px) {
+        .short-text { display: inline-block; }
+        .full-text { display: none; }
+    }
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <div class="row">
+                        <div class="col l9 m8 s12">
+                            <span class="full-text">Número da Ocorrência:</span>
+                            <span class="short-text">Número:</span> <{{ ocorrencia.id }}>
+                        </div>
+                        <div class="col l3 m4 s12 right-align">
+                            {% if ocorrencia.relatorio is None %}
+                                {% if ocorrencia.guarnicao.comandante == user.policial %}
+                                    <a href="{% url 'ocorrencia:adicionar_acessorios' ocorrencia=ocorrencia.id %}">
+                                        <button class="btn waves-effect waves-light right">
+                                            <i class="material-icons right">edit</i>Finalizar
+                                        </button>
+                                    </a>
+                                {% else %}
+                                    <button class="btn red" style="cursor: default;">
+                                        <i class="material-icons left">close</i>Sem finalizar
+                                    </button>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'ocorrencia:geraemostrapdfocorrencia' id=ocorrencia.id %}" target="_blank">
+                                    <button class="btn waves-effect waves-light right">
+                                        <i class="material-icons left">pageview</i>PDF
+                                    </button>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </span>
+
+                <div class="divider"></div>
+                
+                <div class="right-align">
+                    <h6><strong>Data da Ocorrência:</strong> {{ ocorrencia.dataocorrencia }}</h6>
+                </div>
+
+                    <div class="row">
+                        <div class="col s12 l12 m12">
+                            <h5><strong>Endereço</strong></h5>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col l6 m6 s6">
+                            <input type="text" value="{{ ocorrencia.endereco.municipio }}" disabled>
+                            <label>Município</label>
+                        </div>
+                        <div class="input-field col l4 m4 s4">
+                            <input type="text" value="{{ ocorrencia.endereco.bairro }}" disabled>
+                            <label>Bairro</label>
+                        </div>
+                        <div class="input-field col l2 m2 s4">
+                            <input type="text" value="{% if ocorrencia.endereco.numero is None %}-{% else %}{{ ocorrencia.endereco.numero }}{% endif %}" disabled>
+                            <label>Número</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col l6 m6 s6">
+                            <input type="text" value="{{ ocorrencia.endereco.rua }}" disabled>
+                            <label>Rua</label>
+                        </div>
+                        <div class="input-field col l6 m6 s6">
+                            <input type="text" value="{{ ocorrencia.endereco.complemento }}" disabled>
+                            <label>Complemento</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 l12 m12">
+                            <h5><strong>Guarnição</strong></h5>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col l6 m6 s6">
+                            <input type="text" value="{{ ocorrencia.guarnicao.comandante }}" disabled>
+                            <label>Comandante</label>
+                        </div>
+
+                        <div class="input-field col l6 m6 s6">
+                            <input type="text" value="{{ ocorrencia.guarnicao.coordenadordearea }}" disabled>
+                            <label>Coordenador de Área</label>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                        {% for pm in pms  %}
+                            <div class="input-field col l6 m6 s12">
+                                <input type="text" value="{{ pm.policial }} - {{ pm.funcao }}" disabled>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div id="apreensoes"></div>
+
+                    <!-- Aditamentos -->
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div class="card blue-grey darken-1">
+                                <div class="card-content white-text">
+                                    <span class="card-title">Aditamentos</span>
+                                    <div id="listaraditamentos">
+                                        <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                    </div>
+                                </div>
+                                {% if request.user|has_group:"CPO" or ocorrencia.guarnicao.comandante == request.user.policial %}
+                                    <div class="card-action">
+                                        <button data-target="modal-aditamentos" class="btn modal-trigger">
+                                            <i class="material-icons left">add</i>
+                                            <span class="full-text">Inserir Aditamento</span>
+                                            <span class="short-text">Inserir</span>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- -->
+
+                    {% if request.user|has_group:"CPO" or ocorrencia.guarnicao.comandante == request.user.policial %}
+                        <div id="modal-aditamentos" class="modal modal-fixed-footer">
+                            <div class="modal-content">
+                                {% include "ocorrencia/includes/aditamentos.html" %}
+                            </div>
+                            <div class="modal-footer">
+                                <a class="modal-close waves-effect waves-light btn">
+                                    <i class="material-icons left">close</i>Fechar
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col s12 l12 m12">
+                            <h5><strong>Relatório da Ocorrência</strong></h5>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col l12 m12 s12">
+                            <textarea class="materialize-textarea" disabled>{% if ocorrencia.relatorio is None %}Relatório não informado!{% else %}{{ ocorrencia.relatorio }}{% endif %}</textarea>
+                            <label>Relatório da Ocorrência</label>
+                        </div>
+                    </div>
+            </div>
+            <div class="input-field col l12 m12 s12 left">
+                <button class="btn waves-effect waves-light" onclick="history.go(-1)">Voltar
+                    <i class="material-icons left">arrow_back</i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    {% include 'ocorrencia/includes/js/mostrar_ocorrencia.js' %}
+    {% if not request.user|has_group:"CPO" %}
+        {% if not ocorrencia.guarnicao.comandante == request.user.policial %}
+            {% include "ocorrencia/includes/js/get_aditamentos.js" %}
+
+            getAditamentos("listaraditamentos", "{{ ocorrencia.id }}");
+        {% endif %}
+    {% endif %}
+});
+</script>
+{% endblock content %}

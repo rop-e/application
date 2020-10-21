@@ -1,0 +1,76 @@
+{% extends "ocorrencia/edits/base.html" %}
+
+{% block title %}Editar AIT {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-ait">{% csrf_token %}
+<input type="hidden" name="id_ait" value="{{ id }}" />
+<input type="hidden" name="{{ ait.guarnicao.name }}" value="{{ ait.guarnicao.value }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">Editar AIT &lt;{{ id }}></span>
+
+                <div class="row">
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" class="validate" id="{{ ait.codigo.auto_id }}" maxlength="20" name="{{ ait.codigo.name }}" required value="{{ ait.codigo.value }}">
+                        <label for="{{ ait.codigo.auto_id }}" class="active">{{ ait.codigo.label }}</label>
+                    </div>
+                    <div class="col l3 m6 s12">
+                        <label>{{ ait.tipoveiculo.label }}</label>
+                        <select class="browser-default" name="{{ ait.tipoveiculo.name }}" id="{{ ait.tipoveiculo.auto_id }}">
+                            {% for opcao in ait.tipoveiculo %}
+                                {% if opcao.data.value == ait.tipoveiculo.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-ait").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'guarnicao:post_edit_ait' %}",
+            data: $(this).serialize(),
+            success: (response) => {
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: (response) => {
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

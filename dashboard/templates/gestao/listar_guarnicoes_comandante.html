@@ -1,0 +1,202 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}Guarnições{% endblock %}
+
+{% block content %}
+<style>
+    .short-text { display: none; }
+
+    @media (max-width: 450px) {
+        .short-text { display: inline; }
+        .full-text { display: none; }
+    }
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <div class="row">
+                        <strong>Guarnições</strong>
+                        <span class="right">
+                            {% if request|guarnicao_ativa %}
+                            <script>
+                                $(document).ready(function(){
+                                    {% if request|guarnicao_status %}
+                                        $("#editarServico").attr("href", "{% url 'guarnicao:adicionar_policial_guarnicao' guarnicao=guarnicao_ativa.id %}");
+                                    {%else %}
+                                        $("#editarServico").on("click", () => { M.toast({html: "Não é possível editar a guarnição! Finalize o serviço.", classes: "red"}); });
+                                    {% endif %}
+                                });
+                            </script>
+                                <a id="editarServico">
+                                    <button class="btn waves-effect waves-light">
+                                        <i class="material-icons right">edit</i>Editar
+                                    </button>
+                                </a>
+                                <a href="{% url 'guarnicao:encerrar_guarnicao' guarnicao=guarnicao_ativa.id %}">
+                                    <button class="btn waves-effect waves-light">
+                                        <i class="material-icons right">close</i>
+                                        <span class="full-text">Encerrar Serviço</span>
+                                        <span class="short-text">Encerrar</span>
+                                    </button>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'guarnicao:adicionar_guarnicao' %}">
+                                    <button style="float: right;" class="btn waves-effect waves-light">
+                                        <i class="material-icons right">add</i>
+                                        <span class="full-text">Iniciar Serviço</span>
+                                        <span class="short-text">Iniciar</span>
+                                    </button>
+                                </a>
+                                <!-- {% if request|policialviatura_verifica %}
+                                    <span>Atualmente na guarnição de: <strong>{{ request|policialviatura_comandante_guarnicao }}</strong></span>
+                                    <a id="buttonPermutar">
+                                        <button style="float: right;" class="btn waves-effect waves-light">
+                                            <i class="material-icons right">change_history</i>Permutar
+                                        </button>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'guarnicao:adicionar_guarnicao' %}">
+                                        <button style="float: right;" class="btn waves-effect waves-light">
+                                            <i class="material-icons right">add</i>
+                                            <span class="full-text">Iniciar Serviço</span>
+                                            <span class="short-text">Iniciar</span>
+                                        </button>
+                                    </a>
+                                {% endif %} -->
+                            {% endif %}
+                        </span>
+                    </div>
+                </span>
+
+                <div class="divider"></div>
+
+                {% if guarnicoes %}
+                <table class="highlight responsive-table centered">
+                    <thead>
+                        <tr>
+                            <th>Abertura</th>
+                            <th>Fechamento</th>
+                            <th>Visualizar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for guarnicao in guarnicoes %}
+                        <tr>
+                            <td>
+                                <span class="full-text">{{ guarnicao.dataabertura }}</span>
+                                <span class="short-text center">{{ guarnicao.dataabertura|date:"d/m/Y" }} - {{ guarnicao.dataabertura|time }}</span>
+                            </td>
+                            <td>{% if guarnicao.datafechamento is None %}
+                                    Em aberto!
+                                {% else %}
+                                    <span class="full-text">{{ guarnicao.datafechamento }}</span>
+                                    <span class="short-text center">{{ guarnicao.datafechamento|date:"d/m/Y" }} - {{ guarnicao.datafechamento|time }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'guarnicao:visualizar_guarnicao' id=guarnicao.id %}">
+                                    <button class="btn waves-effect waves-light full-text">
+                                        <i class="material-icons right">description</i>Visualizar
+                                    </button>
+                                    <button class="btn waves-effect waves-light short-text btn-floating">
+                                        <i class="material-icons right">description</i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        
+                {% if guarnicoes.has_other_pages %}
+                    <ul class="pagination center">
+                        {% if guarnicoes.has_previous %}
+                            <li class="waves-effect">
+                                <a href="{% my_url guarnicoes.previous_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_left</i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in guarnicoes.paginator.page_range %}
+                            {% if guarnicoes.number == num %}
+                                <li class="active">
+                                    <a href="#!">{{ num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if guarnicoes.has_next %}
+                            <li class="waves-effect">
+                                <a href="{% my_url guarnicoes.next_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_right</i></a>
+                                </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_right</i></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+
+                {% else %}
+                    <p>Não existem guarnições cadastradas.</p>
+                {% endif %}
+            </div>
+            
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <script>
+$(document).ready(function(){
+    $("#buttonPermutar").on("click", (event) => {
+        event.stopPropagation();
+
+        if(confirm("Tem certeza que deseja se desligar da guarnição atual?")){
+            $("#buttonPermutar>button").html("Aguarde...");
+            $("#buttonPermutar>button").prop("disabled", true);
+
+            $.ajax({
+                url: "{% url 'guarnicao:permutar' %}",
+                type: "POST",
+                async: false,
+                success: (response) => {
+                    M.toast({
+                        html: "Desligado da guarnição com sucesso!",
+                        classes: "green",
+                        completeCallback: function() {
+                            location.reload(true);
+                        }
+                    });
+                },
+                error: (response) => {
+                    console.log(response.responseText);
+                }
+            });
+        } else {
+            return false;
+        }
+    });
+});
+</script> -->
+{% endblock content %}

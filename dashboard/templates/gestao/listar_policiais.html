@@ -1,0 +1,71 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Policiais{% endblock %}
+
+{% block content %}
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">Policiais</span>
+
+                <div class="right-align">
+                    <a href="{% url 'policial:registrar' %}" class="waves-effect"><i class="material-icons right">person_add</i>Adicionar</a>
+                </div>
+
+                {% if policiais %}
+                <table class="highlight responsive-table">
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Nome</th>
+                            <th>Sexo</th>
+                            <th>Posto/Graduação</th>
+                            <th>E-mail</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for policial in policiais %}
+                        <tr>
+                            <td>{{ policial.matricula.matricula }}</td>
+                            <td>{{ policial.matricula.nome }}</td>
+                            <td>{{ policial.matricula.sexo }}</td>
+                            <td>{{ policial.postograduacao }}</td>
+                            <td>{{ policial.matricula.email }}</td>
+                            <td>
+                                <a href="{% url 'policial:mostrar' id=policial.id %}" class="waves-effect"><i class="material-icons right">description</i>Visualizar</a>
+                                <a href="{% url 'policial:remover' id=policial.id %}" class="waves-effect"><i class="material-icons right">delete</i>Remover</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                
+
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if policiais.has_previous %}
+                            <a href="?pagina=1">« Primeira</a>
+                            <a href="?pagina={{ policiais.previous_page_number }}">Anterior</a>
+                        {% endif %}
+                
+                        <span class="current">
+                            Página {{ policiais.number }} de {{ policiais.paginator.num_pages }}.
+                        </span>
+                
+                        {% if policiais.has_next %}
+                            <a href="?pagina={{ policiais.next_page_number }}">Próxima</a>
+                            <a href="?pagina={{ policiais.paginator.num_pages }}">Última »</a>
+                        {% endif %}
+                    </span>
+                </div>
+                {% else %}
+                    <p>Não existem policiais cadastrados.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

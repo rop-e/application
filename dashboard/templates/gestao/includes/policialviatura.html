@@ -1,0 +1,88 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Policiais na Guarnição</strong></h5>
+    </div>
+</div>
+
+<form id="policial-form">{% csrf_token %}
+<input type="hidden" id="id_hidden" name="{{ policialviatura.policial.name }}" />
+<input type="hidden" id="{{ policialviatura.guarnicao.auto_id }}" name="{{ policialviatura.guarnicao.name }}" value="{{ guarnicao.id }}" />
+<div class="row">
+    <div class="input-field col l6 m8 s12">
+        <a id="search"><i class="material-icons prefix prefix--post">search</i></a>
+        <input type="text" autocomplete="off" id="id_busca_policial">
+        <label for="id_busca_policial" class="active">{{ policialviatura.policial.label }}</label>
+    </div>
+    <div class="col l3 m4 s12">
+        <label>{{ policialviatura.funcao.label }}</label>
+        <select class="browser-default" name="{{ policialviatura.funcao.name }}" id="{{ policialviatura.funcao.auto_id }}">
+            {% for opcao in policialviatura.funcao %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col l3 m4 s12">
+        <label>{{ policialviatura.viatura.label }}</label>
+        <select class="browser-default" name="{{ policialviatura.viatura.name }}" id="{{ policialviatura.viatura.auto_id }}">
+            {% for opcao in policialviatura.viatura %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l3 m6 s12">
+        <input type="text" id="{{ policialviatura.kmsaida.auto_id }}" name="{{ policialviatura.kmsaida.name }}">
+        <label for="{{ policialviatura.kmsaida.auto_id }}" class="active">{{ policialviatura.kmsaida.label }}</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12 right">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+                <i class="material-icons left">person_add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+<script>
+$(document).ready(function(){
+    const input = $("#id_busca_policial");
+
+    $("#search").click(() => {
+        $.ajax({
+            url: '{% url "policial:buscar_policial" guarnicao=guarnicao.id %}',
+            data: {"term": input.val()},
+            success: (response) => {
+                if(response[0]["id"] === ""){
+                    M.toast({html: "Policial não encontrado ou indisponível!", classes: "red"});
+                } else {
+                    var arrayResponse = response, dataPessoas = {}, dataPessoas2 = {};
+                    for(var i=0; i < arrayResponse.length; i++){
+                        dataPessoas[arrayResponse[i].nome] = null;
+                        dataPessoas2[arrayResponse[i].nome] = arrayResponse[i];
+                    }
+                    input.autocomplete({
+                        data: dataPessoas,
+                        onAutocomplete: (reqdata) => {
+                            $("#id_hidden").val(dataPessoas2[reqdata]["id"]);
+                            M.updateTextFields();
+
+                            input.bind("click", () => {
+                                $("#policial-form").trigger("reset");
+                                $("#id_hidden").val("");
+
+                                M.updateTextFields();
+                            });
+                            M.Autocomplete.getInstance(input).destroy();
+                        }
+                    });
+                    M.Autocomplete.getInstance(input).open();
+                }
+            }
+        });
+    });
+
+    {% include 'gestao/includes/js/policialviatura.js' %}
+});
+</script>

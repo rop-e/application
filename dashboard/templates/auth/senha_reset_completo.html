@@ -1,0 +1,22 @@
+{% extends "auth/base_reset.html" %}
+
+{% block title %}Esqueceu a senha{% endblock title %}
+
+{% block content %}
+<div class="card">
+    <div class="card-content">
+        <div class="row">
+            <h5><strong>Senha atualizada!</strong></h5>
+            <label><strong>Senha redefinida com sucesso.</strong></label>
+        </div>
+
+        <p>Sua senha foi atualizada. Você pode entrar agora.</p>
+
+        <div class="card-action center">
+                <a class="btn waves-effect waves-light default white" href="{% url 'index' %}">Entrar
+                    <i class="material-icons right">home</i>
+                </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

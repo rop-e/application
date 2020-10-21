@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>SubOPO</strong></h5>
+    </div>
+</div>
+
+<blockquote>
+    <strong><b>*</b> Data início</strong>: {{ opo.datainicio }}<br>
+    <strong><b>*</b> Data término</strong>: {% if opo.datatermino is None %}Não informado.{% else %}{{ opo.datatermino }}{% endif %}
+</blockquote>
+
+<form id="oporelatorio-form">{% csrf_token %}
+<input type="hidden" id="id_opo_hidden" name="{{ form.opo.name }}" value="{{ opo.id }}" />
+<div class="row">
+    <div class="input-field col l4 m3 s12">
+        <input type="text" id="{{ form.local.auto_id }}" name="{{ form.local.name }}" value="{{ opo.local }}">
+        <label for="datetime" class="active">{{ form.local.label }}</label>
+    </div>
+    <div class="input-field col l3 m3 s12">
+        <input type="text" class="validate" id="datetime" name="{{ form.dataexecucao.name }}" required>
+        <label for="datetime" class="active">{{ form.dataexecucao.label }}</label>
+    </div>
+    <div class="input-field col l3 m3 s12">
+        <input type="text" class="validate" id="datetime1" name="{{ form.datafinalizacao.name }}" required>
+        <label for="datetime1" class="active">{{ form.datafinalizacao.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12 right">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+                <i class="material-icons left">person_add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>

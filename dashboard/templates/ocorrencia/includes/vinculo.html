@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="col l12 m12 s12">
+        <h5><strong>Vínculo</strong></h5>
+    </div>
+    <div class="input-field col l12 m12 s12">
+        <a id="search"><i class="material-icons prefix prefix--post">search</i></a>
+        <input type="text" disabled value="{% if objeto_ocorrencia.vinculo %}#{{ objeto_ocorrencia.vinculo.id }} - {{ objeto_ocorrencia.vinculo.infracao }} - {{ objeto_ocorrencia.vinculo.guarnicao.comandante }} - {{ objeto_ocorrencia.vinculo.endereco.municipio }} - {{ objeto_ocorrencia.vinculo.dataocorrencia }}{% endif %}" id="id_busca_ocorrencia" />
+        <label for="id_busca_ocorrencia" class="active">Buscar ocorrência</label>
+        <span class="helper-text">Clique na lupa para buscar uma ocorrência</span>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $("#search").on("click", () => {
+            window.onbeforeunload = "";
+
+            window.open(`{% url 'ocorrencia:vincular_ocorrencia' id=ocorrencia %}`, 'Vincular ocorrência {{ ocorrencia }}', 'width=600,height=800,scrollbars=no');
+        });
+    });
+</script>

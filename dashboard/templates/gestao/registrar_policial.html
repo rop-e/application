@@ -1,0 +1,146 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Cadastrar Policial{% endblock %}
+
+{% block content %}
+<div class="col card darken-1 s12 m12 l12">
+    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <div class="col s12">
+        <h5><strong>Cadastrar Policial</strong></h5>
+    </div>
+    <div class="col s3 m3 l3">
+        <div class="row center">
+            <div class="col s12 l12 m12">
+                <img class="img circle" src="{% url 'index' %}media/imagens_perfil/perfil.png">
+                <div class="file-field input-field col l12 m12 s12">
+                    <div class="waves-effect waves-light btn-small">
+                        <span>Foto</span>
+                        <input title="Altere sua foto" type="file" name="{{ registrar_policial_form.foto.name }}" id="{{ registrar_policial_form.foto.auto_id }}">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col s9 m9 l9">
+        <div class="row">
+            <div class="col s12 l12 m12">
+                <h5><strong>Dados Pessoais</strong></h5>
+            </div>
+            <div class="input-field col l5 m5 s5">
+                <input id="{{ registrar_usuario_form.nome.auto_id }}" type="text" class="validate" name="{{ registrar_usuario_form.nome.name }}" required>
+                <label class="active">{{ registrar_usuario_form.nome.label }}</label>
+            </div>
+            <div class="input-field col l3 m3 s3">
+                <input id="{{ registrar_usuario_form.cpf.auto_id }}" type="text" class="validate" name="{{ registrar_usuario_form.cpf.name }}" required>
+                <label class="active">{{ registrar_usuario_form.cpf.label }}</label>
+            </div>
+            <div class="col l2 m2 s2">
+                <label>{{ registrar_usuario_form.sexo.label }}</label>
+                <select class="browser-default" id="{{ registrar_usuario_form.sexo.auto_id }}" name="{{ registrar_usuario_form.sexo.name }}" required>
+                    {% for sexo in registrar_usuario_form.sexo %}
+                        {{ sexo }}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-field col l2 m2 s2">
+                <input id="{{ registrar_usuario_form.dtnascimento.auto_id }}" type="text" class="validate datepicker" name="{{ registrar_usuario_form.dtnascimento.name }}" required>
+                <label class="active">{{ registrar_usuario_form.dtnascimento.label }}</label>
+            </div>
+            <div class="input-field col l4 m4 s4">
+                <input id="{{ registrar_usuario_form.email.auto_id }}" type="text" class="validate" name="{{ registrar_usuario_form.email.name }}" required>
+                <label class="active">{{ registrar_usuario_form.email.label }}</label>
+            </div>
+            <div class="col l2 m2 s2 right">
+                <label>{{ registrar_policial_form.tiposanguineo.label }}</label>
+                <select class="browser-default" id="{{ registrar_policial_form.tiposanguineo.auto_id }}" name="{{ registrar_policial_form.tiposanguineo.name }}" required>
+                    {% for tiposanguineo in registrar_policial_form.tiposanguineo %}
+                        {{ tiposanguineo }}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 l12 m12">
+                <h5><strong>Dados Policiais</strong></h5>
+            </div>
+            <div class="input-field col l2 m2 s2">
+                <input id="{{ registrar_usuario_form.matricula.auto_id }}" type="text" class="validate" name="{{ registrar_usuario_form.matricula.name }}">
+                <label class="active">{{ registrar_usuario_form.matricula.label }}</label>
+            </div>
+            <div class="col l2 m2 s2 right">
+                <label>{{ registrar_policial_form.cargo.label }}</label>
+                <select class="browser-default" id="{{ registrar_policial_form.cargo.auto_id }}" name="{{ registrar_policial_form.cargo.name }}" required>
+                    {% for cargo in registrar_policial_form.cargo %}
+                        {{ cargo }}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col l3 m3 s3 right">
+                <label>{{ registrar_policial_form.postograduacao.label }}</label>
+                <select class="browser-default" id="{{ registrar_policial_form.postograduacao.auto_id }}" name="{{ registrar_policial_form.postograduacao.name }}" required>
+                    {% for postograduacao in registrar_policial_form.postograduacao %}
+                        {{ postograduacao }}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col l4 m4 s4">
+                <input id="{{ registrar_policial_form.nomeguerra.auto_id }}" type="text" class="validate" name="{{ registrar_policial_form.nomeguerra.name }}" required>
+                <label class="active">{{ registrar_policial_form.nomeguerra.label }}</label>
+            </div>
+            <div class="input-field col l2 m2 s2 right">
+                <input id="{{ registrar_policial_form.dtpraca.auto_id }}" type="text" class="validate datepicker" name="{{ registrar_policial_form.dtpraca.name }}" required>
+                <label class="active">{{ registrar_policial_form.dtpraca.label }}</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s6 l6 m6">
+                <h5><strong>Permissões</strong></h5>
+            </div>
+            <div class="col s6 l6 m6">
+                <h5><strong>Senha</strong></h5>
+            </div>
+            <div class="input-field col l6 m6 s6">
+                <label>
+                    <input type="checkbox" name="{{ registrar_usuario_form.is_staff.name }}" id="{{ registrar_usuario_form.is_staff.auto_id }}"/>
+                    <span>Administrador</span>
+                </label>
+            </div>
+            <div class="input-field col l3 m3 s3">
+                <input id="{{ registrar_usuario_form.password1.auto_id }}" type="password" class="validate" name="{{ registrar_usuario_form.password1.name }}" required>
+                <label class="active">{{ registrar_usuario_form.password1.label }}</label>
+            </div>
+            <div class="input-field col l3 m3 s3">
+                <input id="{{ registrar_usuario_form.password2.auto_id }}" type="password" class="validate" name="{{ registrar_usuario_form.password2.name }}" required>
+                <label class="active">{{ registrar_usuario_form.password2.label }}</label>
+            </div>
+            </div>
+            
+            <div class="row">
+                <div class="input-field col l6 m6 s6 right-align">
+                    <button class="btn waves-effect waves-light" type="submit">Criar
+                    </form>
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+                <div class="input-field col l6 m6 s6 right-align">
+                    <button class="btn waves-effect waves-light" onclick="history.go(-1)">Cancelar
+                        <i class="material-icons right">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--
+        { registrar_usuario_form.user_permissions }
+        { registrar_usuario_form.groups }
+        { registrar_usuario_form.is_superuser }
+    -->
+</div>
+{% endblock content %}

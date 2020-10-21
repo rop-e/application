@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Objetos</strong></h5>
+    </div>
+</div>
+
+<form id="diverso-form">{% csrf_token %}
+<input type="hidden" id="{{ diversosacessorio.acessoriosocorrencia.auto_id }}_diverso" name="{{ diversosacessorio.acessoriosocorrencia.name }}" value="{{ acessoriosocorrencia }}" />
+<div class="row">
+    <div class="col l3 m3 s12">
+        <label>{{ diversosacessorio.tipodiversos.label }}</label>
+        <select class="browser-default" name="{{ diversosacessorio.tipodiversos.name }}" id="{{ diversosacessorio.tipodiversos.auto_id }}">
+            {% for opcao in diversosacessorio.tipodiversos %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l9 m9 s12">
+        <textarea class="materialize-textarea validate" id="{{ diversosacessorio.descricao.auto_id }}" name="{{ diversosacessorio.descricao.name }}" required></textarea>
+        <label for="{{ diversosacessorio.descricao.auto_id }}" class="active">{{ diversosacessorio.descricao.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l2 m4 s12">
+        <label>{{ diversosacessorio.localrecebedor.label }}</label>
+        <select class="browser-default" name="{{ diversosacessorio.localrecebedor.name }}" id="{{ diversosacessorio.localrecebedor.auto_id }}_diverso">
+            {% for opcao in diversosacessorio.localrecebedor %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.nome_agente.auto_id }}_diverso" maxlength="30" name="{{ agenterecebedor.nome_agente.name }}" required>
+        <label for="{{ agenterecebedor.nome_agente.auto_id }}_diverso" class="active">{{ agenterecebedor.nome_agente.label }}</label>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.cargo.auto_id }}_diverso" maxlength="20" name="{{ agenterecebedor.cargo.name }}" required>
+        <label for="{{ agenterecebedor.cargo.auto_id }}_diverso" class="active">{{ agenterecebedor.cargo.label }}</label>
+    </div>
+    <div class="input-field col l6 m12 s12">
+        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}_diverso" name="{{ observacao.observacao.name }}"></textarea>
+        <label for="{{ observacao.observacao.auto_id }}_diverso" class="active">{{ observacao.observacao.label }}</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'ocorrencia/includes/js/diversos.js' %}
+});
+</script>
+{% endblock javascript %}

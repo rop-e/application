@@ -1,0 +1,433 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Adicionar Ocorrência <{{ ocorrencia }}>{% endblock %}
+
+{% block content %}
+<style>
+    .short-text { display: none; }
+
+    @media (max-width: 470px) {
+        .short-text { display: inline-block; }
+        .full-text { display: none; }
+    }
+    div.modal-overlay { pointer-events:none; }
+    #search { color:black; cursor: pointer; }
+    #search:hover { color:#039be5; }
+
+    .input-field .prefix.prefix--post {
+        right: 0px;
+    }
+    .input-field .prefix.prefix--post ~ input, .input-field .prefix.prefix--post ~ label, .input-field .prefix.prefix--post ~ .helper-text {
+        margin-left: 0;
+        margin-right: 3rem;
+    }
+</style>
+<script>
+    function voltar(){
+        if(confirm("Voltar irá excluir a ocorrência, deseja prosseguir?")){
+            $.ajax({
+                url: "{% url 'ocorrencia:post_delete_ocorrencia' %}",
+                type: "POST",
+                data: {"ocorrencia": "{{ ocorrencia }}"},
+                success: () => {
+                    history.go(-1);
+                }
+            });
+            return false;
+        } else {
+            return false;
+        }
+    }
+</script>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <div class="row">
+                        Criar Ocorrência
+                        <button id="apagaOcorrencia" style="float: right;" class="btn waves-effect waves-light">
+                            <i class="material-icons right">delete</i>
+                            <span class="full-text">Apagar Ocorrência</span>
+                            <span class="short-text">Apagar</span>
+                        </button>
+                    </div>
+                </span>
+
+                <div class="divider"></div>
+
+                <!-- Envolvidos -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Envolvidos</span>
+                                <div id="listarenvolvidos">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-envolvidos" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Envolvido</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-envolvidos" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/envolvidos.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                <!-- Armas -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Armas Apreendidas</span>
+                                <div id="listararmas">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-armas" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Arma</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                    
+                <div id="modal-armas" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/armas.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                <!-- Diversos -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Objetos Apreendidos</span>
+                                <div id="listardiversos">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-diversos" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Objeto</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-diversos" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/diversos.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                <!-- Documentos -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Documentos Apreendidos</span>
+                                <div id="listardocumentos">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-documentos" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Documento</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-documentos" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/documentos.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                <!-- Drogas -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Drogas Apreendidas</span>
+                                <div id="listardrogas">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-drogas" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Droga</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-drogas" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/drogas.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                <!-- Munições -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Munições Apreendidas</span>
+                                <div id="listarmunicoes">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-municoes" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Munição</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-municoes" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/municoes.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                <!-- Veículos -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Veículos Apreendidos</span>
+                                <div id="listarveiculos">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-veiculos" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Veículo</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="modal-veiculos" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/veiculos.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                <!-- Anexos -->
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text z-depth-5">
+                                <span class="card-title">Anexos</span>
+                                <div id="listaranexos">
+                                    <ul style="display: none;" class="collapsible black-text white row l12 m12 s12"></ul>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button data-target="modal-anexos" class="btn modal-trigger">
+                                    <i class="material-icons left">add</i>
+                                    <span class="full-text">Inserir Anexos</span>
+                                    <span class="short-text">Inserir</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-anexos" class="modal modal-fixed-footer">
+                    <div class="modal-content">
+                        {% include "ocorrencia/includes/anexos.html" %}
+                    </div>
+                    <div class="modal-footer">
+                        <a class="modal-close waves-effect waves-light btn">
+                            <i class="material-icons left">close</i>Fechar
+                        </a>
+                    </div>
+                </div>
+                <!-- -->
+
+                {% include "ocorrencia/includes/vinculo.html" %}
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5><strong>Relatório da Ocorrência</strong></h5>
+                    </div>
+                </div>
+
+                <form id="preview-ocorrencia">
+                <div class="row">
+                    <div class="input-field col l12 m12 s12">
+                        <textarea class="materialize-textarea validate" id="id_relatorio" name="relatorio" required></textarea>
+                        <label for="id_relatorio">Relatório da Ocorrência</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 right">
+                    <button class="btn waves-effect waves-light right" type="submit">Avançar
+                        <i class="material-icons right">send</i>
+                    </button>
+                </form>
+                </div>
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" onclick="voltar();">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    window.onbeforeunload = function(e) {
+        var msg = "Conclua a ocorrência!";
+        e = e || window.event;
+
+        if(e) {
+            e.returnValue = msg;
+        }
+        return msg;
+    }
+
+    $("#apagaOcorrencia").on("click", function(event){
+        window.onbeforeunload = "";
+        
+        event.stopPropagation();
+
+        if(confirm("Deseja apagar essa ocorrência?")){
+            $.ajax({
+                url: "{% url 'ocorrencia:post_delete_ocorrencia' %}",
+                type: "POST",
+                data: {"ocorrencia": "{{ ocorrencia }}"},
+                success: (response) => {
+                    M.toast({html: "Ocorrência deletada com sucesso!", classes: "green", completeCallback: function(){ window.location.href = response.redirect }});
+                }
+            });
+        } else {
+            window.onbeforeunload = function(e) {
+                var msg = "Conclua a ocorrência!";
+                e = e || window.event;
+
+                if(e) {
+                    e.returnValue = msg;
+                }
+                return msg;
+            }
+            return false;
+        }
+    });
+
+    $("#preview-ocorrencia").submit(function(event){
+        window.onbeforeunload = "";
+
+        event.stopPropagation();
+
+        if(confirm("Deseja prosseguir com a ocorrência?")){
+            $.ajax({
+                type: "POST",
+                url: "{% url 'ocorrencia:post_preview_ocorrencia' %}",
+                data: {"ocorrencia": "{{ ocorrencia }}", "relatorio": $("#id_relatorio").val()},
+                success: function(response){
+                    window.location.href = response.redirect;
+                }
+            });
+        } else {
+            window.onbeforeunload = function(e) {
+                var msg = "Conclua a ocorrência!";
+                e = e || window.event;
+
+                if(e) {
+                    e.returnValue = msg;
+                }
+                return msg;
+            }
+            return false;
+        }
+        return false;
+    });
+});
+</script>
+<script>
+    {% include "ocorrencia/includes/js/deleteelemento.js" %}
+</script>
+{% endblock javascript %}
+{% endblock content %}

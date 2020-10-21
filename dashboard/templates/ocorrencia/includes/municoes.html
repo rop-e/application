@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Munições</strong></h5>
+    </div>
+</div>
+
+<form id="municao-form">{% csrf_token %}
+<input type="hidden" id="{{ municaoacessorio.acessoriosocorrencia.auto_id }}_municao" name="{{ municaoacessorio.acessoriosocorrencia.name }}" value="{{ acessoriosocorrencia }}" />
+<div class="row">
+    <div class="col l3 m3 s12">
+        <label>{{ municaoacessorio.municao.label }}</label>
+        <select class="browser-default" name="{{ municaoacessorio.municao.name }}" id="{{ municaoacessorio.municao.auto_id }}">
+            {% for opcao in municaoacessorio.municao %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l2 m3 s12">
+        <input type="text" class="validate" id="{{ municaoacessorio.quantidade.auto_id }}_municao" name="{{ municaoacessorio.quantidade.name }}" required>
+        <label for="{{ municaoacessorio.quantidade.auto_id }}_municao" class="active">{{ municaoacessorio.quantidade.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l2 m4 s12">
+        <label>{{ municaoacessorio.localrecebedor.label }}</label>
+        <select class="browser-default" name="{{ municaoacessorio.localrecebedor.name }}" id="{{ municaoacessorio.localrecebedor.auto_id }}_municao">
+            {% for opcao in municaoacessorio.localrecebedor %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.nome_agente.auto_id }}_municao" maxlength="30" name="{{ agenterecebedor.nome_agente.name }}" required>
+        <label for="{{ agenterecebedor.nome_agente.auto_id }}_municao" class="active">{{ agenterecebedor.nome_agente.label }}</label>
+    </div>
+    <div class="input-field col l2 m4 s12">
+        <input type="text" class="validate" id="{{ agenterecebedor.cargo.auto_id }}_municao" maxlength="20" name="{{ agenterecebedor.cargo.name }}" required>
+        <label for="{{ agenterecebedor.cargo.auto_id }}_municao" class="active">{{ agenterecebedor.cargo.label }}</label>
+    </div>
+    <div class="input-field col l6 m12 s12">
+        <textarea class="materialize-textarea" id="{{ observacao.observacao.auto_id }}_municao" name="{{ observacao.observacao.name }}"></textarea>
+        <label for="{{ observacao.observacao.auto_id }}_municao" class="active">{{ observacao.observacao.label }}</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'ocorrencia/includes/js/municoes.js' %}
+});
+</script>
+{% endblock javascript %}

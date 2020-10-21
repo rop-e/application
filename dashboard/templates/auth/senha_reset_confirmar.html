@@ -1,0 +1,60 @@
+{% extends "auth/base_reset.html" %}
+
+{% block title %}Esqueceu a senha{% endblock title %}
+
+{% block content %}
+{% if validlink %}
+    <div class="card">
+        <div class="card-content">
+            <div class="row">
+                <h5><strong>Redefinição de senha</strong></h5>
+                <label><strong>Digite sua nova senha duas vezes para que possamos verificar se você a digitou corretamente.</strong></label>
+            </div>
+
+            {% if form.errors and not form.non_field_errors %}
+                <p class="errornote">
+                    {% if form.errors.items|length == 1 %}
+                        Por favor corrija o erro abaixo.
+                    {% else %}
+                        Por favor corrija os erros abaixo.
+                    {% endif %}
+                </p>
+            {% endif %}
+
+            <form method="post">{% csrf_token %}
+                <div class="input-field row l12 m12 s12">
+                    <input type="password" class="validate" id="{{ form.new_password1.auto_id }}" name="{{ form.new_password1.name }}" required>
+                    <label for="{{ form.new_password1.auto_id }}" class="active">Nova senha</label>
+                </div>
+                <div class="input-field row l12 m12 s12">
+                    <input type="password" class="validate" id="{{ form.new_password2.auto_id }}" name="{{ form.new_password2.name }}" required>
+                    <label for="{{ form.new_password2.auto_id }}" class="active">Confirme a senha</label>
+
+                    <div style="color: red;">{{ form.new_password2.errors }}</div>
+                </div>
+                <div class="input-field row l12 m12 s12">
+                    <button class="btn waves-effect waves-light right" type="submit">Alterar senha
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <div class="card">
+        <div class="card-content">
+            <div class="row">
+                <h5><strong>Link inválido</strong></h5>
+            </div>
+
+            <p>O link de redefinição de senha era inválido, possivelmente porque já foi usado. Solicite uma nova redefinição de senha.</p>
+
+            <div class="card-action center">
+                <a class="btn waves-effect waves-light default white" href="{% url 'index' %}">Início
+                    <i class="material-icons right">home</i>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

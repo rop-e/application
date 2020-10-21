@@ -1,0 +1,73 @@
+{% load static %}
+{% load ropd_extras %}
+
+<script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+<script src="{% static 'assets/js/jquery.maskedinput.js' %}"></script>
+<script src="{% static 'assets/js/materialize.min.js' %}"></script>
+<script>
+$(document).ready(function(){
+    $('.sidenav').sidenav();
+    $('select').formSelect();
+    $('.modal').modal({dismissible: false});
+    $('.collapsible').collapsible();
+    $('.fixed-action-btn').floatingActionButton({hoverEnabled: false, isOpen: true});
+    $('.chips').chips();
+
+    {% if not request|guarnicao_status and request|guarnicao_ativa and not '/guarnicao/' in request.path %}
+        M.toast({html: "Encerre o seu último serviço!", classes: "red"});
+    {% endif %}
+
+    M.updateTextFields();
+
+    function alertaGuarnicaoBloqueada() {
+        M.toast({html: "Você não pode inserir ocorrências. Finalize o seu último serviço!", classes: "red"});
+    }
+
+    $(document).on("click", "#adicionarOcorrenciaCriminal", function(event){
+        event.stopPropagation();
+
+        {% if not request|guarnicao_status and request|guarnicao_ativa %}
+            alertaGuarnicaoBloqueada();
+        {% else %}
+            $.ajax({
+                url: "{% url 'ocorrencia:checa_policial_guarnicao' %}",
+                type: "POST",
+                success: (response) => {
+                    window.location.href = response.redirect;
+                },
+                error: (response) => {
+                    var erros = response.responseJSON;
+                    for(i in erros){
+                        M.toast({html: erros[i], classes: "red"});
+                    }
+                }
+            });
+            return false;
+        {% endif %}
+    });
+    $(document).on("click", "#adicionarRAT", function(event){
+        event.stopPropagation();
+        
+        {% if not request|guarnicao_status and request|guarnicao_ativa %}
+            alertaGuarnicaoBloqueada();
+        {% else %}
+            $.ajax({
+                url: "{% url 'rat:checa_policial_guarnicao' %}",
+                type: "POST",
+                success: (response) => {
+                    window.location.href = response.redirect;
+                },
+                error: (response) => {
+                    var erros = response.responseJSON;
+                    for(i in erros){
+                        M.toast({html: erros[i], classes: "red"});
+                    }
+                }
+            });
+            return false;
+        {% endif %}
+    });
+});
+</script>
+<script src="{% static 'assets/js/datepicker.js' %}"></script>
+<script src="{% static 'assets/js/timepicker.js' %}"></script>

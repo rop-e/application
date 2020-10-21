@@ -1,0 +1,103 @@
+{% extends "ocorrencia/edits/base.html" %}
+
+{% block title %}Editar Veículo {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-veiculo">{% csrf_token %}
+<input type="hidden" name="id_veiculo" value="{{ id }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar Veículo &lt;{{ veiculo.modelo.value }}></div>
+
+                <div class="row">
+                    <div class="col l4 m4 s12">
+                        <label>{{ veiculo.categoria.label }}</label>
+                        <select class="browser-default" name="{{ veiculo.categoria.name }}" id="{{ veiculo.categoria.auto_id }}">
+                            {% for opcao in veiculo.categoria %}
+                                {% if opcao.data.value == veiculo.categoria.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col l4 m4 s12">
+                        <label>{{ veiculo.marca.label }}</label>
+                        <select class="browser-default" name="{{ veiculo.marca.name }}" id="{{ veiculo.marca.auto_id }}">
+                            {% for opcao in veiculo.marca %}
+                                {% if opcao.data.value == veiculo.marca.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l4 m3 s12">
+                        <input type="text" class="validate" id="{{ veiculo.modelo.auto_id }}" maxlength="80" name="{{ veiculo.modelo.name }}" required value="{{ veiculo.modelo.value }}">
+                        <label for="{{ veiculo.modelo.auto_id }}" class="active">{{ veiculo.modelo.label }}</label>
+                    </div>
+                    <div class="input-field col l2 m3 s12">
+                        <input type="text" class="validate" id="{{ veiculo.cor.auto_id }}" maxlength="10" name="{{ veiculo.cor.name }}" required value="{{ veiculo.cor.value }}">
+                        <label for="{{ veiculo.cor.auto_id }}" class="active">{{ veiculo.cor.label }}</label>
+                    </div>
+                    <div class="input-field col l2 m4 s12">
+                        <input type="number" id="{{ veiculo.ano.auto_id }}" name="{{ veiculo.ano.name }}" value="{% if veiculo.ano.value is not None %}{{ veiculo.ano.value }}{% endif %}">
+                        <label for="{{ veiculo.ano.auto_id }}" class="active">{{ veiculo.ano.label }}</label>
+                    </div>
+                    <div class="input-field col l2 m3 s12">
+                        <input type="text" id="{{ veiculo.placa.auto_id }}" maxlength="10" name="{{ veiculo.placa.name }}" value="{% if veiculo.placa.value is not None %}{{ veiculo.placa.value }}{% endif %}">
+                        <label for="{{ veiculo.placa.auto_id }}" class="active">{{ veiculo.placa.label }}</label>
+                    </div>
+                    <div class="input-field col l4 m3 s12">
+                        <input type="text" id="{{ veiculo.chassi.auto_id }}" maxlength="30" name="{{ veiculo.chassi.name }}" value="{% if veiculo.chassi.value is not None %}{{ veiculo.chassi.value }}{% endif %}">
+                        <label for="{{ veiculo.chassi.auto_id }}" class="active">{{ veiculo.chassi.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-veiculo").submit(function(event){
+        event.stopPropagation();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'acessoriosocorrencia:post_edit_veiculo' %}",
+            data: $(this).serialize(),
+            success: function(response){
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: function(response){
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    M.toast({html: erros[i], classes: "red"});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

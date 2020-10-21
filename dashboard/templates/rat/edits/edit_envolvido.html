@@ -1,0 +1,115 @@
+{% extends "opo/edits/base.html" %}
+
+{% block title %}Editar Envolvido {{ id }}{% endblock title %}
+
+{% block content %}
+<form id="edit-envolvido">{% csrf_token %}
+<input type="hidden" name="id_envolvido" value="{{ id }}" />
+<input type="hidden" name="{{ envolvido.pessoa.name }}" value="{{ envolvido.pessoa.value }}" />
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <div class="card-title">Editar Envolvido &lt;{{ pessoa.nome.value }}></div>
+
+                <div class="row">
+                    <div class="input-field col l5 m5 s12">
+                        <input type="text" class="validate" id="{{ pessoa.nome.auto_id }}" name="{{ pessoa.nome.name }}" required value="{{ pessoa.nome.value }}">
+                        <label for="{{ pessoa.nome.auto_id }}" class="active">{{ pessoa.nome.label }}</label>
+                    </div>
+                    <div class="col l3 m3 s12">
+                        <label>{{ pessoa.sexo.label }}</label>
+                        <select class="browser-default" name="{{ pessoa.sexo.name }}" id="{{ pessoa.sexo.auto_id }}">
+                            {% for opcao in pessoa.sexo %}
+                                {% if opcao.data.value == pessoa.sexo.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l3 m3 s12">
+                        <input type="text" class="datepicker" id="{{ pessoa.datanascimento.auto_id }}" name="{{ pessoa.datanascimento.name }}" value="{% if pessoa.datanascimento.value is not None %}{{ pessoa.datanascimento.value|date:'d/m/Y' }}{% endif %}">
+                        <label for="{{ pessoa.datanascimento.auto_id }}" class="active">{{ pessoa.datanascimento.label }}</label>
+                    </div>
+                    <div class="col l4 m4 s12">
+                        <label>{{ envolvido.tipoenvolvimento.label }}</label>
+                        <select class="browser-default" name="{{ envolvido.tipoenvolvimento.name }}" id="{{ envolvido.tipoenvolvimento.auto_id }}">
+                            {% for opcao in envolvido.tipoenvolvimento %}
+                                {% if opcao.data.value == envolvido.tipoenvolvimento.value %}
+                                    <option value="{{ opcao.data.value }}" selected>{{ opcao.choice_label }}</option>
+                                {% else %}
+                                    <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col l5 m5 s12">
+                        <input type="text" id="{{ pessoa.mae.auto_id }}" name="{{ pessoa.mae.name }}" maxlength="30" value="{{ pessoa.mae.value }}">
+                        <label for="{{ pessoa.mae.auto_id }}" class="active">{{ pessoa.mae.label }}</label>
+                    </div>
+                    <div class="input-field col l3 m3 s12">
+                        <input type="text" id="{{ pessoa.apelido.auto_id }}" name="{{ pessoa.apelido.name }}" maxlength="25" value="{{ pessoa.apelido.value }}">
+                        <label for="{{ pessoa.apelido.auto_id }}" class="active">{{ pessoa.apelido.label }}</label>
+                    </div>
+                    <div class="input-field col l4 m4 s12">
+                        <input type="text" id="{{ pessoa.cpf.auto_id }}" name="{{ pessoa.cpf.name }}" maxlength="14" value="{{ pessoa.cpf.value }}">
+                        <label for="{{ pessoa.cpf.auto_id }}" class="active">{{ pessoa.cpf.label }}</label>
+                    </div>
+                    <div class="input-field col l4 m4 s12">
+                        <input type="text" id="{{ pessoa.rg.auto_id }}" name="{{ pessoa.rg.name }}" maxlength="14" value="{{ pessoa.rg.value }}">
+                        <label for="{{ pessoa.rg.auto_id }}" class="active">{{ pessoa.rg.label }}</label>
+                    </div>
+                    <div class="input-field col l4 m4 s12">
+                        <input type="text" id="{{ pessoa.cnh.auto_id }}" name="{{ pessoa.cnh.name }}" maxlength="30" value="{{ pessoa.cnh.value }}">
+                        <label for="{{ pessoa.cnh.auto_id }}" class="active">{{ pessoa.cnh.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l6 m6 s6 right">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light right" type="submit">Atualizar
+                        <i class="material-icons right">check</i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col l6 m6 s6 left">
+                <div class="input-field row">
+                    <button class="btn waves-effect waves-light" onclick="window.close();">Cancelar
+                        <i class="material-icons left">cancel</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#edit-envolvido").submit(function(event){
+        event.stopPropagation();
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'envolvido:post_edit_envolvidorat' %}",
+            data: $(this).serialize(),
+            success: (response) => {
+                M.toast({html: response.message, classes: "green", completeCallback: callBack});
+            },
+            error: (response) => {
+                var erros = jQuery.parseJSON(response.responseText);
+                for(i in erros){
+                    for(j in erros[i]){
+                        M.toast({html: erros[i][j], classes: "red"});
+                    }
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,246 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load ropd_extras %}
+
+{% block title %}OPO {{ opo.numeroopo }}{% endblock %}
+
+{% block content %}
+<style>
+.short-text { display: none; }
+
+@media (max-width: 480px) {
+    .short-text { display: inline-block; }
+    .full-text { display: none; }
+}
+</style>
+<div class="col s12 m12 l12">
+    <div class="row">
+        <div class="card darken-1 col l12 m12 s12">
+            <div class="card-content text-darken-4 grey-text">
+                <span class="card-title">
+                    <div class="row">
+                        OPO {{ opo.numeroopo }} - {{ opo.titulo }}
+                        {% if request.user|has_group:"CPO" %}
+                            <button id="apagaOPO" style="float: right;" class="btn waves-effect waves-light">
+                                <i class="material-icons right">delete</i>
+                                <span class="full-text">Apagar OPO</span>
+                                <span class="short-text">Apagar</span>
+                            </button>
+                        {% endif %}
+                    </div>
+                </span>
+
+                <div class="divider"></div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5>
+                            <strong>
+                                Dados da OPO
+                                <a title="Editar" onclick="window.open(`{% url 'opo:edit_dadosopo' id=opo.id %}`, 'Dados da OPO', 'width=600,height=800,scrollbars=no'); return false;" class="waves-effect">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </strong>
+                        </h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ opo.numeroopo }}" disabled>
+                        <label>Número da OPO</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ opo.titulo }}" disabled>
+                        <label>Título</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{{ opo.opotipoevento }}" disabled>
+                        <label>Tipo de evento</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ opo.datasolicitacao|date:'d/m/Y H:i' }}" disabled>
+                        <label>Data da solicitação</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ opo.armamento }}" disabled>
+                        <label>Armamento</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ opo.uniforme }}" disabled>
+                        <label>Uniforme</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5>
+                            <strong>
+                                Dados da solicitação
+                                <a title="Editar" onclick="window.open(`{% url 'opo:edit_dadossolicitacaoopo' id=opo.id %}`, 'Dados de solicitação da OPO', 'width=600,height=800,scrollbars=no'); return false;" class="waves-effect">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </strong>
+                        </h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ opo.solicitantenome }}" disabled>
+                        <label>Solicitante</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{% if opo.solicitantecontato is None %}-{% else %}{{ opo.solicitantecontato }}{% endif %}" disabled>
+                        <label>Contato</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ opo.datainicio|date:'d/m/Y H:i' }}" disabled>
+                        <label>Data de início</label>
+                    </div>
+                    <div class="input-field col l2 m6 s12">
+                        <input type="text" value="{{ opo.datatermino|date:'d/m/Y H:i' }}" disabled>
+                        <label>Data de término</label>
+                    </div>
+                    <div class="input-field col l5 m6 s12">
+                        <input type="text" value="{{ opo.local }}" disabled>
+                        <label>Local</label>
+                    </div>
+                    <div class="input-field col l3 m6 s12">
+                        <input type="text" value="{{ opo.get_designado_display }}" disabled>
+                        <label>Designado para</label>
+                    </div>
+                </div>
+
+                {% if comandantescia %}
+                    <div class="row">
+                        <div class="col l12 m12 s12">
+                            <h5><strong>Comandantes de CIA</strong></h5>
+                            <hr>
+                        </div>
+                        {% for comandante in comandantescia %}
+                            <div class="input-field col l6 m6 s12">
+                                <input type="text" value="{{ comandante.comandante }} - {{ comandante.comandante.companhia }}" disabled>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col l12 m12 s12">
+                        <h5>
+                            <strong>
+                                Observação
+                                {% if opo.observacao %}
+                                    <a title="Editar" onclick="window.open(`{% url 'opo:edit_observacaoopo' id=opo.id %}`, 'Observação da OPO', 'width=600,height=800,scrollbars=no'); return false;" class="waves-effect">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                {% endif %}
+                            </strong>
+                        </h5>
+                        <hr>
+                    </div>
+                    <div class="input-field col l12 m6 s12">
+                        <textarea class="materialize-textarea" disabled>{% if opo.observacao is not None %}{{ opo.observacao }}{% endif %}</textarea>
+                        <label>Observação</label>
+                    </div>
+                </div>
+
+                {% if subopos %}
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div class="card blue-grey darken-1">
+                                <div class="card-content white-text">
+                                    <span class="card-title">SubOPOs</span>
+
+                                    <ul class="collapsible black-text white row l12 m12 s12">
+                                        {% for subopo in subopos %}
+                                            <li>
+                                                <div class="collapsible-header" style="position: relative;">
+                                                    <i class="material-icons">person</i>{{ subopo.local }} - {{ subopo.dataexecucao }} - {% if subopo.guarnicao %}{{ subopo.guarnicao }} - {% endif %}{{ subopo.get_status_display }}
+                                                    {% if subopo.status == "pendente" and not subopo.guarnicao %}
+                                                        {% if request.user|has_group:"CPO" %}
+                                                            <a title="Editar" onclick="window.open(`{% url 'opo:edit_subopo' id=subopo.id %}`, 'Editar SubOPO', 'width=600,height=800,scrollbars=no'); event.stopPropagation();" style="position: absolute; right: 0;" class="waves-effect">
+                                                                <i class="material-icons">edit</i>
+                                                            </a>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="collapsible-body">
+                                                    {% if subopo.status == "pendente" %}
+                                                        {% if not request.user|has_group:"CPO" %}
+                                                            <p style="float: right;">
+                                                                <a onclick="window.open(`{% url 'opo:atribuir_subopo' id=subopo.id %}`, 'Atribuir SubOPO', 'width=600,height=800,scrollbars=no'); return false;">
+                                                                    <button class="btn waves-effect waves-light">
+                                                                        <span class="full-text">
+                                                                            <i class="material-icons right">announcement</i>Atribuir 
+                                                                        </span>
+                                                                        <span class="short-text">
+                                                                            <i class="material-icons">announcement</i>
+                                                                        </span>
+                                                                    </button>
+                                                                </a>
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% if subopo.guarnicao %}
+                                                    <p>
+                                                        <strong>Guarnição atribuída:</strong> {{ subopo.guarnicao }}
+                                                    </p>
+                                                    {% endif %}
+                                                    <p>
+                                                        <strong>Local:</strong> {% if subopo.local is None %}-{% else %}{{ subopo.local }}{% endif %}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Data de execução:</strong> {{ subopo.dataexecucao }}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Data de finalização:</strong> {% if subopo.datafinalizacao is None %}Não informado.{% else %}{{ subopo.datafinalizacao }}{% endif %}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Status:</strong> {{ subopo.get_status_display }}
+                                                    </p>
+                                                    {% if subopo.relatorio %}
+                                                    <p>
+                                                        <strong>Relatório:</strong> {{ subopo.relatorio }}
+                                                    </p>
+                                                    {% endif %}
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field row l12 m12 s12 left">
+                    <button class="btn waves-effect waves-light" type="reset" onclick="history.go(-1)">Voltar
+                        <i class="material-icons left">arrow_back</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#apagaOPO").on("click", function(event){        
+        event.stopPropagation();
+
+        if(confirm("Deseja apagar essa OPO?")){
+            $.ajax({
+                url: "{% url 'opo:post_delete_opo' %}",
+                type: "POST",
+                data: {"opo": "{{ opo.id }}"},
+                success: (response) => {
+                    M.toast({html: "OPO deletada com sucesso!", classes: "green", completeCallback: function(){ window.location.href = response.redirect }});
+                }
+            });
+        } else {
+            return false;
+        }
+    });
+});
+</script>
+{% endblock content %}

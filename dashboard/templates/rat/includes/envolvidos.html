@@ -1,0 +1,231 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Envolvidos</strong></h5>
+    </div>
+</div>
+
+<form id="envolvido-form">{% csrf_token %}
+<input type="hidden" id="{{ ratenvolvido.rat.auto_id }}_envolvido" name="{{ ratenvolvido.rat.name }}" value="{{ rat.id }}" />
+<input type="hidden" id="id_pessoa" name="id_pessoa" value="" />
+<div class="row">
+    <div class="input-field col l5 m5 s12">
+        <input type="text" class="validate" onclick="buscaPessoa(this);" autocomplete="off" id="{{ pessoa.nome.auto_id }}" name="{{ pessoa.nome.name }}" required>
+        <label for="{{ pessoa.nome.auto_id }}" class="active">{{ pessoa.nome.label }}</label>
+    </div>
+    <div class="col l3 m3 s12">
+        <label>{{ pessoa.sexo.label }}</label>
+        <select class="browser-default" name="{{ pessoa.sexo.name }}" id="{{ pessoa.sexo.auto_id }}">
+            {% for opcao in pessoa.sexo %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l3 m3 s12">
+        <input type="text" class="datepicker" id="{{ pessoa.datanascimento.auto_id }}" name="{{ pessoa.datanascimento.name }}">
+        <label for="{{ pessoa.datanascimento.auto_id }}" class="active">{{ pessoa.datanascimento.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l4 m4 s12">
+        <label>{{ ratenvolvido.tipoenvolvimento.label }}</label>
+        <select class="browser-default" name="{{ ratenvolvido.tipoenvolvimento.name }}" id="{{ ratenvolvido.tipoenvolvimento.auto_id }}">
+            {% for opcao in ratenvolvido.tipoenvolvimento %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l5 m5 s12">
+        <input type="text" id="{{ pessoa.mae.auto_id }}" name="{{ pessoa.mae.name }}" maxlength="30">
+        <label for="{{ pessoa.mae.auto_id }}" class="active">{{ pessoa.mae.label }}</label>
+    </div>
+    <div class="input-field col l3 m3 s12">
+        <input type="text" id="{{ pessoa.apelido.auto_id }}" name="{{ pessoa.apelido.name }}" maxlength="25">
+        <label for="{{ pessoa.apelido.auto_id }}" class="active">{{ pessoa.apelido.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="input-field col l4 m4 s12">
+        <a id="mostrarCPF" class="btn waves-effect waves-light"><i class="material-icons left">add</i>CPF</a>
+        <input type="text" id="{{ pessoa.cpf.auto_id }}" onkeydown="javascript: fMasc(this, mCPF);" name="{{ pessoa.cpf.name }}" maxlength="14">
+        <label for="{{ pessoa.cpf.auto_id }}" class="active">{{ pessoa.cpf.label }}</label>
+    </div>
+    <div class="input-field col l4 m4 s12">
+        <a id="mostrarRG" class="btn waves-effect waves-light"><i class="material-icons left">add</i>RG</a>
+        <input type="text" id="{{ pessoa.rg.auto_id }}" name="{{ pessoa.rg.name }}" maxlength="14">
+        <label for="{{ pessoa.rg.auto_id }}" class="active">{{ pessoa.rg.label }}</label>
+    </div>
+    <div class="input-field col l4 m4 s12">
+        <a id="mostrarCNH" class="btn waves-effect waves-light"><i class="material-icons left">add</i>CNH</a>
+        <input type="text" id="{{ pessoa.cnh.auto_id }}" name="{{ pessoa.cnh.name }}" maxlength="30">
+        <label for="{{ pessoa.cnh.auto_id }}" class="active">{{ pessoa.cnh.label }}</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col l4 m4 s12">
+        <label>{{ ratenvolvido.localrecebedor.label }}</label>
+        <select class="browser-default" name="{{ ratenvolvido.localrecebedor.name }}" id="{{ ratenvolvido.localrecebedor.auto_id }}_envolvido">
+            {% for opcao in ratenvolvido.localrecebedor %}
+                <option value="{{ opcao.data.value }}">{{ opcao.choice_label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="input-field col l4 m4 s12">
+        <input type="text" id="{{ ratagenterecebedor_envolvido.nome_agente.auto_id }}_envolvido" maxlength="30" name="{{ ratagenterecebedor_envolvido.nome_agente.name }}">
+        <label for="{{ ratagenterecebedor_envolvido.nome_agente.auto_id }}_envolvido" class="active">{{ ratagenterecebedor_envolvido.nome_agente.label }}</label>
+    </div>
+    <div class="input-field col l4 m4 s12">
+        <input type="text" id="{{ ratagenterecebedor_envolvido.cargo.auto_id }}_envolvido" maxlength="20" name="{{ ratagenterecebedor_envolvido.cargo.name }}">
+        <label for="{{ ratagenterecebedor_envolvido.cargo.auto_id }}_envolvido" class="active">{{ ratagenterecebedor_envolvido.cargo.label }}</label>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col l6 m6 s12">
+        <label>Veículos</label>
+        <select class="browser-default" id="selectVeiculos" name="{{ ratveiculoenvolvidos.ratveiculos.name }}"></select>
+    </div>
+    <div class="input-field col l6 m6 s12">
+        <textarea class="materialize-textarea" id="{{ versao.observacao.auto_id }}_envolvido" name="{{ versao.observacao.name }}" required></textarea>
+        <label for="{{ versao.observacao.auto_id }}_envolvido" class="active">Versão do envolvido</label>
+    </div>
+    <div class="col l12 m12 s12">
+        <div class="input-field row l12 m12 s12">
+            <button class="btn waves-effect waves-light right" type="submit">Adicionar
+            <i class="material-icons left">person_add</i>
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+document.getElementById("envolvido-form").onreset = () => {
+    $("#mostrarCPF").css("display", "inline-block");
+    $("#{{ pessoa.cpf.auto_id }}").css("display", "none");
+    $("#mostrarRG").css("display", "inline-block");
+    $("#{{ pessoa.rg.auto_id }}").css("display", "none");
+    $("#mostrarCNH").css("display", "inline-block");
+    $("#{{ pessoa.cnh.auto_id }}").css("display", "none");
+}
+
+function formataData(data) {
+    var dsplit = data.split("-");
+    var dataformatada = dsplit[2] + "/" + dsplit[1] + "/" + dsplit[0];
+    return dataformatada;
+}
+
+function buscaPessoa(input) {
+    PessoaAlterada = true;
+    $.ajax({
+        url: '{% url "pessoa:buscar_pessoa" %}',
+        data: {"term": input.value},
+        success: (response) => {
+            var arrayResponse = response, dataPessoas = {}, dataPessoas2 = {};
+            for(var i=0; i < arrayResponse.length; i++){
+                dataPessoas[arrayResponse[i].nome] = null;
+                dataPessoas2[arrayResponse[i].nome] = arrayResponse[i];
+            }
+            $(input).autocomplete({
+                data: dataPessoas,
+                onAutocomplete: (reqdata) => {
+                    $.ajax({
+                        type: "GET",
+                        url: "{% url 'envolvido:checar_nome_existente' %}",
+                        data: {"nome": input.value, "rat": "{{ rat.id }}"},
+                        success: (response) => {
+                            if(response["invalid"]){
+                                M.toast({html: "Você já inseriu essa pessoa como envolvida!", classes: "red"});
+                                $("#envolvido-form").trigger("reset");
+                            } else {
+                                $("#id_pessoa").val(dataPessoas2[reqdata]["id"]);
+                                $("#id_sexo").val(dataPessoas2[reqdata]["sexo"]).prop("disabled", true);
+                                $("#id_datanascimento").prop("disabled", true);
+                                (dataPessoas2[reqdata]["datanascimento"] !== null) ? $("#id_datanascimento").val(formataData(dataPessoas2[reqdata]["datanascimento"])) : $("#id_datanascimento").val("");
+                                $("#id_mae").val(dataPessoas2[reqdata]["mae"]).prop("disabled", true);
+                                $("#id_apelido").val(dataPessoas2[reqdata]["apelido"]).prop("disabled", true);
+                                $("#id_cpf").val(dataPessoas2[reqdata]["cpf"]);
+                                $("#id_rg").val(dataPessoas2[reqdata]["rg"]);
+                                $("#id_cnh").val(dataPessoas2[reqdata]["cnh"]);
+                                $("#mostrarCPF").css("display", "none");
+                                $("#id_cpf").css("display", "inline-block").prop("disabled", true);
+                                $("#mostrarRG").css("display", "none");
+                                $("#id_rg").css("display", "inline-block").prop("disabled", true);
+                                $("#mostrarCNH").css("display", "none");
+                                $("#id_cnh").css("display", "inline-block").prop("disabled", true);
+                                M.updateTextFields();
+                                $('select').formSelect();
+                            }
+                        }
+                    });
+                    
+                }
+            });
+        }
+    });
+    if(PessoaAlterada){
+        $("#envolvido-form").trigger("reset");
+        $("#id_pessoa").val("");
+        $("#id_sexo").prop("disabled", false);
+        $("#id_datanascimento").prop("disabled", false);
+        $("#id_mae").prop("disabled", false);
+        $("#id_apelido").prop("disabled", false);
+        $("#id_cpf").prop("disabled", false);
+        $("#id_rg").prop("disabled", false);
+        $("#id_cnh").prop("disabled", false);
+    }
+    M.updateTextFields();
+    $('select').formSelect();
+}
+
+function fMasc(objeto, mascara){
+    obj = objeto;
+    masc = mascara;
+    setTimeout("fMascEx()", 1);
+}
+
+function fMascEx(){
+    obj.value = masc(obj.value);
+}
+
+function mCPF(cpf){
+    cpf = cpf.replace(/\D/g, "");
+    cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+    cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    return cpf;
+}
+
+$(document).ready(function(){
+    var inputCPF = $("#id_cpf"), inputRG = $("#id_rg"), inputCNH = $("#id_cnh");
+
+    inputRG.mask("99.999.999-99");
+    inputCPF.css("display", "none");
+    inputRG.css("display", "none");
+    inputCNH.css("display", "none");
+
+    var mostrarCPF = $("#mostrarCPF"), mostrarRG = $("#mostrarRG"), mostrarCNH = $("#mostrarCNH");
+
+    mostrarCPF.on("click", (event) => {
+        mostrarCPF.css("display", "none");
+        inputCPF.css("display", "block");
+        return false;
+    });
+    
+    mostrarRG.on("click", (event) => {
+        mostrarRG.css("display", "none");
+        inputRG.css("display", "block");
+        return false;
+    });
+
+    mostrarCNH.on("click", (event) => {
+        mostrarCNH.css("display", "none");
+        inputCNH.css("display", "block");
+        return false;
+    });
+
+    {% include "rat/includes/js/envolvidos.js" %}
+});
+
+</script>
+{% endblock javascript %}

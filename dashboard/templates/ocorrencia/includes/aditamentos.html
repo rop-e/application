@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col s12 l12 m12">
+        <h5><strong>Aditamentos</strong></h5>
+    </div>
+</div>
+
+<form id="aditamento-form">{% csrf_token %}
+<input type="hidden" id="{{ observacaoocorrencia.ocorrencia.auto_id }}" name="{{ observacaoocorrencia.ocorrencia.name }}" value="{{ ocorrencia.id }}" />
+<div class="row">
+    <div class="input-field col l12 m12 s12">
+        <textarea class="materialize-textarea validate" id="{{ observacao.observacao.auto_id }}" name="{{ observacao.observacao.name }}" required></textarea>
+        <label for="{{ observacao.observacao.auto_id }}" class="active">Aditamento</label>
+    </div>
+    <div class="input-field col l12 m12 s12 right">
+        <button class="btn waves-effect waves-light right" type="submit">Adicionar
+        <i class="material-icons left">add</i>
+        </button>
+    </div>
+</div>
+</form>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    {% include 'ocorrencia/includes/js/aditamentos.js' %}
+});
+</script>
+{% endblock javascript %}
