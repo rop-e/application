@@ -2,7 +2,7 @@ name: Django CI
 
 on:
   push:
-    branches: [ master merge-code-rope-version ]
+    branches: [ master ]
   
 jobs:
   build:
