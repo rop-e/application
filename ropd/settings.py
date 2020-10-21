@@ -1,5 +1,6 @@
 import os
 
+# TODO: Verificar real necessidade desta variavel aqui
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
 
