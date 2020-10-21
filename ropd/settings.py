@@ -195,14 +195,14 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media /
-PDF_ROOT=MEDIA_ROOT + '/pdf/'  # Path pdf url
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+PDF_ROOT = MEDIA_ROOT + '/pdf/'  # Path pdf url
 
-ENVIRONMENT=os.environ.get('ENVIRONMENT')
+ENVIRONMENT = os.environ.get('ENVIRONMENT')
 
 if ENVIRONMENT == 'production':
-    DEBUG=os.environ.get('DEBUG')
-    SECRET_KEY=os.environ.get('SECRET_KEY')
+    DEBUG = os.environ.get('DEBUG')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     # SESSION_COOKIE_SECURE = True
     # SECURE_BROWSER_XSS_FILTER = True
     # SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -212,5 +212,5 @@ if ENVIRONMENT == 'production':
     # SECURE_SSL_REDIRECT = True
     # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
-    DEBUG=True
-    SECRET_KEY='123456789)*(&^%$#@'
+    DEBUG = True
+    SECRET_KEY = '123456789)*(&^%$#@'
