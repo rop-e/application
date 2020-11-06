@@ -62,7 +62,7 @@ class PolicialViaturaListCreateView(generics.ListCreateAPIView):
             GET: policialviatura/
             POST: policialviatura/
     """
-    queryset = PolicialViatura.objects.all()[::-1]
+    queryset = PolicialViatura.objects.all()
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
