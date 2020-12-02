@@ -78,7 +78,7 @@ class PolicialViaturaListCreateView(generics.ListCreateAPIView):
 
 
 class PolicialViaturaDetailsUpdateDeleteView(
-      generics.RetrieveUpdateDestroyAPIView):
+        generics.RetrieveUpdateDestroyAPIView):
     """
         RetrieveUpdateDestroyAPIView:
             Details of a police
