@@ -323,3 +323,20 @@ class PermutaDetailsUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+
+class GuarnicaoAtivaView(generics.ListAPIView):
+    """
+        ListAtivaView:
+            List garrison active
+        HTTP Verbs:
+            GET: guarnicao/ativa/<id do comandante>/
+    """
+    serializer_class = GuarnicaoSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        comandante = self.kwargs['id']
+        return Guarnicao.objects.filter(comandante=comandante, datafechamento__isnull=False)

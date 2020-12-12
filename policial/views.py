@@ -52,3 +52,20 @@ class PolicialDetailsUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+
+class PolicialUsuarioView(generics.ListAPIView):
+    """
+        ListAtivaView:
+            List policial with user id
+        HTTP Verbs:
+            GET: policial/usuario/<id do usuario>/
+    """
+    serializer_class = ListPolicialSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        usuario = self.kwargs['id']
+        return Policial.objects.filter(matricula=usuario)

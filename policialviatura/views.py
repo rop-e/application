@@ -94,3 +94,20 @@ class PolicialViaturaDetailsUpdateDeleteView(
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+
+class PolicialViaturaAtivaView(generics.ListAPIView):
+    """
+        ListAtivaView:
+            List policialviatura active
+        HTTP Verbs:
+            GET: policialviatura/ativa/<id da guarnicao>/
+    """
+    serializer_class = PolicialViaturaSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        guarnicao = self.kwargs['id']
+        return PolicialViatura.objects.filter(guarnicao=guarnicao)

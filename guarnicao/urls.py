@@ -15,10 +15,19 @@ from .views import (
     GuarnicaoTRAVListCreateView,
     GuarnicaoTRAVDetailsUpdateDeleteView,
     PermutaListCreateView,
-    PermutaDetailsUpdateDeleteView
+    PermutaDetailsUpdateDeleteView,
+
+
+
+
+    GuarnicaoAtivaView
 )
 
 urlpatterns = [
+    path(
+        'ativa/<int:id>/',
+        GuarnicaoAtivaView.as_view(),
+        name='ativa'),
     path(
         'tiposervico/',
         TipoServicoListCreateView.as_view(),
