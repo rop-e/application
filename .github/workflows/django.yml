@@ -2,9 +2,10 @@ name: Django CI
 
 on:
   push:
-    branches: [ v2.1 ]
+    branches: [ rota-login-personalizada ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, v2.2 ]
+
   
 jobs:
   build:

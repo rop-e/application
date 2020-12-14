@@ -1,9 +1,16 @@
 from django.urls import path
 from .views import (
-        PolicialListCreateView,
-        PolicialDetailsUpdateDeleteView
-    )
+    PolicialListCreateView,
+    PolicialDetailsUpdateDeleteView,
+    PolicialUsuarioView
+)
+
 urlpatterns = [
+    path(
+        'usuario/<int:id>/',
+        PolicialUsuarioView.as_view(),
+        name='usuario'
+    ),
     path(
          '',
          PolicialListCreateView.as_view(),
