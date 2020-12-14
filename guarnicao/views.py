@@ -339,4 +339,4 @@ class GuarnicaoAtivaView(generics.ListAPIView):
 
     def get_queryset(self):
         comandante = self.kwargs['id']
-        return Guarnicao.objects.filter(comandante=comandante, datafechamento__isnull=False)
+        return Guarnicao.objects.filter(comandante=comandante, datafechamento__isnull=True)
