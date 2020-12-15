@@ -10,6 +10,7 @@ from .serializers import (
     ModalidadedePoliciamentoSerializer,
     CompanhiaSerializer,
     GuarnicaoSerializer,
+    ListGuarnicaoSerializer,
     GuarnicaoAITSerializer,
     GuarnicaoRRDSerializer,
     GuarnicaoTRAVSerializer,
@@ -340,3 +341,19 @@ class GuarnicaoAtivaView(generics.ListAPIView):
     def get_queryset(self):
         comandante = self.kwargs['id']
         return Guarnicao.objects.filter(comandante=comandante, datafechamento__isnull=True)
+
+
+class GuarnicaoAtivasView(generics.ListAPIView):
+    """
+        ListAtivaView:
+            List garrisons active
+        HTTP Verbs:
+            GET: guarnicao/ativas/
+    """
+    serializer_class = ListGuarnicaoSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Guarnicao.objects.filter(datafechamento__isnull=True)

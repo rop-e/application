@@ -16,11 +16,8 @@ from .views import (
     GuarnicaoTRAVDetailsUpdateDeleteView,
     PermutaListCreateView,
     PermutaDetailsUpdateDeleteView,
-
-
-
-
-    GuarnicaoAtivaView
+    GuarnicaoAtivaView,
+    GuarnicaoAtivasView
 )
 
 urlpatterns = [
@@ -28,6 +25,10 @@ urlpatterns = [
         'ativa/<int:id>/',
         GuarnicaoAtivaView.as_view(),
         name='ativa'),
+    path(
+        'ativas/',
+        GuarnicaoAtivasView.as_view(),
+        name='ativas'),
     path(
         'tiposervico/',
         TipoServicoListCreateView.as_view(),
