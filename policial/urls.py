@@ -9,14 +9,13 @@ urlpatterns = [
     path(
         'usuario/<int:id>/',
         PolicialUsuarioView.as_view(),
-        name='usuario'
-    ),
+        name='usuario'),
     path(
-         '',
-         PolicialListCreateView.as_view(),
-         name='create'),
+        '',
+        PolicialListCreateView.as_view(),
+        name='create'),
     path(
-         '<int:pk>/',
-         PolicialDetailsUpdateDeleteView.as_view(),
-         name='detalhe'),
+        '<int:pk>/',
+        PolicialDetailsUpdateDeleteView.as_view(),
+        name='detalhe'),
 ]

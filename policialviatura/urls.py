@@ -4,10 +4,6 @@ from .views import (
     PolicialViaturaDetailsUpdateDeleteView,
     FuncaoDetailsUpdateDeleteView,
     FuncaoListCreateView,
-
-
-
-
     PolicialViaturaAtivaView
 )
 
@@ -15,8 +11,7 @@ urlpatterns = [
     path(
         'ativa/<int:id>/',
         PolicialViaturaAtivaView.as_view(),
-        name='ativa'
-    ),
+        name='ativa'),
     path(
         '',
         PolicialViaturaListCreateView.as_view(),
