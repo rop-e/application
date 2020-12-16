@@ -60,12 +60,14 @@
             <th>REGISTRO/SISTEMA</th>
             <td>{{ ocorrencia.datacriacao }}</td>
         </tr>
-        {% if ocorrencia.vinculo %}
         <tr>
-            <th>OCORRÊNCIA VINCULADA</th>
-            <td>Ocorrência #{{ ocorrencia.vinculo.id }}</td>
+            <th>OCORRÊNCIA VINCULADA?</th>
+            <td>{% if ocorrencia.vinculo %}<a target="_blank" href="{% url 'ocorrencia:mostrar' id=ocorrencia.vinculo.id %}">Ocorrência #{{ ocorrencia.vinculo.id }}</a>{% else %}-{% endif %}</td>
         </tr>
-        {% endif %}
+        <tr>
+            <th>POSSUI ANEXOS?</th>
+            <td>{% if anexos %}{{ anexos.count }}{% else %}-{% endif %}</td>
+        </tr>
     </tbody>
 </table><br>
 
@@ -126,7 +128,7 @@
     <thead>
         <tr>
             <td colspan="2" style="background-color: #ddd; text-align: center;">
-                <h4>TIPO DE RELATÓRIO</h4>
+                <h4>RELATÓRIO</h4>
             </td>
         </tr>
     </thead>
@@ -538,13 +540,8 @@
             </thead>
             <tbody>
                 <tr>
-                    <th>OBSERVAÇÃO</th>
+                    <td><img src="{{ anexo.anexo.url }}" /></td>
                     <td>{{ anexo.observacao.observacao }}</td>
-                </tr>
-                <tr>
-                    <th style="text-align: center;" colspan="2">
-                        <img src="{{ anexo.anexo.url }}" />
-                    </th>
                 </tr>
             </tbody>
         </table><br>
