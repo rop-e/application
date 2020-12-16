@@ -18,11 +18,9 @@ from .ocorrencia_views import (
     cancel_aditamento,
     verifica_ocorrencia_nao_finalizada,
     listar_ocorrencias_sem_finalizar,
-
     post_anexo,
     get_anexos,
     delete_anexo,
-
     geraemostrapdfocorrencia,
     vincular_ocorrencia,
     post_vincular_ocorrencia
