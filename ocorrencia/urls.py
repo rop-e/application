@@ -5,7 +5,9 @@ from .views import (
     TipoInfracaoListCreateView,
     TipoOcorrenciaListCreateView,
     OcorrenciaDateFilterListView,
-    OcorrenciaEnvolvidosFilterListView
+    OcorrenciaEnvolvidosFilterListView,
+    OrgaoListCreateView,
+    OrgaoDetailsUpdateDeleteView
 )
 
 urlpatterns = [
@@ -33,4 +35,12 @@ urlpatterns = [
         'tipoocorrencia/',
         TipoOcorrenciaListCreateView.as_view(),
         name='create'),
+    path(
+        'orgao/',
+        OrgaoListCreateView.as_view(),
+        name='create'),
+    path(
+        'orgao/<int:pk>/',
+        OrgaoDetailsUpdateDeleteView.as_view(),
+        name='detalhe'),
 ]

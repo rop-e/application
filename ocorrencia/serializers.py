@@ -3,7 +3,8 @@ from .models import (
     Ocorrencia,
     TipoOcorrencia,
     Infracao,
-    ObservacaoOcorrencia
+    ObservacaoOcorrencia,
+    Orgao
 )
 from guarnicao.models import Guarnicao
 from policial.models import Policial
@@ -106,6 +107,12 @@ class GuarnicaoFilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guarnicao
         fields = ["comandante"]
+
+
+class OrgaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Orgao
+        fields = ("__all__")
 
 
 class ListOcorrenciaFilterSerializer(serializers.ModelSerializer):
