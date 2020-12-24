@@ -19,7 +19,7 @@ class FormOcorrencia(forms.ModelForm):
 
     class Meta:
         model = Ocorrencia
-        exclude = ["endereco", "relatorio", "status_previa"]
+        exclude = ["endereco", "relatorio", "status_previa", "orgao"]
 
     def clean_infracao(self):
         infracao = self.cleaned_data["infracao"]

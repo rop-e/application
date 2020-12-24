@@ -32,12 +32,31 @@ class Infracao(models.Model):
         return self.tipo
 
 
+class Orgao(models.Model):
+    orgao = models.CharField(
+            'Órgão', max_length=80,
+            help_text='Informe o Órgão')
+
+    class Meta:
+        verbose_name = 'Órgão'
+        verbose_name_plural = 'Órgãos'
+        db_table = 'orgao'
+
+    def __str__(self):
+        return self.orgao
+
+
 class Ocorrencia(models.Model):
     tipoocorrencia = models.ForeignKey(
                      TipoOcorrencia,
                      verbose_name='Tipo de Ocorrência',
                      on_delete=models.CASCADE,
                      help_text='Informe o tipo de ocorrência')
+    orgao = models.ForeignKey(
+            Orgao,
+            verbose_name='Órgão',
+            on_delete=models.CASCADE, null=True,
+            help_text='Informe o Orgão')
     guarnicao = models.ForeignKey(
                 Guarnicao,
                 verbose_name='Guarnição',
