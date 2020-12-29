@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.filters import RelatedOnlyFieldListFilter
 from .models import (
     TipoServico,
     ModalidadedePoliciamento,
@@ -19,13 +20,35 @@ admin.site.register(GuarnicaoTRAV)
 admin.site.register(Permuta)
 
 
+class FinalizadasListFilter(admin.SimpleListFilter):
+    title = 'Finalizadas'
+    parameter_name = 'finalizada'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('sim', 'Sim'),
+            ('nao',  'Não'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'sim':
+            return queryset.filter(datafechamento__isnull=False)
+        if self.value() == 'nao':
+            return queryset.filter(datafechamento__isnull=True)
+
+        return queryset
+
+
 class GuarnicaoAdmin(admin.ModelAdmin):
     list_display = (
         "comandante",
         "municipio",
         "dataabertura",
-        "datafechamento"
+        "datafechamento",
+        "ativo"
     )
+    search_fields = ["comandante__nomeguerra"]
+    list_filter = [FinalizadasListFilter, "ativo", ('municipio', RelatedOnlyFieldListFilter)]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "municipio":
