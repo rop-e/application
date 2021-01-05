@@ -2,7 +2,8 @@ from django.contrib import admin
 from .models import (
     TipoEnvolvimento,
     Envolvido,
-    Lesao
+    Lesao,
+    TipoLesao
 )
 
 
@@ -16,3 +17,4 @@ class TipoEnvolvimentoAdmin(admin.ModelAdmin):
 admin.site.register(TipoEnvolvimento, TipoEnvolvimentoAdmin)
 admin.site.register(Envolvido)
 admin.site.register(Lesao)
+admin.site.register(TipoLesao)
