@@ -4,6 +4,10 @@ from django.contrib.auth.models import (
     PermissionsMixin,
     BaseUserManager
 )
+from django.dispatch import receiver
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail  
 
 SEXO = (
     ('M', 'MASCULINO'),
@@ -104,3 +108,15 @@ class Usuario(AbstractUsuario):
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'
         db_table = 'contasdeusuario'
+
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    email_plaintext_message = "{}?token={}".format(reverse('resetar-senha:reset-password-request'), reset_password_token.key)
+
+    send_mail(
+        "Redefinição de senha em {title}".format(title="ROP-E"),
+        email_plaintext_message,
+        "rope.17bpm@gmail.com",
+        [reset_password_token.user.email]
+    )
