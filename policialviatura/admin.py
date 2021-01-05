@@ -19,9 +19,9 @@ class FinalizadasListFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'sim':
-            return queryset.filter(guarnicao__datafechamento__isnull=True)
-        if self.value() == 'nao':
             return queryset.filter(guarnicao__datafechamento__isnull=False)
+        if self.value() == 'nao':
+            return queryset.filter(guarnicao__datafechamento__isnull=True)
 
         return queryset
 
@@ -44,7 +44,7 @@ class PolicialViaturaAdmin(admin.ModelAdmin):
             obj.guarnicao.dataabertura.strftime("%d/%m/%Y - %H:%M"))
 
     def guarnicao_finalizada(self, obj):
-        return False if obj.guarnicao.datafechamento else True
+        return True if obj.guarnicao.datafechamento else False
     
     guarnicao_finalizada.short_description = "Guarnição Finalizada"
     guarnicao_finalizada.boolean = True
