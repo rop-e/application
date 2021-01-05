@@ -5,6 +5,7 @@ from django.urls import (
     path,
     include
 )
+from . import views
 
 from contasdeusuario.views import CustomAuthToken
 
@@ -27,6 +28,8 @@ urlpatterns = [
 
     # autenticacao de usuario para o dashboard
     path('contas/', include('dashboard.auth.urls')),
+
+    path('download/', views.download, name='download'),
 
     path(
         BASEURL+'usuario/',
