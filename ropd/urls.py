@@ -29,6 +29,10 @@ urlpatterns = [
     path('contas/', include('dashboard.auth.urls')),
 
     path(
+        BASEURL+'usuario/',
+        include('contasdeusuario.urls')),
+
+    path(
         BASEURL+'policial/',
         include('policial.urls')),
     path(
