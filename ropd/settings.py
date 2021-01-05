@@ -46,6 +46,7 @@ MY_APPS = [
 EXTERNAL_LIBRARYS = [
     'rest_framework',  # rest framework
     'rest_framework.authtoken',  # autenticação do django rest framework
+    'django_rest_passwordreset',  # reset de senha api
 ]
 
 INSTALLED_APPS += MY_APPS
