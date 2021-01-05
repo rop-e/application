@@ -810,8 +810,6 @@ def post_encerra_guarnicao(request):
             PolicialViatura.objects.filter(
                 id=viatura["viatura"],
                 guarnicao=guarnicao).update(kmvolta=viatura["kmvolta"])
-        
-        PolicialViatura.objects.filter(guarnicao=guarnicao).update(ativo=False)
 
         return JsonResponse({
             "pdf": reverse(

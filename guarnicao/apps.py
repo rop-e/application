@@ -5,3 +5,6 @@ class GuarnicaoConfig(AppConfig):
     name = 'guarnicao'
     verbose_name = 'Guarnição'
     verbose_name_plural = 'Guarnições'
+
+    def ready(self):
+        import guarnicao.signals
