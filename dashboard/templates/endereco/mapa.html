@@ -14,18 +14,52 @@
     <div class="card-content text-darken-4 grey-text">
         <span class="card-title">Mapa de Ocorrências</span>
 
-        <div class="col l12 m12 s12">
-            <div class="row l12 m12 s12">
-                <label>Selecione uma cidade</label>
-                <select class="browser-default" id="id_municipio">
-                    {% for municipio in municipios %}
-                        {% if municipio.codigo_ibge == querycidade.codigo_ibge %}
-                            <option value="{{ municipio.codigo_ibge }}" selected>{{ municipio.nome }}</option>
-                        {% else %}
-                            <option value="{{ municipio.codigo_ibge }}">{{ municipio.nome }}</option>
+            <div class="card grey lighten-5">
+                <div class="card-content white-text">
+                    <span class="card-title black-text">
+                        {% if filtros %}
+                            {% for x, v in filtros.items %}
+                                <div class="chip">
+                                    {{ v }}
+                                    <label>{{ x }}</label>
+                                </div>
+                            {% endfor %}
                         {% endif %}
-                    {% endfor %}
-                </select>
+                        <span class="right">{{ qtd }} resultado(s).</span>
+                    </span>
+
+                    <form method="GET">
+                        <div class="row l12 m12 s12">
+                            <div class="col l4 m12 s12">
+                                <label>Cidade</label>
+                                <select class="browser-default" name="municipio">
+                                    <option value selected>---------</option>
+                                    {% for municipio in municipios %}
+                                        <option value="{{ municipio.codigo_ibge }}">{{ municipio }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col l4 m12 s12">
+                                <label>Tipificação penal</label>
+                                <select class="browser-default" name="infracao">
+                                    <option value="" selected>---------</option>
+                                    {% for infracao in infracoes %}
+                                        <option value="{{ infracao.id }}">{{ infracao }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row l12 m12 s12 right-align">
+                            <button class="btn waves-effect waves-light" id="id_clear_reload_filter" type="reset">Limpar
+                                <i class="material-icons left">cancel</i>
+                            </button>
+                            <button class="btn waves-effect waves-light" type="submit">Pesquisar
+                                <i class="material-icons left">search</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <div class="row l12 m12 s12">
@@ -49,12 +83,25 @@ map.addControl(new L.Control.Fullscreen({
     },
     position: 'topright'
 }));
+</script>
 
-$("#id_municipio").on("change", function(event){
-    event.stopPropagation();
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    var buttonReset = $("#id_clear_reload_filter");
 
-    var codigo_ibge = $(this).val();
-    window.location.href = "{% url 'endereco:index' %}" + codigo_ibge + "/"; 
+    buttonReset.attr("disabled", "");
+
+    buttonReset.on("click", () => reload());
+
+    function reload(){
+        window.location = window.location.pathname;
+    }
+
+    if($(".chip").length){
+        buttonReset.removeAttr("disabled");
+    }
 });
 </script>
+{% endblock javascript %}
 {% endblock content %}
