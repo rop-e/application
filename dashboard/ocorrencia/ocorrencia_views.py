@@ -251,6 +251,9 @@ def mostrar(request, id):
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
+from utils.pycrypto import encrypt, decrypt
+
+
 @xframe_options_exempt
 def geraemostrapdfocorrencia(request, id):
     try:
@@ -262,6 +265,15 @@ def geraemostrapdfocorrencia(request, id):
         arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
         
         filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+    
+        message = """ID DA GUARNIÇÃO: {}
+MATRÍCULA DO COMANDANTE DA GUARNIÇÃO: {}
+ID DA OCORRÊNCIA: {}
+DATA CRIAÇÃO DA OCORRÊNCIA: {}""".format(
+            ocorrencia.guarnicao.id,
+            ocorrencia.guarnicao.comandante.id,
+            ocorrencia.id,
+            ocorrencia.datacriacao)
 
         context_pdf = {
             "ocorrencia": ocorrencia,
@@ -271,7 +283,8 @@ def geraemostrapdfocorrencia(request, id):
             "envolvidos": Envolvido.objects.filter(
                 ocorrencia=ocorrencia),
             "anexos": Anexo.objects.filter(ocorrencia=ocorrencia),
-            "aditamentos": ObservacaoOcorrencia.objects.filter(ocorrencia=ocorrencia)
+            "aditamentos": ObservacaoOcorrencia.objects.filter(ocorrencia=ocorrencia),
+            "hash": encrypt("3ut3nh04f0rc@2021", message)
         }
 
         try:

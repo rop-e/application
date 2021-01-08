@@ -81,6 +81,8 @@ class Ocorrencia(models.Model):
                     verbose_name='Status de pré-visualização',
                     default=True)
 
+    hash = models.CharField(max_length=255, blank=True)
+
     relatorio = models.TextField(
                 'Relatório da ocorrência',
                 null=True, blank=True)

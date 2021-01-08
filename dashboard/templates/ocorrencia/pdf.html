@@ -5,8 +5,9 @@
     <title>ROP-E - Relatório - Ocorrência nº {{ ocorrencia.id }}</title>
     <style type="text/css">
         @page { size: A4;
-            @frame paginacao_frame { -pdf-frame-content: paginacao; top: 25pt; right: 25pt; width: 20pt; }
+            @frame paginacao_frame { -pdf-frame-content: paginacao; top: 25pt; right: 25pt; width: 50pt; }
             @frame content_frame { left: 40pt; width: 512pt; top: 65pt; height: 692pt; }
+            @frame footer_frame { -pdf-frame-content: footer_content; left: 25pt; top: 800pt; }
         }
         div.cabecalho { border: 6px solid #000; padding: 11px; text-align: center; }
         div.cabecalho span { font-size: 1.2em; font-weight: bold; }
@@ -20,11 +21,13 @@
         p { font-size: 1em; }
         div.assinaturas { text-align: center; font-size: 1.5em; }
         div.assinaturas p { margin: 180px auto 0 auto; }
+        #footer_content table { -pdf-keep-in-frame-mode: shrink; }
     </style>
 </head>
 
 <body>
-<div id="paginacao" style="font-size: 1.5em;"><pdf:pagenumber> </div>
+<div id="paginacao" style="font-size: 1.5em;"><pdf:pagenumber> de <pdf:pagecount> </div>
+<div id="footer_content">HASH: {{ hash }}</div>
 
 <div class="cabecalho">
     <img src="{% static 'assets/img/LogoBTM17.png' %}" width="50" /><br><br>
@@ -519,34 +522,6 @@
         </tr>
     </tbody>
 </table><br>
-
-{% if anexos %}
-<table class="table">
-    <thead>
-        <tr>
-            <th colspan="2" style="background-color: #ddd; text-align: center;">
-                <h4>ANEXOS</h4>
-            </th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-    {% for anexo in anexos %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="text-align: center;" colspan="2">Anexo {{ forloop.counter }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><img src="{{ anexo.anexo.url }}" /></td>
-                    <td>{{ anexo.observacao.observacao }}</td>
-                </tr>
-            </tbody>
-        </table><br>
-    {% endfor %}
-{% endif %}
 
 {% if aditamentos %}
 <table class="table">
