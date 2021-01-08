@@ -8,6 +8,7 @@ from .serializers import (
     TipoEnvolvimentoSerializer,
     EnvolvidoSerializer,
     TipoLesaoSerializer,
+    ListLesaoSerializer,
     LesaoSerializer,
     ListEnvolvidoSerializer
 )
@@ -154,6 +155,12 @@ class LesaoListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save()
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return ListLesaoSerializer
+        else:
+            return LesaoSerializer
 
 
 class LesaoDetailsUpdateDeleteView(

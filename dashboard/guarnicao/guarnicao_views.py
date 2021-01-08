@@ -29,6 +29,7 @@ from policial.models import Policial
 from ocorrencia.models import Ocorrencia
 from policialviatura.models import PolicialViatura
 from rat.models import RAT
+from endereco.models import Municipios
 
 # SERIALIZER
 from policialviatura.serializers import ListPolicialViaturaSerializer
@@ -83,6 +84,7 @@ def filter(request):
     qs = Guarnicao.objects.all()
     status = request.GET.get("status", "")
     companhia = request.GET.get("companhia", "")
+    municipio = request.GET.get("municipio", "")
     dataabertura = request.GET.get("data_abertura")
     datafechamento = request.GET.get("data_fechamento")
     bloqueadas = request.GET.get("bloqueadas", "")
@@ -95,6 +97,9 @@ def filter(request):
 
     if is_valid_queryparam(companhia):
         qs = qs.filter(companhia=companhia)
+
+    if is_valid_queryparam(municipio):
+        qs = qs.filter(municipio=municipio)
     
     if is_valid_queryparam(dataabertura):
         dabertura = timezone.now().strptime(dataabertura, "%d/%m/%Y")
@@ -120,7 +125,6 @@ def listar_guarnicoes_todas(request):
         id_companhias.append(guarnicao.companhia.id)
 
     numero_pagina = request.GET.get("pagina", "")
-
     paginador = Paginator(qs.order_by("-id"), 10)
 
     filtros = QueryDict(mutable=True)
@@ -174,12 +178,32 @@ def listar_guarnicoes_comandante(request):
 
 @login_required
 def listar_guarnicoes_ativas(request):
-    paginador = Paginator(
-                get_guarnicoes().filter(datafechamento=None, ativo=True), 10)
-    numero_pagina = request.GET.get("pagina")
+    qs = filter(request).filter(datafechamento=None, ativo=True)
+
+    id_companhias = []
+    id_municipios = []
+
+    for guarnicao in Guarnicao.objects.filter(datafechamento__isnull=True, ativo=True):
+        id_companhias.append(guarnicao.companhia.id)
+        id_municipios.append(guarnicao.municipio.codigo_ibge)
+
+    numero_pagina = request.GET.get("pagina", "")
+    paginador = Paginator(qs.order_by("-id"), 10)
+
+    filtros = QueryDict(mutable=True)
+
+    for k, v in request.GET.items():
+        if v != "":
+            if k == "companhia":
+                filtros.appendlist("Companhia", Companhia.objects.get(id=v))
+            elif k == "municipio":
+                filtros.appendlist("Município atuante", Municipios.objects.get(codigo_ibge=v))
 
     context = {
-        "guarnicoes": paginador.get_page(numero_pagina)
+        "guarnicoes": paginador.get_page(numero_pagina),
+        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct(),
+        "municipios": Municipios.objects.filter(codigo_ibge__in=id_municipios).distinct(),
+        "filtros": filtros,
     }
 
     return render(request, "gestao/listar_guarnicoes_ativas.html", context)
@@ -810,8 +834,6 @@ def post_encerra_guarnicao(request):
             PolicialViatura.objects.filter(
                 id=viatura["viatura"],
                 guarnicao=guarnicao).update(kmvolta=viatura["kmvolta"])
-        
-        PolicialViatura.objects.filter(guarnicao=guarnicao).update(ativo=False)
 
         return JsonResponse({
             "pdf": reverse(

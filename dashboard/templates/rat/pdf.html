@@ -1,0 +1,388 @@
+{% load static %}
+<html>
+<head>
+<meta charset="utf-8">
+    <title>ROP-E - Relatório - Registro de Acidente de Trânsito nº {{ rat.id }}</title>
+    <style type="text/css">
+        @page { size: A4;
+            @frame paginacao_frame { -pdf-frame-content: paginacao; top: 25pt; right: 25pt; width: 20pt; }
+            @frame content_frame { left: 40pt; width: 512pt; top: 65pt; height: 692pt; }
+        }
+        div.cabecalho { border: 6px solid #000; padding: 11px; text-align: center; }
+        div.cabecalho span { font-size: 1.2em; font-weight: bold; }
+        table.table { -pdf-keep-with-next: false; font-size: 1.2em; }
+        table.table, th, td { border: 1px solid #000; text-align: left; }
+        table.table th, td { padding: 5px; }
+        table.table th { width: 40%; }
+        table.table tr { page-break-inside: avoid !important; page-break-after: auto; }
+        h3 { font-size: 1.5em; }
+        h4 { font-size: 1.1em; }
+        p { font-size: 1em; }
+        div.assinaturas { text-align: center; font-size: 1.5em; }
+        div.assinaturas p { margin: 180px auto 0 auto; }
+    </style>
+</head>
+
+<body>
+<div id="paginacao" style="font-size: 1.5em;"><pdf:pagenumber> </div>
+
+<div class="cabecalho">
+    <img src="{% static 'assets/img/LogoBTM17.png' %}" width="50" /><br><br>
+    <span>POLÍCIA MILITAR DA BAHIA</span><br>
+    <span>COMANDO DE OPERAÇÕES POLICIAIS MILITARES</span><br>
+    <span>COMANDO DE POLICIAMENTO DA REGIÃO SUDOESTE</-span><br>
+    <span>{{ rat.guarnicao.comandante.batalhao }}</span><br>
+    <span>{{ rat.guarnicao.companhia }}</span><br>
+</div><br>
+
+<table class="table">
+    <thead>
+        <td style="text-align: center;">
+            <h3>REGISTRO DE OCORRÊNCIA POLICIAL - DIGITAL<br>Nº {{ rat.id }}</h3>
+        </td>
+    </thead>
+</table><br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h3>PROTOCOLO</h3>
+            </td>    
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>DATA E HORA</th>
+            <td>{{ rat.dataocorrencia }}</td>
+        </tr>
+        <tr>
+            <th>REGISTRO/SISTEMA</th>
+            <td>{{ rat.datacriacao }}</td>
+        </tr>
+        <tr>
+            <th>HOUVE INFRAÇÃO?</th>
+            <td>{% if rat.infracao %}SIM{% else %}NÃO{% endif %}</td>
+        </tr>
+        <tr>
+            <th>POSSUI ANEXOS?</th>
+            <td>{% if anexos %}{{ anexos.count }}{% else %}-{% endif %}</td>
+        </tr>
+    </tbody>
+</table><br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>EFETIVO DE SERVIÇO</h4>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>COMPANHIA</th>
+            <td>{{ rat.guarnicao.companhia }}</td>
+        </tr>
+        <tr>
+            <th>COMANDANTE</th>
+            <td>{{ rat.guarnicao.comandante }}</td>
+        </tr>
+        <tr>
+            <th>E-MAIL</th>
+            <td>{{ rat.guarnicao.comandante.matricula.email }}</td>
+        </tr>
+    </tbody>
+</table>
+{% if pms %}
+<table class="table">
+    <thead>
+        <tr>
+            <td style="background-color: #ddd; text-align: center;">
+                <h4>POLICIAIS</h4>
+            </td>    
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                {% for pm in pms %}
+                    {% if pm.viatura is not None %}
+                        {% ifchanged pm.viatura %}
+                            VIATURA: <b>{{ pm.viatura }}</b> ({{ pm.viatura.placa }}) - {{ pm.viatura.modelo }} - <b>KM Inicial</b>: {{ pm.kmsaida }} - <b>KM Final</b>: {{ pm.kmvolta }}<br>
+                        {% endifchanged %}
+                        - {{ pm.policial }} - {{ pm.funcao }}<br>
+                    {%else %}
+                        - {{ pm.policial }} - {{ pm.funcao }}<br>
+                    {% endif %}
+                    <br>
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+<br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>RELATÓRIO</h4>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>TIPO</th>
+            <td>REGISTRO DE ACIDENTE DE TRÂNSITO</td>
+        </tr>
+        <tr>
+            <th>TIPO DE ACIDENTE</th>
+            <td>{{ rat.tipoacidente.tipo }}</td>
+        </tr>
+        <tr>
+            <th>CONDIÇÃO DE SINALIZAÇÃO</th>
+            <td>{{ rat.condicaosinalizacao.condicao }}</td>
+        </tr>
+        <tr>
+            <th>CONDIÇÃO DA VIA</th>
+            <td>{{ rat.condicaovia.condicao }}</td>
+        </tr>
+        <tr>
+            <th>CONDIÇÃO METEOROLÓGICA</th>
+            <td>{{ rat.condicaometeorologica.condicao }}</td>
+        </tr>
+        <tr>
+            <th>TIPO DE PAVIMENTAÇÃO</th>
+            <td>{{ rat.pavimentacao.pavimentacao }}</td>
+        </tr>
+        <tr>
+            <th>TRAÇADO DA VIA</th>
+            <td>{{ rat.tracadovia.tracado }}</td>
+        </tr>
+        <tr>
+            <th>DATA</th>
+            <td>{{ rat.dataocorrencia | date }}</td>
+        </tr>
+        <tr>
+            <th>HORÁRIO</th>
+            <td>{{ rat.dataocorrencia | time }}</td>
+        </tr>
+        <tr>
+            <th>RUA</th>
+            <td>{{ rat.endereco.rua }}</td>
+        </tr>
+        <tr>
+            <th>BAIRRO/POVOADO/DISTRITO</th>
+            <td>{{ rat.endereco.bairro }}</td>
+        </tr>
+        <tr>
+            <th>MUNICÍPIO</th>
+            <td>{{ rat.endereco.municipio.nome }}</td>
+        </tr>
+    </tbody>
+</table><br>
+
+{% if envolvidos %}
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>PESSOAS ENVOLVIDAS NA OCORRÊNCIA</h4>
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+    {% for envolvido in envolvidos %} 
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">Envolvido {{ forloop.counter }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in envolvido.ratveiculoenvolvidos_set.all %}
+                    <tr>
+                        <th>VEÍCULO</th>
+                        <td>{{ x.ratveiculos.veiculo }}</td>
+                    </tr>
+                {% empty %}
+                {% endfor %}
+                <tr>
+                    <th>TIPO DE ENVOLVIMENTO</th>
+                    <td>{{ envolvido.tipoenvolvimento.tipo }}</td>
+                </tr>
+                <tr>
+                    <th>DESCRIÇÃO</th>
+                    <td>
+                        NOME: {{ envolvido.pessoa.nome }}<br>
+                        SEXO: {% if envolvido.pessoa.sexo == "M" %}MASCULINO{% else %}FEMININO{% endif %}<br>
+                        {% if envolvido.pessoa.datanascimento is not None %}DATA DE NASCIMENTO: {{ envolvido.pessoa.datanascimento }}<br>{% endif %}
+                        {% if envolvido.pessoa.mae != '' %}NOME DA MÃE: {{ envolvido.pessoa.mae }}<br>{% endif %}
+                        {% if envolvido.pessoa.cpf != '' %}CPF: {{ envolvido.pessoa.cpf }}<br>{% endif %}
+                        {% if envolvido.pessoa.rg != '' %}RG: {{ envolvido.pessoa.rg }}<br>{% endif %}
+                        {% if envolvido.pessoa.cnh != '' %}CNH: {{ envolvido.pessoa.cnh }}<br>{% endif %}
+                        {% if envolvido.pessoa.categoriacnh is not None %}CATEGORIA CNH: {{ envolvido.pessoa.categoriacnh }}<br>{% endif %}
+                        {% if envolvido.pessoa.datavencimentocnh is not None %}VENCIMENTO CNH: {{ envolvido.pessoa.datavencimentocnh }}{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>VULGO/APELIDO</th>
+                    <td>{% if envolvido.pessoa.apelido == '' %}Não informado.{% else %}{{ envolvido.pessoa.apelido }}{% endif %}</td>
+                </tr>
+                {% if envolvido.localrecebedor is not None %}
+                    <tr>
+                        <th>LOCAL DE APRESENTAÇÃO</th>
+                        <td>{{ envolvido.localrecebedor }}</td>
+                    </tr>
+                {% endif %}
+                {% if envolvido.agenterecebedor is not None %}
+                    <tr>
+                        <th>AGENTE RECEBEDOR</th>
+                        <td>{{ envolvido.agenterecebedor }}</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table><br>
+    {% endfor %}
+{% endif %}
+
+{% if veiculos %}
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>VEÍCULOS APREENDIDOS</h4>
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+    {% for veiculo in veiculos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">Veículo {{ forloop.counter }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>DESCRIÇÃO</th>
+                    <td>
+                        CATEGORIA: {{ veiculo.veiculo.categoria }}<br>
+                        MARCA: {{ veiculo.veiculo.marca }}<br>
+                        MODELO: {{ veiculo.veiculo.modelo }} ({{ veiculo.veiculo.cor }})<br>
+                        {% if veiculo.veiculo.placa is not None %}PLACA: {{ veiculo.veiculo.placa }}<br>{% endif %}
+                        {% if veiculo.veiculo.chassi is not None %}CHASSI: {{ veiculo.veiculo.chassi }}{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>LOCAL DE APRESENTAÇÃO</th>
+                    <td>{{ veiculo.localrecebedor }}</td>
+                </tr>
+                <tr>
+                    <th>AGENTE RECEBEDOR</th>
+                    <td>{{ veiculo.agenterecebedor }}</td>
+                </tr>
+                {% if veiculo.observacao is not None %}
+                    <tr>
+                        <th>OBSERVAÇÃO:</th>
+                        <td>{{ veiculo.observacao }}</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table><br>
+    {% endfor %}
+{% endif %}
+
+{% if objetos %}
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>OBJETOS APREENDIDOS</h4>
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+    {% for objeto in objetos %} 
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">Objeto {{ forloop.counter }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>DESCRIÇÃO</th>
+                    <td>{{ objeto.descricao }}</td>
+                </tr>
+                <tr>
+                    <th>QUANTIDADE</th>
+                    <td>{{ objeto.quantidade }}</td>
+                </tr>
+                <tr>
+                    <th>LOCAL DE CONDUÇÃO</th>
+                    <td>{{ objeto.localconducao }}</td>
+                </tr>
+            </tbody>
+        </table><br>
+    {% endfor %}
+{% endif %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="1" style="background-color: #ddd; text-align: center;">
+                <h3>RELATÓRIO DA OCORRÊNCIA</h3>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ rat.relatorio }}</td>
+        </tr>
+    </tbody>
+</table><br>
+
+{% if anexos %}
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>ANEXOS</h4>
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+    {% for anexo in anexos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">Anexo {{ forloop.counter }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="{{ anexo.anexo.url }}" /></td>
+                    <td>{{ anexo.observacao.observacao }}</td>
+                </tr>
+            </tbody>
+        </table><br>
+    {% endfor %}
+{% endif %}
+
+<p style="text-align: right; font-size: 1.5em;">{{ rat.dataocorrencia }}</p>
+
+<div class="assinaturas">
+    <p>Comandante da Guarnição:<br><br>
+        <hr width="75%">
+        {{ rat.guarnicao.comandante }}
+    </p>
+</div>
+</body>
+</html>

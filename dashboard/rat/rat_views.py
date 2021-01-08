@@ -2,7 +2,10 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import (
+    JsonResponse,
+    FileResponse
+)
 from dashboard.guarnicao.guarnicao_views import (
     verifica_guarnicao_ativa,
     get_guarnicao
@@ -40,10 +43,10 @@ from rat.models import (
     RAT,
     RATObjetos,
     RATVeiculoEnvolvidos,
-    RATVeiculos
+    RATVeiculos,
+    TipoAcidente
 )
 from policial.models import Policial
-from rat.models import TipoAcidente
 from endereco.models import Municipios
 from veiculo.models import Veiculo
 from envolvido.models import Envolvido
@@ -61,6 +64,9 @@ from dashboard.rat.forms import (
     FormEditarRAT,
     FormEditarRelatorio
 )
+from policialviatura.models import PolicialViatura
+from ocorrencia.models import ObservacaoOcorrencia
+from ropd.settings import PDF_ROOT
 
 
 def is_valid_queryparam(param):
@@ -168,6 +174,42 @@ def mostrar(request, id):
     }
 
     return render(request, "rat/mostrar.html", context)
+
+
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+@xframe_options_exempt
+def geraemostrapdfrat(request, id):
+    try:
+        rat = RAT.objects.get(id=id)
+
+        pasta = "rats/"
+        nomearquivo = "RAT_" + str(rat.id) + "-" +\
+            timezone.localtime(rat.dataocorrencia).strftime("%Y")
+        arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+        
+        filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+
+        context_pdf = {
+            "rat": rat,
+            "pms": PolicialViatura.objects.filter(
+                guarnicao=rat.guarnicao).order_by(
+                    "policial__nomeguerra"),
+            "envolvidos": Envolvido.objects.filter(
+                rat=rat),
+            "objetos": RATObjetos.objects.filter(rat=rat),
+            "veiculos": RATVeiculos.objects.filter(rat=rat),
+            "anexos": Anexo.objects.filter(rat=rat)
+        }
+
+        GerarPDF("rat/pdf.html", context_pdf, arquivo)
+
+        with open(filename, 'r'):
+            response = FileResponse(open(filename))
+            return response
+
+    except Exception as error:
+        raise error
 
 
 @login_required

@@ -7,19 +7,42 @@ from endereco.models import (
 from dashboard.endereco.forms import FormEndereco
 from django.http import JsonResponse
 from utils.extrair_lat_lng import extract_lat_lng
+from ocorrencia.models import (
+    Ocorrencia,
+    Infracao
+)
+from django.http import QueryDict
 
 
 @login_required
-def index(request, codigo_ibge=None):
-    if codigo_ibge is None:
-        codigo_ibge = "2911709"
+def index(request):
+
+    id_infracoes = []
+
+    cidade = request.GET.get("municipio", None)
+    infracao = request.GET.get("infracao", None)
+
+    for ocorrencia in Ocorrencia.objects.all():
+        id_infracoes.append(ocorrencia.infracao.id)
+
+    filtros = QueryDict(mutable=True)
+
+    for k, v in request.GET.items():
+        if v != "":
+            if k == "municipio":
+                filtros.appendlist("Cidade", Municipios.objects.get(codigo_ibge=v))
+            if k == "infracao":
+                filtros.appendlist("Infração", Infracao.objects.get(id=v))
+
     context = {
-        "cidade": get_cidade(codigo_ibge),
-        "querycidade": Municipios.objects.get(codigo_ibge=codigo_ibge),
-        "coordenadas": get_coordenadas(),
+        "cidade": get_cidade(cidade),
         "municipios": Municipios.objects.filter(
-            batalhaomunicipios__batalhao__batalhao="17º BPM").order_by(
-                "batalhaomunicipios__municipio__nome")
+            batalhaomunicipios__batalhao__batalhao=request.user.policial.batalhao).order_by(
+                "batalhaomunicipios__municipio__nome"),
+        "filtros": filtros,
+        "coordenadas": get_coordenadas(query(cidade, infracao)),
+        "qtd": query(cidade, infracao).count(),
+        "infracoes": Infracao.objects.filter(id__in=id_infracoes),
     }
 
     return render(request, "endereco/mapa.html", context)
@@ -77,19 +100,37 @@ def get_municipios():
 
 
 def get_cidade(codigo_ibge):
+    if codigo_ibge == "" or codigo_ibge is None:
+        codigo_ibge = 2911709
+
     cidade = Municipios.objects.get(codigo_ibge=codigo_ibge)
     latitude = cidade.latitude
     longitude = cidade.longitude
     return "{}, {}".format(latitude, longitude)
 
 
-def get_coordenadas():
-    enderecos = Endereco.objects.filter(ocorrencia__isnull=False)
+def query(cidade, infracao):
+    if cidade == "" or cidade is None:
+        cidade = 2911709
+
+    if infracao:
+        return Endereco.objects.filter(
+        ocorrencia__isnull=False,
+        municipio__codigo_ibge=cidade, ocorrencia__infracao=infracao)
+    else:
+        return Endereco.objects.filter(
+        ocorrencia__isnull=False,
+        municipio__codigo_ibge=cidade)
+
+
+
+def get_coordenadas(qs):
     coordenadas = []
 
-    for coordenada in enderecos:
+    for coordenada in qs:
         coordenadas.append([
             float(coordenada.latitude),
             float(coordenada.longitude)
         ])
+
     return coordenadas

@@ -23,12 +23,61 @@
 
                 <div class="divider"></div>
 
+                <div class="card grey lighten-5">
+                    <div class="card-content white-text">
+                        <span class="card-title black-text">
+                            <strong>Filtrar</strong>
+                            {% if filtros %}
+                                {% for x, v in filtros.items %}
+                                    <div class="chip">
+                                        {{ v }}
+                                        <label>{{ x }}</label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </span>
+
+                        <form method="GET">
+                            <div class="row l12 m12 s12">
+                                <div class="col l4 m12 s12">
+                                    <label>Companhia</label>
+                                    <select class="browser-default" name="companhia">
+                                        <option value="" selected>---------</option>
+                                        {% for companhia in companhias %}
+                                            <option value="{{ companhia.id }}">{{ companhia }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col l4 m12 s12">
+                                    <label>Município atuante</label>
+                                    <select class="browser-default" name="municipio">
+                                        <option value="" selected>---------</option>
+                                        {% for municipio in municipios %}
+                                            <option value="{{ municipio.codigo_ibge }}">{{ municipio }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row l12 m12 s12 right-align">
+                                <button class="btn waves-effect waves-light" id="id_clear_reload_filter" type="reset">Limpar
+                                    <i class="material-icons left">cancel</i>
+                                </button>
+                                <button class="btn waves-effect waves-light" type="submit">Pesquisar
+                                    <i class="material-icons left">search</i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 {% if guarnicoes %}
                 <table class="highlight responsive-table centered">
                     <thead>
                         <tr>
                             <th>Comandante</th>
                             <th>Companhia</th>
+                            <th>Município atuante</th>
                             <th>Abertura</th>
                             <th>Visualizar</th>
                         </tr>
@@ -38,6 +87,7 @@
                         <tr>
                             <td>{{ guarnicao.comandante }}</td>
                             <td>{{ guarnicao.companhia }}</td>
+                            <td>{{ guarnicao.municipio }}</td>
                             <td>
                                 <span class="full-text">{{ guarnicao.dataabertura }}</span>
                                 <span class="short-text center">{{ guarnicao.dataabertura|date:"d/m/Y" }} - {{ guarnicao.dataabertura|time }}</span>
@@ -106,4 +156,24 @@
         </div>
     </div>
 </div>
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+    var buttonReset = $("#id_clear_reload_filter");
+
+    buttonReset.attr("disabled", "");
+
+    buttonReset.on("click", () => reload());
+
+    function reload(){
+        window.location = window.location.pathname;
+    }
+
+    if($(".chip").length){
+        buttonReset.removeAttr("disabled");
+    }
+});
+</script>
+{% endblock javascript %}
 {% endblock content %}

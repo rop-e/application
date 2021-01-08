@@ -11,11 +11,9 @@ from .rat_views import (
     post_edit_rat,
     adicionar_veiculos_envolvidos,
     post_delete_rat,
-
     post_anexo,
     get_anexos,
     delete_anexo,
-    
     get_objetos,
     post_objeto,
     edit_objeto,
@@ -23,9 +21,6 @@ from .rat_views import (
     delete_objeto,
     edit_relatorio,
     post_edit_relatorio,
-
-    
-
     get_veiculos,
     post_veiculo,
     checar_veiculo_placa_existente,
@@ -33,12 +28,9 @@ from .rat_views import (
     edit_veiculo,
     post_edit_veiculo,
     delete_veiculo,
-
-
-        
     post_preview_rat,
     preview_rat,
-
+    geraemostrapdfrat
 )
 
 app_name = "rat"
@@ -49,6 +41,8 @@ urlpatterns = [
     path(
         "mostrar/<int:id>/", mostrar, name="mostrar"),
     path(
+        "mostrar/<int:id>/pdf/", geraemostrapdfrat, name="geraemostrapdfrat"),
+    path(
         "rat/<int:id>/edit",
         edit_rat,
         name="edit_rat"),
@@ -56,16 +50,12 @@ urlpatterns = [
         "rat/post/ajax/",
         post_edit_rat,
         name="post_edit_rat"),
-
-
     path(
         "relatorio/<int:id>/edit",
         edit_relatorio, name="edit_relatorio"),
     path(
         "relatorio/post/ajax",
         post_edit_relatorio, name="post_edit_relatorio"),
-
-
     path(
         "verifica/pendente/get/ajax/",
         verifica_rat_nao_finalizada,
@@ -84,7 +74,6 @@ urlpatterns = [
     path(
         "adicionar/rat/<int:rat>/veiculos_envolvidos/",
         adicionar_veiculos_envolvidos, name="adicionar_veiculos_envolvidos"),
-
     path(
         "adicionar/rat/preview/",
         post_preview_rat, name="post_preview_rat"),
@@ -94,7 +83,6 @@ urlpatterns = [
     path(
         "rat/post/ajax/delete_rat/",
         post_delete_rat, name="post_delete_rat"),
-
     path(
         "get/ajax/anexos",
         get_anexos,
@@ -107,7 +95,6 @@ urlpatterns = [
         "post/ajax/anexo/delete",
         delete_anexo,
         name="delete_anexo"),
-
     path(
         "get/ajax/objetos",
         get_objetos,
@@ -128,8 +115,6 @@ urlpatterns = [
         "post/ajax/objeto/delete",
         delete_objeto,
         name="delete_objeto"),
-
-
     path(
         "get/ajax/veiculos",
         get_veiculos,

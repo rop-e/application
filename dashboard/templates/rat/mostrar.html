@@ -37,11 +37,11 @@
                                     </button>
                                 {% endif %}
                             {% else %}
-                                <!-- <a href="#pdf" target="_blank">
+                                <a href="{% url 'rat:geraemostrapdfrat' id=rat.id %}" target="_blank">
                                     <button class="btn waves-effect waves-light right">
                                         <i class="material-icons left">pageview</i>PDF
                                     </button>
-                                </a> -->
+                                </a>
                             {% endif %}
                         </div>
                     </div>

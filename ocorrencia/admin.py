@@ -4,11 +4,13 @@ from .models import (
     Infracao,
     Ocorrencia,
     GuarnicaoApoio,
-    ObservacaoOcorrencia
+    ObservacaoOcorrencia,
+    Orgao
 )
 
 admin.site.register(TipoOcorrencia)
 admin.site.register(Infracao)
+admin.site.register(Orgao)
 admin.site.register(Ocorrencia)
 admin.site.register(GuarnicaoApoio)
 admin.site.register(ObservacaoOcorrencia)

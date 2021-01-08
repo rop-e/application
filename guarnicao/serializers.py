@@ -9,6 +9,7 @@ from .models import (
     GuarnicaoTRAV,
     Permuta
 )
+from policial.models import Policial
 
 
 class CompanhiaSerializer(serializers.ModelSerializer):
@@ -77,6 +78,20 @@ class PermutaSerializer(serializers.ModelSerializer):
             'datacriacao',
             'dataatualizacao',
         )
+
+
+class ComandanteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Policial
+        fields = ["id", "matricula", "postograduacao", "nomeguerra"]
+        depth = 2
+
+
+class ListGuarnicaoSerializer(serializers.ModelSerializer):
+    comandante = ComandanteSerializer()
+    class Meta:
+        model = Guarnicao
+        fields = ("__all__")
 
 
 class ListGuarnicaoAITSerializer(serializers.ModelSerializer):

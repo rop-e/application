@@ -103,7 +103,7 @@ class PolicialViaturaAtivaView(generics.ListAPIView):
         HTTP Verbs:
             GET: policialviatura/ativa/<id da guarnicao>/
     """
-    serializer_class = PolicialViaturaSerializer
+    serializer_class = ListPolicialViaturaSerializer
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]

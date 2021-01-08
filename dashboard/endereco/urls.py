@@ -9,7 +9,6 @@ app_name = 'endereco'
 
 urlpatterns = [
     path('', index, name='index'),
-    path('<str:codigo_ibge>/', index),
     path(
         "editar/endereco/<int:id>/",
         edit_endereco, name="edit_endereco"),

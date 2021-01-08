@@ -8,21 +8,21 @@ from .models import Usuario
 class FormularioCriacaoUsuario(forms.ModelForm):
     """Formulário para criação de usuário"""
     senha1 = forms.CharField(
-             label='Senha',
+             label="Senha",
              widget=forms.PasswordInput)
     senha2 = forms.CharField(
-             label='Confirmação de Senha',
+             label="Confirmação de Senha",
              widget=forms.PasswordInput)
 
     class Meta:
         model = Usuario
         fields = (
-            'nome',
-            'sexo',
-            'email',
-            'dtnascimento',
-            'cpf',
-            'matricula',
+            "nome",
+            "sexo",
+            "email",
+            "dtnascimento",
+            "cpf",
+            "matricula",
         )
 
     def clean_password2(self):
@@ -42,19 +42,24 @@ class FormularioCriacaoUsuario(forms.ModelForm):
 
 class FormularioAlteracaoUsuario(forms.ModelForm):
     """Formulário de alteração de policial"""
-    senha = ReadOnlyPasswordHashField()
+    senha = ReadOnlyPasswordHashField(
+            label=("Senha"),
+            help_text=(
+                "As senhas brutas não são armazenadas, portanto, não há como ver "
+                "a senha deste usuário, mas você pode alterar a senha "
+                "usando <a href=\"../password/\">este formulário</a>."))
 
     class Meta:
         model = Usuario
         fields = (
-            'nome',
-            'sexo',
-            'email',
-            'dtnascimento',
-            'cpf',
-            'matricula',
-            'is_active',
-            'is_staff',
+            "nome",
+            "sexo",
+            "email",
+            "dtnascimento",
+            "cpf",
+            "matricula",
+            "is_active",
+            "is_staff",
         )
 
     def clean_password(self):
@@ -66,37 +71,37 @@ class UsuarioAdmin(BaseUserAdmin):
     add_form = FormularioCriacaoUsuario
 
     list_display = (
-        'matricula',
-        'nome',
-        'email',
-        'is_staff'
+        "matricula",
+        "nome",
+        "email",
+        "is_staff"
     )
     list_filter = (
-        'groups',
-        'is_active'
+        "groups",
+        "is_active"
     )
 
     add_fieldsets = (
         (None, {
-            'classes': ('wide',),
-            'fields': (
-                    'matricula',
-                    'nome',
-                    'sexo',
-                    'email',
-                    'cpf',
-                    'dtnascimento',
-                    'senha1',
-                    'senha2'
+            "classes": ("wide",),
+            "fields": (
+                    "matricula",
+                    "nome",
+                    "sexo",
+                    "email",
+                    "cpf",
+                    "dtnascimento",
+                    "senha1",
+                    "senha2"
                 ),
         }),
     )
     search_fields = (
-        'matricula',
-        'nome',
-        'email'
+        "matricula",
+        "nome",
+        "email"
     )
-    ordering = ('nome',)
+    ordering = ("nome",)
 
     def get_fieldsets(self, request, obj=None):
         if not obj:
@@ -104,28 +109,28 @@ class UsuarioAdmin(BaseUserAdmin):
 
         if request.user.is_superuser:
             perm_fields = (
-                'is_active',
-                'is_staff',
-                'is_superuser',
-                'groups'
+                "is_active",
+                "is_staff",
+                "is_superuser",
+                "groups"
             )
         else:
             perm_fields = (
-                'is_active',
-                'groups'
+                "is_active",
+                "groups"
             )
 
         return [
-            (None, {'fields': ('matricula', 'senha')}),
-            ('Informações pessoais', {'fields': (
-                    'nome',
-                    'sexo',
-                    'cpf',
-                    'email',
-                    'dtnascimento',
+            (None, {"fields": ("matricula", "senha")}),
+            ("Informações pessoais", {"fields": (
+                    "nome",
+                    "sexo",
+                    "cpf",
+                    "email",
+                    "dtnascimento",
                 )
             }),
-            (('Permissões'), {'fields': perm_fields})
+            (("Permissões"), {"fields": perm_fields})
         ]
 
 
