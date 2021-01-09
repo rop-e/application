@@ -36,7 +36,7 @@ class FormRAT(forms.ModelForm):
 
     class Meta:
         model = RAT
-        exclude = ["endereco", "relatorio"]
+        exclude = ["endereco", "relatorio", "hash", "status_previa"]
 
     def clean(self):
         cleaned_data = super(FormRAT, self).clean()
@@ -108,7 +108,7 @@ class FormEditarRAT(forms.ModelForm):
 
     class Meta:
         model = RAT
-        exclude = ["endereco", "relatorio", "guarnicao", "endereco", "dataocorrencia"]
+        exclude = ["endereco", "relatorio", "guarnicao", "endereco", "dataocorrencia", "hash", "status_previa"]
     
     def clean(self):
         cleaned_data = super(FormEditarRAT, self).clean()

@@ -143,33 +143,33 @@ def filter(request):
         qs = qs.filter(dataocorrencia__date__lte=dfinal)
 
     if envolvidos == "on":
-        qs = qs.filter(envolvido__isnull=False).distinct()
+        qs = qs.filter(envolvido_ocorrencia__isnull=False).distinct()
         if is_valid_queryparam(envolvido):
             qs = qs.filter(envolvido__pessoa__nome__icontains=envolvido)
 
     if armas == "on":
         qs = qs.filter(
-            acessoriosocorrencia__armaacessorio__isnull=False).distinct()
+            acessoriosocorrencia_ocorrencia__armaacessorio_acessoriosocorrencia__isnull=False).distinct()
 
     if diversos == "on":
         qs = qs.filter(
-            acessoriosocorrencia__diversosacessorio__isnull=False).distinct()
+            acessoriosocorrencia_ocorrencia__diversosacessorio_acessoriosocorrencia__isnull=False).distinct()
 
     if docs == "on":
         qs = qs.filter(
-            acessoriosocorrencia__docacessorio__isnull=False).distinct()
+            acessoriosocorrencia_ocorrencia__docacessorio_acessoriosocorrencia__isnull=False).distinct()
 
     if drogas == "on":
         qs = qs.filter(
-            acessoriosocorrencia__drogaacessorio__isnull=False).distinct()
+            acessoriosocorrencia_ocorrencia__drogaacessorio_acessoriosocorrencia__isnull=False).distinct()
 
     if municoes == "on":
         qs = qs.filter(
-            acessoriosocorrencia__municaoacessorio__isnull=False).distinct()
+            acessoriosocorrencia_ocorrencia__municaoacessorio_acessoriosocorrencia__isnull=False).distinct()
 
     if veiculos == "on":
         qs = qs.filter(
-            acessoriosocorrencia__veiculoacessorio__isnull=False).distinct()
+            acessoriosocorrencia_ocorrencia__veiculoacessorio_acessoriosocorrencia__isnull=False).distinct()
 
     return qs
 
@@ -251,8 +251,6 @@ def mostrar(request, id):
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from utils.pycrypto import encrypt, decrypt
-
 
 @xframe_options_exempt
 def geraemostrapdfocorrencia(request, id):
@@ -265,15 +263,6 @@ def geraemostrapdfocorrencia(request, id):
         arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
         
         filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
-    
-        message = """ID DA GUARNIÇÃO: {}
-MATRÍCULA DO COMANDANTE DA GUARNIÇÃO: {}
-ID DA OCORRÊNCIA: {}
-DATA CRIAÇÃO DA OCORRÊNCIA: {}""".format(
-            ocorrencia.guarnicao.id,
-            ocorrencia.guarnicao.comandante.id,
-            ocorrencia.id,
-            ocorrencia.datacriacao)
 
         context_pdf = {
             "ocorrencia": ocorrencia,
@@ -283,8 +272,7 @@ DATA CRIAÇÃO DA OCORRÊNCIA: {}""".format(
             "envolvidos": Envolvido.objects.filter(
                 ocorrencia=ocorrencia),
             "anexos": Anexo.objects.filter(ocorrencia=ocorrencia),
-            "aditamentos": ObservacaoOcorrencia.objects.filter(ocorrencia=ocorrencia),
-            "hash": encrypt("3ut3nh04f0rc@2021", message)
+            "aditamentos": ObservacaoOcorrencia.objects.filter(ocorrencia=ocorrencia)
         }
 
         try:

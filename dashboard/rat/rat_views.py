@@ -96,12 +96,12 @@ def filter(request):
         qs = qs.filter(endereco__municipio=municipio)
     
     if is_valid_queryparam(placa):
-        qs = qs.filter(ratveiculos__veiculo__placa=placa)
+        qs = qs.filter(ratveiculos_rat__veiculo__placa=placa)
 
     if envolvidos == "on":
-        qs = qs.filter(envolvido__isnull=False).distinct()
+        qs = qs.filter(envolvido_rat__isnull=False).distinct()
         if is_valid_queryparam(envolvido):
-            qs = qs.filter(envolvido__pessoa__nome__icontains=envolvido)
+            qs = qs.filter(envolvido_rat__pessoa__nome__icontains=envolvido)
 
     if is_valid_queryparam(data_inicial):
         dinicial = timezone.now().strptime(data_inicial, "%d/%m/%Y")

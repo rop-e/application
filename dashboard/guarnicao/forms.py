@@ -53,7 +53,7 @@ class FormGuarnicao(forms.ModelForm):
 
     class Meta:
         model = Guarnicao
-        exclude = ["comandante", "relatorio", "ativo", "bloqueadopor", "observacao"]
+        exclude = ["comandante", "relatorio", "ativo", "bloqueadopor", "observacao", "hash"]
 
     def clean_tiposervico(self):
         tiposervico = self.cleaned_data["tiposervico"]

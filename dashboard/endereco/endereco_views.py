@@ -16,7 +16,7 @@ from django.http import QueryDict
 
 @login_required
 def index(request):
-
+    # SE MAPA DER ERRO NONETYPE, ALGUMA OCORRENCIA SEM INFRAÇÃO
     id_infracoes = []
 
     cidade = request.GET.get("municipio", None)
