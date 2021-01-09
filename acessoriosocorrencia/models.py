@@ -27,6 +27,7 @@ class AcessoriosOcorrencia(models.Model):
                  Ocorrencia,
                  verbose_name='Ocorrência',
                  on_delete=models.CASCADE,
+                 related_name='acessoriosocorrencia_ocorrencia',
                  help_text='Informe a Ocorrência')
 
     class Meta:
@@ -43,6 +44,7 @@ class MunicaoAcessorio(models.Model):
                            AcessoriosOcorrencia,
                            verbose_name='Apreensão da Ocorrencia',
                            on_delete=models.CASCADE,
+                           related_name='municaoacessorio_acessoriosocorrencia',
                            help_text='Informe a apreensão da ocorrência')
     municao = models.ForeignKey(
               Calibre, verbose_name='Calibre',
@@ -85,6 +87,7 @@ class VeiculoAcessorio(models.Model):
                            AcessoriosOcorrencia,
                            verbose_name='Apreensão da Ocorrência',
                            on_delete=models.CASCADE,
+                           related_name='veiculoacessorio_acessoriosocorrencia',
                            help_text='Informe a apreensão da ocorrência')
     veiculo = models.ForeignKey(
               Veiculo, verbose_name='Veículo',
@@ -137,6 +140,7 @@ class DocAcessorio(models.Model):
                            AcessoriosOcorrencia,
                            verbose_name='Apreensão da Ocorrência',
                            on_delete=models.CASCADE,
+                           related_name='docacessorio_acessoriosocorrencia',
                            help_text='Informe a apreensão da ocorrência')
     tipodoc = models.ForeignKey(
               TipoDoc, verbose_name='Tipo de documento',
@@ -192,6 +196,7 @@ class DiversosAcessorio(models.Model):
                            AcessoriosOcorrencia,
                            verbose_name='Apreensão da Ocorrência',
                            on_delete=models.CASCADE,
+                           related_name='diversosacessorio_acessoriosocorrencia',
                            help_text='Informe a apreensão da ocorrência')
     tipodiversos = models.ForeignKey(
                    TiposDiversos, verbose_name='Objeto',
@@ -301,6 +306,7 @@ class ArmaAcessorio(models.Model):
                            AcessoriosOcorrencia,
                            verbose_name='Apreensão da Ocorrência',
                            on_delete=models.CASCADE,
+                           related_name='armaacessorio_acessoriosocorrencia',
                            help_text='Informe a apreensão da ocorrência')
     agenterecebedor = models.ForeignKey(
                       AgenteRecebedor, verbose_name='Agente Recebedor',
@@ -376,6 +382,7 @@ class DrogaAcessorio(models.Model):
                            AcessoriosOcorrencia,
                            verbose_name='Apreensão da Ocorrência',
                            on_delete=models.CASCADE,
+                           related_name='drogaacessorio_acessoriosocorrencia',
                            help_text='Informe a apreensão da ocorrência')
     agenterecebedor = models.ForeignKey(
                       AgenteRecebedor, verbose_name='Agente Recebedor',

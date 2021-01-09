@@ -35,10 +35,12 @@ class Envolvido(models.Model):
     ocorrencia = models.ForeignKey(
                  Ocorrencia, verbose_name='Ocorrência',
                  on_delete=models.CASCADE, null=True, blank=True,
+                 related_name='envolvido_ocorrencia',
                  help_text='Informe a ocorrência')
     rat = models.ForeignKey(
           RAT, verbose_name='Registro de Acidente de Trânsito',
           on_delete=models.CASCADE, null=True, blank=True,
+          related_name='envolvido_rat',
           help_text='Informe o Registro de Acidente de Trânsito')
     tipoenvolvimento = models.ForeignKey(
                        TipoEnvolvimento, verbose_name='Tipo de envolvimento',
