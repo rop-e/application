@@ -141,6 +141,12 @@ class RAT(models.Model):
                  on_delete=models.CASCADE,
                  help_text='Informe o traçado da via')
 
+    status_previa = models.BooleanField(
+                    verbose_name='Status de pré-visualização',
+                    default=True)
+
+    hash = models.CharField(max_length=255, blank=True)
+
     infracao = models.BooleanField(
                'Houve infração?',
                help_text='Informe se houve infração')
@@ -167,6 +173,7 @@ class RATObjetos(models.Model):
     rat = models.ForeignKey(
           RAT, verbose_name='Registro de Acidente de Trânsito',
           on_delete=models.CASCADE,
+          related_name='ratobjetos_rat',
           help_text='Informe o Registro de Acidente de Trânsito')
 
     descricao = models.TextField(
@@ -195,6 +202,7 @@ class RATVeiculos(models.Model):
     rat = models.ForeignKey(
           RAT, verbose_name='Registro de Acidente de Trânsito',
           on_delete=models.CASCADE,
+          related_name='ratveiculos_rat',
           help_text='Informe o Registro de Acidente de Trânsito')
     veiculo = models.ForeignKey(
               Veiculo, verbose_name='Veículo',
