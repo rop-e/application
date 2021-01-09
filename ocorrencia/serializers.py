@@ -56,46 +56,6 @@ class ListObservacaoOcorrenciaSerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class VinculoOcorrenciaFilterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ocorrencia
-        fields = ["id"]
-
-
-class TipoOcorrenciaFilterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TipoOcorrencia
-        fields = ["tipoocorrencia"]
-
-
-class InfracaoFilterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Infracao
-        fields = ["tipo"]
-
-
-class EstadosFilterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Estados
-        fields = ["uf"]
-
-
-class MunicipiosFilterSerializer(serializers.ModelSerializer):
-    codigo_uf = EstadosFilterSerializer()
-
-    class Meta:
-        model = Municipios
-        fields = ["nome", "codigo_uf"]
-
-
-class EnderecoFilterSerializer(serializers.ModelSerializer):
-    municipio = MunicipiosFilterSerializer()
-
-    class Meta:
-        model = Endereco
-        exclude = ["id", "datacriacao", "dataatualizacao", "latitude", "longitude", "observacao"]
-
-
 class PolicialFilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Policial
@@ -116,13 +76,106 @@ class OrgaoSerializer(serializers.ModelSerializer):
 
 
 class ListOcorrenciaFilterSerializer(serializers.ModelSerializer):
-    guarnicao = GuarnicaoFilterSerializer()
-    endereco = EnderecoFilterSerializer()
-    infracao = InfracaoFilterSerializer()
-    tipoocorrencia = TipoOcorrenciaFilterSerializer()
-    vinculo = VinculoOcorrenciaFilterSerializer()
+    class Meta:
+        model = Ocorrencia
+        exclude = ["status_previa", "datacriacao", "dataatualizacao", "hash"]
+        depth = 2
+
+
+class ListOcorrenciasGuarnicaoFilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ocorrencia
+        exclude = ["guarnicao", "status_previa", "datacriacao", "dataatualizacao", "hash"]
+
+
+from acessoriosocorrencia.models import (
+    AcessoriosOcorrencia,
+    ArmaAcessorio,
+    Arma,
+    DrogaAcessorio,
+    MunicaoAcessorio,
+    VeiculoAcessorio,
+    DocAcessorio,
+    Veiculo,
+    DiversosAcessorio
+)
+from envolvido.models import Envolvido
+
+class ArmaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Arma
+        exclude = ["datacriacao", "dataatualizacao"]
+
+
+class ArmaAcessorioSerializer(serializers.ModelSerializer):
+    arma = ArmaSerializer()
+
+    class Meta:
+        model = ArmaAcessorio
+        exclude = ["datacriacao", "dataatualizacao", "acessoriosocorrencia"]
+
+
+class DrogaAcessorioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DrogaAcessorio
+        exclude = ["datacriacao", "dataatualizacao", "acessoriosocorrencia"]
+
+
+class MunicaoAcessorioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MunicaoAcessorio
+        exclude = ["datacriacao", "dataatualizacao", "acessoriosocorrencia"]
+
+
+class VeiculoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Veiculo
+        exclude = ["datacriacao", "dataatualizacao"]
+
+
+class VeiculoAcessorioSerializer(serializers.ModelSerializer):
+    veiculo = VeiculoSerializer()
+
+    class Meta:
+        model = VeiculoAcessorio
+        exclude = ["datacriacao", "dataatualizacao", "acessoriosocorrencia"]
+
+
+class DocAcessorioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DocAcessorio
+        exclude = ["datacriacao", "dataatualizacao", "acessoriosocorrencia"]
+
+
+class DiversosAcessorioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DiversosAcessorio
+        exclude = ["datacriacao", "dataatualizacao", "acessoriosocorrencia"]
+
+
+class AcessoriosOcorrenciaSerializer(serializers.ModelSerializer):
+    armas = ArmaAcessorioSerializer(many=True, source='armaacessorio_acessoriosocorrencia')
+    drogas = DrogaAcessorioSerializer(many=True, source='drogaacessorio_acessoriosocorrencia')
+    municoes = MunicaoAcessorioSerializer(many=True, source='municaoacessorio_acessoriosocorrencia')
+    veiculos = VeiculoAcessorioSerializer(many=True, source='veiculoacessorio_acessoriosocorrencia')
+    documentos = DocAcessorioSerializer(many=True, source='docacessorio_acessoriosocorrencia')
+    objetos = DiversosAcessorioSerializer(many=True, source='diversosacessorio_acessoriosocorrencia')
+
+    class Meta:
+        model = AcessoriosOcorrencia
+        fields = ["armas", "drogas", "municoes", "veiculos", "documentos", "objetos"]
+
+
+class EnvolvidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Envolvido
+        exclude = ["datacriacao", "dataatualizacao", "ocorrencia", "rat"]
+
+
+class ListApreensoesOcorrenciaSerializer(serializers.ModelSerializer):
+    envolvidos = EnvolvidoSerializer(many=True, source='envolvido_ocorrencia')
+    apreensoes = AcessoriosOcorrenciaSerializer(many=True, source='acessoriosocorrencia_ocorrencia')
 
     class Meta:
         model = Ocorrencia
-        exclude = ["status_previa", "datacriacao", "dataatualizacao"]
-        depth = 2
+        fields = ["id", "envolvidos", "apreensoes"]

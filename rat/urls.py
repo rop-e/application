@@ -19,7 +19,8 @@ from .views import (
     RATVeiculosListCreateView,
     RATVeiculosDetailsUpdateDeleteView,
     RATVeiculoEnvolvidosListCreateView,
-    RATVeiculoEnvolvidosDetailsUpdateDeleteView
+    RATVeiculoEnvolvidosDetailsUpdateDeleteView,
+    ApreensoesRATListView
 )
 
 urlpatterns = [
@@ -79,6 +80,10 @@ urlpatterns = [
         "<int:pk>/",
         RATDetailsUpdateDeleteView.as_view(),
         name="detalhe"),
+    path(
+        "apreensoes/<int:pk>/",
+        ApreensoesRATListView.as_view(),
+        name="apreensoes"),
     path(
         "objetos/",
         RATObjetosListCreateView.as_view(),

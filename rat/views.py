@@ -14,7 +14,8 @@ from .serializers import (
     RATSerializer,
     RATObjetosSerializer,
     RATVeiculosSerializer,
-    RATVeiculoEnvolvidosSerializer
+    RATVeiculoEnvolvidosSerializer,
+    ListApreensoesRatSerializer
 )
 from .models import (
     TipoAcidente,
@@ -406,6 +407,14 @@ class RATVeiculoEnvolvidosDetailsUpdateDeleteView(
     """
     queryset = RATVeiculoEnvolvidos.objects.all()
     serializer_class = RATVeiculoEnvolvidosSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+class ApreensoesRATListView(generics.RetrieveAPIView):
+    queryset = RAT.objects.all()
+    serializer_class = ListApreensoesRatSerializer
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]

@@ -10,7 +10,9 @@ from .serializers import (
     ListOcorrenciaSerializer,
     TipoOcorrenciaSerializer,
     ListOcorrenciaFilterSerializer,
-    OrgaoSerializer
+    ListOcorrenciasGuarnicaoFilterSerializer,
+    OrgaoSerializer,
+    ListApreensoesOcorrenciaSerializer
 )
 from .models import (
     Ocorrencia,
@@ -150,3 +152,22 @@ class OcorrenciaEnvolvidosFilterListView(generics.ListAPIView):
     def get_queryset(self):
         envolvido = self.kwargs["envolvido"]
         return Ocorrencia.objects.filter(envolvido__pessoa__nome__icontains=envolvido)
+
+
+class OcorrenciasGuarnicaoListView(generics.ListAPIView):
+    serializer_class = ListOcorrenciasGuarnicaoFilterSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        guarnicao = self.kwargs['id']
+        return Ocorrencia.objects.filter(guarnicao=guarnicao)
+
+
+class ApreensoesOcorrenciaListView(generics.RetrieveAPIView):
+    queryset = Ocorrencia.objects.all()
+    serializer_class = ListApreensoesOcorrenciaSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]

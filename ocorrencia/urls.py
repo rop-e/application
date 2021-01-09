@@ -7,7 +7,9 @@ from .views import (
     OcorrenciaDateFilterListView,
     OcorrenciaEnvolvidosFilterListView,
     OrgaoListCreateView,
-    OrgaoDetailsUpdateDeleteView
+    OrgaoDetailsUpdateDeleteView,
+    OcorrenciasGuarnicaoListView,
+    ApreensoesOcorrenciaListView
 )
 
 urlpatterns = [
@@ -15,6 +17,10 @@ urlpatterns = [
         '',
         OcorrenciaListCreateView.as_view(),
         name='create'),
+    path(
+        'guarnicao/<int:id>/',
+        OcorrenciasGuarnicaoListView.as_view(),
+        name='ocorrencias_guarnicao'),
     path(
         'datefilter/<int:diaI>/<int:mesI>/<int:anoI>/<int:diaF>/<int:mesF>/<int:anoF>/',
         OcorrenciaDateFilterListView.as_view(),
@@ -27,6 +33,10 @@ urlpatterns = [
         '<int:pk>/',
         OcorrenciaDetailsUpdateDeleteView.as_view(),
         name='detalhe'),
+    path(
+        'apreensoes/<int:pk>/',
+        ApreensoesOcorrenciaListView.as_view(),
+        name='apreensoes'),
     path(
         'tipoinfracao/',
         TipoInfracaoListCreateView.as_view(),
