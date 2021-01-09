@@ -107,6 +107,8 @@ class Guarnicao(models.Model):
     relatorio = models.TextField(
                 'Relatório de guarnição',
                 null=True, blank=True)
+    
+    hash = models.CharField(max_length=255, blank=True)
 
     dataabertura = models.DateTimeField(
                    'Data de abertura', auto_now_add=True)

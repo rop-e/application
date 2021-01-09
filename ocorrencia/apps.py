@@ -5,3 +5,6 @@ class OcorrenciaConfig(AppConfig):
     name = 'ocorrencia'
     verbose_name = 'Ocorrência'
     verbose_name_plural = 'Ocorrências'
+    
+    def ready(self):
+        import ocorrencia.signals
