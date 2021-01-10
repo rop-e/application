@@ -11,6 +11,7 @@ from rest_framework.authentication import (
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,

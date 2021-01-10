@@ -10,6 +10,7 @@ from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 
+
 SEXO = (
     ("M", "MASCULINO"),
     ("F", "FEMININO")
@@ -115,7 +116,7 @@ class Usuario(AbstractUsuario):
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
     context = {
         "matricula": reset_password_token.user.matricula,
-        "url_redefinicao_senha": "{}?token={}".format(reverse("resetar-senha:reset-password-confirm"), reset_password_token.key)
+        "token": reset_password_token.key
     }
 
     message = get_template("auth/senha_reset_api.html").render(context)
