@@ -20,10 +20,15 @@ from .views import (
     RATVeiculosDetailsUpdateDeleteView,
     RATVeiculoEnvolvidosListCreateView,
     RATVeiculoEnvolvidosDetailsUpdateDeleteView,
+    RATsGuarnicaoListView,
     ApreensoesRATListView
 )
 
 urlpatterns = [
+    path(
+        "guarnicao/<int:id>/",
+        RATsGuarnicaoListView.as_view(),
+        name="rats_guarnicao"),
     path(
         "tipoacidente/",
         TipoAcidenteListCreateView.as_view(),

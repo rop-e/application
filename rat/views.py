@@ -15,6 +15,7 @@ from .serializers import (
     RATObjetosSerializer,
     RATVeiculosSerializer,
     RATVeiculoEnvolvidosSerializer,
+    ListRATsGuarnicaoFilterSerializer,
     ListApreensoesRatSerializer
 )
 from .models import (
@@ -410,6 +411,17 @@ class RATVeiculoEnvolvidosDetailsUpdateDeleteView(
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+
+class RATsGuarnicaoListView(generics.ListAPIView):
+    serializer_class = ListRATsGuarnicaoFilterSerializer
+
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        guarnicao = self.kwargs['id']
+        return RAT.objects.filter(guarnicao=guarnicao)
 
 
 class ApreensoesRATListView(generics.RetrieveAPIView):

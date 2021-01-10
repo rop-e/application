@@ -145,6 +145,12 @@ class EnvolvidoSerializer(serializers.ModelSerializer):
         exclude = ["datacriacao", "dataatualizacao", "rat", "ocorrencia"]
 
 
+class ListRATsGuarnicaoFilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RAT
+        exclude = ["guarnicao", "status_previa", "datacriacao", "dataatualizacao", "hash"]
+
+
 class ListApreensoesRatSerializer(serializers.ModelSerializer):
     envolvidos = EnvolvidoSerializer(many=True, source='envolvido_rat')
     veiculos = VeiculosSerializer(many=True, source='ratveiculos_rat')
