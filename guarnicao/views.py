@@ -14,7 +14,8 @@ from .serializers import (
     GuarnicaoAITSerializer,
     GuarnicaoRRDSerializer,
     GuarnicaoTRAVSerializer,
-    PermutaSerializer
+    PermutaSerializer,
+    ListAtivaGuarnicaoSerializer
 )
 from .models import (
     TipoServico,
@@ -333,7 +334,7 @@ class GuarnicaoAtivaView(generics.ListAPIView):
         HTTP Verbs:
             GET: guarnicao/ativa/<id do comandante>/
     """
-    serializer_class = GuarnicaoSerializer
+    serializer_class = ListAtivaGuarnicaoSerializer
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
