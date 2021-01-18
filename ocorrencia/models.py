@@ -2,6 +2,7 @@ from django.db import models
 from guarnicao.models import Guarnicao
 from observacao.models import Observacao
 from endereco.models import Endereco
+from colorfield.fields import ColorField
 
 
 class TipoOcorrencia(models.Model):
@@ -22,6 +23,7 @@ class Infracao(models.Model):
     tipo = models.CharField(
            'Tipo penal', max_length=50,
            help_text='Informe o tipo penal')
+    cor = ColorField(default="#FF0000")
 
     class Meta:
         verbose_name = 'Tipo de infração'
@@ -81,7 +83,7 @@ class Ocorrencia(models.Model):
                     verbose_name='Status de pré-visualização',
                     default=True)
 
-    hash = models.CharField(max_length=255, blank=True)
+    hash = models.TextField('Hash', blank=True)
 
     relatorio = models.TextField(
                 'Relatório da ocorrência',
