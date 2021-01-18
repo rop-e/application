@@ -30,7 +30,14 @@ $(document).ready(function(){
     $("#finalizarRAT").on("click", function(event){
         event.stopPropagation();
         if(confirm("Deseja finalizar a ocorrência?")){
-            M.toast({html: "Ocorrência finalizada com sucesso!", classes: "green", completeCallback: function(){ window.location.href = "{% url 'index' %}"; }});
+            $.ajax({
+                url: "{% url 'rat:finalizar_rat' %}",
+                type: "POST",
+                data: {"rat": "{{ rat.id }}"},
+                success: (response) => {
+                    M.toast({html: "RAT finalizada com sucesso!", classes: "green", completeCallback: function(){ window.location.href = response.redirect }});
+                }
+            });
         } else {
             return false;
         }
