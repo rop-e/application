@@ -12,3 +12,6 @@ venv
 !.travis.yml
 /.env
 /.vscode
+
+**/__pycache__/
+**/migrations/**
