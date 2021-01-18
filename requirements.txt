@@ -2,6 +2,7 @@ autopep8==1.4.4
 asgiref==3.2.7
 dj-database-url==0.5.0
 Django==3.0.5  # django
+django-colorfield==0.4.0  # cor infração mapa de calor
 django-cors-headers==3.2.1  # django cors headers
 django-rest-passwordreset==1.1.0  # reset senha
 djangorestframework==3.11.0  # django rest framework
@@ -13,7 +14,8 @@ pycodestyle==2.5.0  # flake8
 mccabe==0.6.1  # flake8
 pyflakes==2.1.1  # flake8
 
-pycrypto==2.6.1 # hash pdf
+pycrypto==2.6.1  # hash pdf
+pycryptodome==3.9.9  # hash pdf
 
 Pillow==7.1.1  # foto do usuario
 reportlab==3.5.42
