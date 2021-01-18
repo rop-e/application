@@ -70,6 +70,34 @@ class GuarnicaoTRAVSerializer(serializers.ModelSerializer):
         )
 
 
+class AtivaGuarnicaoAITSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuarnicaoAIT
+        fields = ["id", "codigo", "tipoveiculo"]
+
+
+class AtivaGuarnicaoRRDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuarnicaoRRD
+        fields = ["id", "codigo", "tipoveiculo"]
+
+
+class AtivaGuarnicaoTRAVSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuarnicaoTRAV
+        fields = ["id", "codigo", "tipoveiculo"]
+
+
+class ListAtivaGuarnicaoSerializer(serializers.ModelSerializer):
+    aits = AtivaGuarnicaoAITSerializer(many=True, source='guarnicaoait_guarnicao')
+    rrds = AtivaGuarnicaoRRDSerializer(many=True, source='guarnicaorrd_guarnicao')
+    travs = AtivaGuarnicaoTRAVSerializer(many=True, source='guarnicaotrav_guarnicao')
+
+    class Meta:
+        model = Guarnicao
+        exclude = ["hash"]
+
+
 class PermutaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permuta

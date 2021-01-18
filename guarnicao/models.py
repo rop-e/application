@@ -108,7 +108,7 @@ class Guarnicao(models.Model):
                 'Relatório de guarnição',
                 null=True, blank=True)
     
-    hash = models.CharField(max_length=255, blank=True)
+    hash = models.TextField('Hash', blank=True)
 
     dataabertura = models.DateTimeField(
                    'Data de abertura', auto_now_add=True)
@@ -133,6 +133,7 @@ class GuarnicaoAIT(models.Model):
                 Guarnicao,
                 verbose_name='Guarnição',
                 on_delete=models.CASCADE,
+                related_name='guarnicaoait_guarnicao',
                 help_text='Informe a guarnição')
 
     codigo = models.CharField(
@@ -160,6 +161,7 @@ class GuarnicaoRRD(models.Model):
                 Guarnicao,
                 verbose_name='Guarnição',
                 on_delete=models.CASCADE,
+                related_name='guarnicaorrd_guarnicao',
                 help_text='Informe a guarnição')
 
     codigo = models.CharField(
@@ -187,6 +189,7 @@ class GuarnicaoTRAV(models.Model):
                 Guarnicao,
                 verbose_name='Guarnição',
                 on_delete=models.CASCADE,
+                related_name='guarnicaotrav_guarnicao',
                 help_text='Informe a guarnição')
 
     codigo = models.CharField(

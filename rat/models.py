@@ -145,7 +145,7 @@ class RAT(models.Model):
                     verbose_name='Status de pré-visualização',
                     default=True)
 
-    hash = models.CharField(max_length=255, blank=True)
+    hash = models.TextField('Hash', blank=True)
 
     infracao = models.BooleanField(
                'Houve infração?',

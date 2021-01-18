@@ -8,6 +8,7 @@ from .models import (
     Orgao
 )
 
+
 admin.site.register(TipoOcorrencia)
 admin.site.register(Infracao)
 admin.site.register(Orgao)

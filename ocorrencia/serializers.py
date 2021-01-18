@@ -13,6 +13,19 @@ from endereco.models import (
     Municipios,
     Estados
 )
+from acessoriosocorrencia.models import (
+    AcessoriosOcorrencia,
+    ArmaAcessorio,
+    Arma,
+    DrogaAcessorio,
+    MunicaoAcessorio,
+    VeiculoAcessorio,
+    DocAcessorio,
+    Veiculo,
+    DiversosAcessorio
+)
+from envolvido.models import Envolvido
+
 
 class TipoOcorrenciaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -87,19 +100,6 @@ class ListOcorrenciasGuarnicaoFilterSerializer(serializers.ModelSerializer):
         model = Ocorrencia
         exclude = ["guarnicao", "status_previa", "datacriacao", "dataatualizacao", "hash"]
 
-
-from acessoriosocorrencia.models import (
-    AcessoriosOcorrencia,
-    ArmaAcessorio,
-    Arma,
-    DrogaAcessorio,
-    MunicaoAcessorio,
-    VeiculoAcessorio,
-    DocAcessorio,
-    Veiculo,
-    DiversosAcessorio
-)
-from envolvido.models import Envolvido
 
 class ArmaSerializer(serializers.ModelSerializer):
     class Meta:
