@@ -161,7 +161,7 @@
                     {% for ocorrencia in ocorrencias %}
                         <tr {% if ocorrencia.relatorio is None %}class="pendente"{% endif %}>
                             <td>{{ ocorrencia.id }}</td>
-                            <td>{{ ocorrencia.infracao }}</td>
+                            <td>{% if ocorrencia.infracao is None %}NÃO HÁ.{% else %}{{ ocorrencia.infracao }}{% endif %}</td>
                             <td>{{ ocorrencia.endereco.municipio }}</td>
                             <td>{{ ocorrencia.dataocorrencia }}</td>
                             <td>
