@@ -7,7 +7,7 @@
         @page { size: A4;
             @frame paginacao_frame { -pdf-frame-content: paginacao; top: 1cm; margin-left: 1cm; height: 1cm; }
             @frame content_frame { left: 40pt; width: 512pt; top: 65pt; height: 692pt; }
-            @frame footer_frame { -pdf-frame-content: footer_content; bottom: 0; margin-left: 1cm; margin-right: 1cm; height: 2cm; }
+            @frame footer_frame { -pdf-frame-content: footer_content; bottom: 0; margin-left: 1cm; margin-right: 1cm; height: 78pt; }
         }
         div.cabecalho { border: 6px solid #000; padding: 11px; text-align: center; }
         div.cabecalho span { font-size: 1.2em; font-weight: bold; }
@@ -27,17 +27,13 @@
 
 <body>
 <div id="paginacao" style="font-size: 1.5em;"><pdf:pagenumber> de <pdf:pagecount> </div>
-<div id="footer_content">
-    <div class="hash">
-        CÓDIGO DE VALIDAÇÃO: {{ ocorrencia.hash }}
-    </div>
-</div>
+<div id="footer_content" class="hash">CÓDIGO DE VALIDAÇÃO: {{ ocorrencia.hash }}</div>
 
 <div class="cabecalho">
     <img src="{% static 'assets/img/LogoBTM17.png' %}" width="50" /><br><br>
     <span>POLÍCIA MILITAR DA BAHIA</span><br>
     <span>COMANDO DE OPERAÇÕES POLICIAIS MILITARES</span><br>
-    <span>COMANDO DE POLICIAMENTO DA REGIÃO SUDOESTE</-span><br>
+    <span>COMANDO DE POLICIAMENTO DA REGIÃO SUDOESTE</span><br>
     <span>{{ ocorrencia.guarnicao.comandante.batalhao }}</span><br>
     <span>{{ ocorrencia.guarnicao.companhia }}</span><br>
 </div><br>
@@ -69,11 +65,11 @@
         </tr>
         <tr>
             <th>OCORRÊNCIA VINCULADA?</th>
-            <td>{% if ocorrencia.vinculo %}<a target="_blank" href="{% url 'ocorrencia:mostrar' id=ocorrencia.vinculo.id %}">Ocorrência #{{ ocorrencia.vinculo.id }}</a>{% else %}-{% endif %}</td>
+            <td>{% if ocorrencia.vinculo %}Ocorrência #{{ ocorrencia.vinculo.id }}{% else %}SEM VÍNCULO.{% endif %}</td>
         </tr>
         <tr>
             <th>POSSUI ANEXOS?</th>
-            <td>{% if anexos %}{{ anexos.count }}{% else %}-{% endif %}</td>
+            <td>{% if anexos %}{{ anexos.count }}{% else %}NÃO POSSUI.{% endif %}</td>
         </tr>
     </tbody>
 </table><br>
@@ -570,10 +566,42 @@
 <p style="text-align: right; font-size: 1.5em;">{{ ocorrencia.dataocorrencia }}</p>
 
 <div class="assinaturas">
-    <p>Comandante da Guarnição:<br><br>
+    <p>Comandante da Guarnição<br><br>
         <hr width="75%">
         {{ ocorrencia.guarnicao.comandante }}
     </p>
 </div>
+
+{% if anexos %}
+<pdf:nextpage />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="2" style="background-color: #ddd; text-align: center;">
+                <h4>ANEXOS</h4>
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+    {% for anexo in anexos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" colspan="2">Anexo {{ forloop.counter }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="2" style="max-width: 100%;">
+                    <img src="{{ anexo.anexo.url }}" /><br>
+                    {{ anexo.observacao.observacao }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}
 </body>
 </html>
