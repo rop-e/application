@@ -3,7 +3,7 @@ import os
 # TODO: Verificar real necessidade desta variavel aqui
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
-SENHA_HASH = "3ut3nh04f0rc@2021"
+SENHA_HASH = os.getenv('SENHA_HASH')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # '-05sgp9!deq=q1nltm@^^2cc+v29i(tyybv3v2t77qi66czazj'
@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'colorfield'
 ]
 
 # my installed apps
@@ -70,12 +71,6 @@ REST_FRAMEWORK = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = os.environ.get('EMAIL_HOST')
-EMAIL_PORT = os.environ.get('EMAIL_PORT')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
