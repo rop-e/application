@@ -25,7 +25,7 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        <span class="right">{{ qtd }} resultado(s).</span>
+                        <span class="right">{{ ocorrencias.count }} resultado(s).</span>
                     </span>
 
                     <form method="GET">
@@ -48,6 +48,14 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                            <div class="input-field col l2 m12 s12">
+                                <input type="text" id="id_data_inicial" class="datepicker" name="data_inicial" placeholder="dd/mm/aaaa" />
+                                <label for="id_data_inicial" class="active">Data inicial</label>
+                            </div>
+                            <div class="input-field col l2 m12 s12">
+                                <input type="text" id="id_data_final" class="datepicker" name="data_final" placeholder="dd/mm/aaaa" />
+                                <label for="id_data_final" class="active">Data final</label>
+                            </div>
                         </div>
 
                         <div class="row l12 m12 s12 right-align">
@@ -62,6 +70,16 @@
                 </div>
             </div>
 
+            <script>
+                var coordenadas = [];
+                {% if ocorrencias %}
+                    {% for ocorrencia in ocorrencias %}
+                        {% if not ocorrencia.endereco.latitude == 0 and not ocorrencia.endereco.longitude == 0 %}
+                            coordenadas.push([parseFloat("{{ ocorrencia.endereco.latitude }}".replace(",", ".")), parseFloat("{{ ocorrencia.endereco.longitude }}".replace(",", "."))], );
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </script>
             <div class="row l12 m12 s12">
                 <div id="map" style="width: 100%; height: calc(100vh - 19rem)"></div>
             </div>
@@ -69,12 +87,14 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
+<script src="https://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
 <script src="{% static 'assets/js/leaflet-heat.js' %}"></script>
 <script>
 var map = L.map("map").setView([{{ cidade }}], 14);
 var tiles = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {attribution: `&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors`}).addTo(map);
-var addressPoints = [{% for coordenada in coordenadas %}{{ coordenada }},{% endfor %}];
-var heat = L.heatLayer(addressPoints, {radius: 10}).addTo(map);
+// var heat = L.heatLayer(coordenadas, {radius: 10}).addTo(map);
 map.zoomControl.setPosition('topright');
 map.addControl(new L.Control.Fullscreen({
     title: {
@@ -83,6 +103,18 @@ map.addControl(new L.Control.Fullscreen({
     },
     position: 'topright'
 }));
+
+
+var markers = L.markerClusterGroup();
+for (var i = 0; i < coordenadas.length; i++) {
+    var a = coordenadas[i];
+    var title = a[2];
+    var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title });
+    marker.bindPopup(title);
+    markers.addLayer(marker);
+}
+
+map.addLayer(markers);
 </script>
 
 {% block javascript %}

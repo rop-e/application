@@ -11,38 +11,80 @@ from ocorrencia.models import (
     Ocorrencia,
     Infracao
 )
+from django.utils import timezone
 from django.http import QueryDict
+
+
+def is_valid_queryparam(param):
+    return param != '' and param is not None
+
+
+def filter(request):
+    qs = Ocorrencia.objects.filter(relatorio__isnull=False)
+
+    infracao = request.GET.get("infracao", "")
+    municipio = request.GET.get("municipio", "")
+    data_inicial = request.GET.get("data_inicial", "")
+    data_final = request.GET.get("data_final", "")
+
+    if is_valid_queryparam(infracao):
+        qs = qs.filter(infracao=infracao)
+
+    if is_valid_queryparam(municipio):
+        qs = qs.filter(endereco__municipio__codigo_ibge=municipio)
+
+    if is_valid_queryparam(data_inicial):
+        dinicial = timezone.now().strptime(data_inicial, "%d/%m/%Y")
+        qs = qs.filter(dataocorrencia__date__gte=dinicial)
+    else:
+        qs = qs.filter(dataocorrencia__date__gte=timezone.now()-timezone.timedelta(days=30))
+
+    if is_valid_queryparam(data_final):
+        dfinal = timezone.now().strptime(data_final, "%d/%m/%Y")
+        qs = qs.filter(dataocorrencia__date__lte=dfinal)
+    else:
+        qs = qs.filter(dataocorrencia__date__lte=timezone.now())
+
+    return qs
 
 
 @login_required
 def index(request):
-    # SE MAPA DER ERRO NONETYPE, ALGUMA OCORRENCIA SEM INFRAÇÃO
-    id_infracoes = []
+    qs = filter(request)
 
-    cidade = request.GET.get("municipio", None)
-    infracao = request.GET.get("infracao", None)
-
-    for ocorrencia in Ocorrencia.objects.all():
-        id_infracoes.append(ocorrencia.infracao.id)
+    infracoes = Infracao.objects.filter(ocorrencia__isnull=False, ocorrencia__relatorio__isnull=False).distinct().order_by("tipo")
+    municipios = Municipios.objects.filter(batalhaomunicipios__batalhao__batalhao=request.user.policial.batalhao, endereco__ocorrencia__isnull=False, endereco__ocorrencia__relatorio__isnull=False).distinct().order_by("batalhaomunicipios__municipio__nome")
 
     filtros = QueryDict(mutable=True)
+
+    if not is_valid_queryparam(request.GET.get("municipio", "")):
+        cidade = 2911709
+        filtros.appendlist("Cidade", Municipios.objects.get(codigo_ibge=cidade))
+    
+    if not is_valid_queryparam(request.GET.get("data_inicial", "")):
+        filtros.appendlist("Data inicial", timezone.localtime(timezone.now()-timezone.timedelta(days=30)).strftime("%d/%m/%Y"))
+
+    if not is_valid_queryparam(request.GET.get("data_final", "")):
+        filtros.appendlist("Data final", timezone.localtime().strftime("%d/%m/%Y"))
 
     for k, v in request.GET.items():
         if v != "":
             if k == "municipio":
                 filtros.appendlist("Cidade", Municipios.objects.get(codigo_ibge=v))
-            if k == "infracao":
+                cidade = v
+            elif k == "infracao":
                 filtros.appendlist("Infração", Infracao.objects.get(id=v))
+            elif k == "data_inicial":
+                filtros.appendlist("Data inicial", v)
+            elif k == "data_final":
+                filtros.appendlist("Data final", v)
 
     context = {
-        "cidade": get_cidade(cidade),
-        "municipios": Municipios.objects.filter(
-            batalhaomunicipios__batalhao__batalhao=request.user.policial.batalhao).order_by(
-                "batalhaomunicipios__municipio__nome"),
+        "ocorrencias": qs,
+        "municipios": municipios,
         "filtros": filtros,
-        "coordenadas": get_coordenadas(query(cidade, infracao)),
-        "qtd": query(cidade, infracao).count(),
-        "infracoes": Infracao.objects.filter(id__in=id_infracoes),
+        "infracoes": infracoes,
+        "cidade": get_cidade(cidade)
     }
 
     return render(request, "endereco/mapa.html", context)
@@ -94,43 +136,9 @@ def post_edit_endereco(request):
             return JsonResponse(form.errors, status=400)
 
 
-def get_municipios():
-    municipios = Municipios.objects.all().order_by("nome")
-    return municipios
-
-
 def get_cidade(codigo_ibge):
-    if codigo_ibge == "" or codigo_ibge is None:
-        codigo_ibge = 2911709
-
     cidade = Municipios.objects.get(codigo_ibge=codigo_ibge)
     latitude = cidade.latitude
     longitude = cidade.longitude
     return "{}, {}".format(latitude, longitude)
 
-
-def query(cidade, infracao):
-    if cidade == "" or cidade is None:
-        cidade = 2911709
-
-    if infracao:
-        return Endereco.objects.filter(
-        ocorrencia__isnull=False,
-        municipio__codigo_ibge=cidade, ocorrencia__infracao=infracao)
-    else:
-        return Endereco.objects.filter(
-        ocorrencia__isnull=False,
-        municipio__codigo_ibge=cidade)
-
-
-
-def get_coordenadas(qs):
-    coordenadas = []
-
-    for coordenada in qs:
-        coordenadas.append([
-            float(coordenada.latitude),
-            float(coordenada.longitude)
-        ])
-
-    return coordenadas
