@@ -257,48 +257,51 @@ def geraemostrapdfocorrencia(request, id):
     try:
         ocorrencia = Ocorrencia.objects.get(id=id)
 
-        pasta = "ocorrencias/"
-        nomearquivo = "Ocorrencia_" + str(ocorrencia.id) + "-" +\
-            timezone.localtime(ocorrencia.dataocorrencia).strftime("%Y")
-        arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
-        
-        filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+        if ocorrencia.relatorio:
+            pasta = "ocorrencias/"
+            nomearquivo = "Ocorrencia_" + str(ocorrencia.id) + "-" +\
+                timezone.localtime(ocorrencia.dataocorrencia).strftime("%Y")
+            arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+            
+            filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
 
-        context_pdf = {
-            "ocorrencia": ocorrencia,
-            "pms": PolicialViatura.objects.filter(
-                guarnicao=ocorrencia.guarnicao).order_by(
-                    "policial__nomeguerra"),
-            "envolvidos": Envolvido.objects.filter(
-                ocorrencia=ocorrencia),
-            "anexos": Anexo.objects.filter(ocorrencia=ocorrencia),
-            "aditamentos": ObservacaoOcorrencia.objects.filter(ocorrencia=ocorrencia)
-        }
+            context_pdf = {
+                "ocorrencia": ocorrencia,
+                "pms": PolicialViatura.objects.filter(
+                    guarnicao=ocorrencia.guarnicao).order_by(
+                        "policial__nomeguerra"),
+                "envolvidos": Envolvido.objects.filter(
+                    ocorrencia=ocorrencia),
+                "anexos": Anexo.objects.filter(ocorrencia=ocorrencia),
+                "aditamentos": ObservacaoOcorrencia.objects.filter(ocorrencia=ocorrencia)
+            }
 
-        try:
-            acessoriosocorrencia = AcessoriosOcorrencia.objects.get(ocorrencia=ocorrencia)
-            aoid = acessoriosocorrencia.id
+            try:
+                acessoriosocorrencia = AcessoriosOcorrencia.objects.get(ocorrencia=ocorrencia)
+                aoid = acessoriosocorrencia.id
 
-            context_pdf["armas"] = ArmaAcessorio.objects.filter(
-                acessoriosocorrencia=aoid)
-            context_pdf["drogas"] = DrogaAcessorio.objects.filter(
-                acessoriosocorrencia=aoid)
-            context_pdf["diversos"] = DiversosAcessorio.objects.filter(
-                acessoriosocorrencia=aoid)
-            context_pdf["docs"] = DocAcessorio.objects.filter(
-                acessoriosocorrencia=aoid)
-            context_pdf["municoes"] =  MunicaoAcessorio.objects.filter(
-                acessoriosocorrencia=aoid)
-            context_pdf["veiculos"] = VeiculoAcessorio.objects.filter(
-                acessoriosocorrencia=aoid)
-        except Exception:
-            pass
+                context_pdf["armas"] = ArmaAcessorio.objects.filter(
+                    acessoriosocorrencia=aoid)
+                context_pdf["drogas"] = DrogaAcessorio.objects.filter(
+                    acessoriosocorrencia=aoid)
+                context_pdf["diversos"] = DiversosAcessorio.objects.filter(
+                    acessoriosocorrencia=aoid)
+                context_pdf["docs"] = DocAcessorio.objects.filter(
+                    acessoriosocorrencia=aoid)
+                context_pdf["municoes"] =  MunicaoAcessorio.objects.filter(
+                    acessoriosocorrencia=aoid)
+                context_pdf["veiculos"] = VeiculoAcessorio.objects.filter(
+                    acessoriosocorrencia=aoid)
+            except Exception:
+                pass
 
-        GerarPDF("ocorrencia/pdf.html", context_pdf, arquivo)
+            GerarPDF("pdf/ocorrencia.html", context_pdf, arquivo)
 
-        with open(filename, 'r'):
-            response = FileResponse(open(filename))
-            return response
+            with open(filename, 'r'):
+                response = FileResponse(open(filename))
+                return response
+        else:
+            return redirect("index")
 
     except Exception as error:
         raise error

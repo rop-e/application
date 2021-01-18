@@ -30,7 +30,8 @@ from .rat_views import (
     delete_veiculo,
     post_preview_rat,
     preview_rat,
-    geraemostrapdfrat
+    geraemostrapdfrat,
+    finalizar_rat
 )
 
 app_name = "rat"
@@ -42,6 +43,9 @@ urlpatterns = [
         "mostrar/<int:id>/", mostrar, name="mostrar"),
     path(
         "mostrar/<int:id>/pdf/", geraemostrapdfrat, name="geraemostrapdfrat"),
+    path(
+        "rat/finaliza/",
+        finalizar_rat, name="finalizar_rat"),
     path(
         "rat/<int:id>/edit",
         edit_rat,

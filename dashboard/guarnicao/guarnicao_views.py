@@ -848,48 +848,52 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 def geraemostrapdfguarnicao(request, id):
     try:
         guarnicao = Guarnicao.objects.get(id=id)
-        aits = GuarnicaoAIT.objects.filter(guarnicao=guarnicao)
-        rrds = GuarnicaoRRD.objects.filter(guarnicao=guarnicao)
-        travs = GuarnicaoTRAV.objects.filter(guarnicao=guarnicao)
 
-        opos = OPORelatorio.objects.filter(guarnicao=guarnicao, status="finalizada")
-        
-        pasta = "guarnicoes/"
-        nomearquivo = "Guarnicao_" + str(guarnicao.id) + "-" +\
-            str(guarnicao.companhia) + "-Encerramento_de_Servico-" +\
-            str(guarnicao.municipio.nome) + "_Data__" +\
-            timezone.localtime(guarnicao.dataabertura).strftime("%d_%m_%Y")
+        if guarnicao.relatorio:
+            aits = GuarnicaoAIT.objects.filter(guarnicao=guarnicao)
+            rrds = GuarnicaoRRD.objects.filter(guarnicao=guarnicao)
+            travs = GuarnicaoTRAV.objects.filter(guarnicao=guarnicao)
 
-        arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
-        
-        filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+            opos = OPORelatorio.objects.filter(guarnicao=guarnicao, status="finalizada")
+            
+            pasta = "guarnicoes/"
+            nomearquivo = "Guarnicao_" + str(guarnicao.id) + "-" +\
+                str(guarnicao.companhia) + "-Encerramento_de_Servico-" +\
+                str(guarnicao.municipio.nome) + "_Data__" +\
+                timezone.localtime(guarnicao.dataabertura).strftime("%d_%m_%Y")
 
-        my_file = Path(filename)
+            arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+            
+            filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
 
-        if not my_file.is_file():
-            context_pdf = {
-                "guarnicao": guarnicao,
-                "pms": PolicialViatura.objects.filter(
-                    guarnicao=guarnicao).order_by("policial__nomeguerra"),
-                "ocorrencias": ocorrencias_guarnicao(guarnicao),
-                "rats": RAT.objects.filter(guarnicao=guarnicao),
-                "aits": aits,
-                "aitscarros": aits.filter(tipoveiculo="carro").count(),
-                "aitsmotos": aits.filter(tipoveiculo="moto").count(),
-                "rrds": rrds,
-                "rrdscarros": rrds.filter(tipoveiculo="carro").count(),
-                "rrdsmotos": rrds.filter(tipoveiculo="moto").count(),
-                "travs": travs,
-                "travscarros": travs.filter(tipoveiculo="carro").count(),
-                "travsmotos": travs.filter(tipoveiculo="moto").count(),
-                "opos": opos
-            }
+            my_file = Path(filename)
 
-            GerarPDF("gestao/pdf.html", context_pdf, arquivo)
+            if not my_file.is_file():
+                context_pdf = {
+                    "guarnicao": guarnicao,
+                    "pms": PolicialViatura.objects.filter(
+                        guarnicao=guarnicao).order_by("policial__nomeguerra"),
+                    "ocorrencias": ocorrencias_guarnicao(guarnicao),
+                    "rats": RAT.objects.filter(guarnicao=guarnicao),
+                    "aits": aits,
+                    "aitscarros": aits.filter(tipoveiculo="carro").count(),
+                    "aitsmotos": aits.filter(tipoveiculo="moto").count(),
+                    "rrds": rrds,
+                    "rrdscarros": rrds.filter(tipoveiculo="carro").count(),
+                    "rrdsmotos": rrds.filter(tipoveiculo="moto").count(),
+                    "travs": travs,
+                    "travscarros": travs.filter(tipoveiculo="carro").count(),
+                    "travsmotos": travs.filter(tipoveiculo="moto").count(),
+                    "opos": opos
+                }
 
-        with open(filename, 'r'):
-            response = FileResponse(open(filename))
-            return response
+                GerarPDF("pdf/guarnicao.html", context_pdf, arquivo)
+
+            with open(filename, 'r'):
+                response = FileResponse(open(filename))
+                return response
+        else:
+            return redirect("index")
 
     except Exception as error:
         raise error

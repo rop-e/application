@@ -183,30 +183,33 @@ def geraemostrapdfrat(request, id):
     try:
         rat = RAT.objects.get(id=id)
 
-        pasta = "rats/"
-        nomearquivo = "RAT_" + str(rat.id) + "-" +\
-            timezone.localtime(rat.dataocorrencia).strftime("%Y")
-        arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
-        
-        filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+        if rat.relatorio:
+            pasta = "rats/"
+            nomearquivo = "RAT_" + str(rat.id) + "-" +\
+                timezone.localtime(rat.dataocorrencia).strftime("%Y")
+            arquivo = pasta + str(nomearquivo + ".pdf").replace(" ", "_")
+            
+            filename = PDF_ROOT + pasta + str(nomearquivo + ".pdf").replace(" ", "_")
 
-        context_pdf = {
-            "rat": rat,
-            "pms": PolicialViatura.objects.filter(
-                guarnicao=rat.guarnicao).order_by(
-                    "policial__nomeguerra"),
-            "envolvidos": Envolvido.objects.filter(
-                rat=rat),
-            "objetos": RATObjetos.objects.filter(rat=rat),
-            "veiculos": RATVeiculos.objects.filter(rat=rat),
-            "anexos": Anexo.objects.filter(rat=rat)
-        }
+            context_pdf = {
+                "rat": rat,
+                "pms": PolicialViatura.objects.filter(
+                    guarnicao=rat.guarnicao).order_by(
+                        "policial__nomeguerra"),
+                "envolvidos": Envolvido.objects.filter(
+                    rat=rat),
+                "objetos": RATObjetos.objects.filter(rat=rat),
+                "veiculos": RATVeiculos.objects.filter(rat=rat),
+                "anexos": Anexo.objects.filter(rat=rat)
+            }
 
-        GerarPDF("rat/pdf.html", context_pdf, arquivo)
+            GerarPDF("pdf/rat.html", context_pdf, arquivo)
 
-        with open(filename, 'r'):
-            response = FileResponse(open(filename))
-            return response
+            with open(filename, 'r'):
+                response = FileResponse(open(filename))
+                return response
+        else:
+            return redirect("index")
 
     except Exception as error:
         raise error
@@ -701,17 +704,35 @@ def post_preview_rat(request):
 
 @login_required
 def preview_rat(request, id):
-    try:
-        rat = get_rat(id)
+    rat = get_rat(id)
 
-        context = {
-            "rat": rat,
-            "pms": listar_policiais_na_viatura(rat.guarnicao_id)
-        }
+    if rat.guarnicao.comandante == request.user.policial and rat.status_previa:
+        try:
+            context = {
+                "rat": rat,
+                "pms": listar_policiais_na_viatura(rat.guarnicao_id)
+            }
 
-        return render(request, "rat/finalizar_rat.html", context)
-    except Exception:
+            return render(request, "rat/finalizar_rat.html", context)
+        except Exception:
+            return redirect("index")
+    else:
         return redirect("index")
+
+
+@login_required
+@csrf_exempt
+def finalizar_rat(request):
+    if request.is_ajax and request.method == "POST":
+        rat = RAT.objects.get(id=request.POST.get("rat"))
+
+        rat.status_previa = False
+        rat.save()
+
+        return JsonResponse({
+            "redirect": reverse("rat:listar")
+        }, status=200)
+# ACABA AQUI
 
 
 @login_required
