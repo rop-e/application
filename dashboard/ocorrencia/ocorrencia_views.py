@@ -64,7 +64,10 @@ from acessoriosocorrencia.models import (
     VeiculoAcessorio
 )
 from pessoa.models import Pessoa
-from guarnicao.models import Guarnicao
+from guarnicao.models import (
+    Guarnicao,
+    Companhia
+)
 
 # SERIALIZERS
 from ocorrencia.serializers import (
@@ -182,13 +185,11 @@ def listar(request):
 
     paginador = Paginator(qs.order_by("-id"), 4)
 
-    id_policiais = []
+    id_companhias = []
     id_infracoes = []
 
-    for guarnicao in Guarnicao.objects.filter(ocorrencia__isnull=False):
-        id_policiais.append(guarnicao.comandante.id)
-
     for ocorrencia in Ocorrencia.objects.filter(infracao__isnull=False):
+        id_companhias.append(ocorrencia.guarnicao.companhia.id)
         id_infracoes.append(ocorrencia.infracao.id)
 
     filtros = QueryDict(mutable=True)
@@ -226,7 +227,7 @@ def listar(request):
 
     context = {
         "ocorrencias": paginador.get_page(numero_pagina),
-        "policiais": Policial.objects.filter(id__in=id_policiais).distinct(),
+        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct(),
         "infracoes": Infracao.objects.filter(id__in=id_infracoes).distinct(),
         "filtros": filtros,
         "checkbox": checkbox
