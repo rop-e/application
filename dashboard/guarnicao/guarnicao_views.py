@@ -307,9 +307,6 @@ def get_policiais_guarnicao(request):
 def adicionar_policial_guarnicao(request, guarnicao):
     guarnicao = Guarnicao.objects.get(id=guarnicao)
     if guarnicao.ativo:
-        if request.method == "POST":
-            post_policial(request)
-
         context = {
             "guarnicao": guarnicao,
             "policiais": listar_policiais_na_viatura(guarnicao.id),
