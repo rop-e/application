@@ -4,33 +4,13 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel='stylesheet' href="{% static 'assets/css/materialize.min.css' %}">
         <style>
-            .bg {
-                background-color: #eeeeef;
-                /* background-image: url("https://raw.githubusercontent.com/tiagosousaeti/materialize-landing-page/master/img/startup.png"); */
-                height: 100%;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
-                z-index: -1;
-            }
-            .title {
-                opacity: 1;
-                position: absolute; 
-                left: 0;
-                top: 10%;
-                width: 100%;
-                text-align: center;
-            }
-            .title span.subtitle {
-                z-index: 5;
-                padding: 18px;
-                font-size: 25px;
-                letter-spacing: 10px;
-            }
+            #download { width: 30%; }
             @media only screen and (max-width : 992px) {
                 header, main, footer {
                     padding-left: 0;
                 }
+                #download { width: 32%; }
+                #android { width: 60% }
             }
             </style>
         <title>ROP-E - Download</title>
@@ -51,21 +31,19 @@
             </nav>
         </div>
 
-        <div class="bg"></div>
-
-        <div class="row title center-align">
-            <h2 class="subtitle black-text waves-light">Download ROP-E</h2>
-            <div class="col s12 l12 m12" style="padding: 20;">
-                <img src="{% static 'assets/images/android-phone.png' %}" class="responsive-img" />
-            </div>
-            <div class="col s12 l12 m12">
-                <a href="#sobre" class="waves-effect waves-light btn-large blue">
-                    <i class="material-icons left">info</i>Sobre
-                </a>
-                <a href="https://raw.githubusercontent.com/rop-e/rope-movel/main/ROP-E.apk" class="waves-effect waves-light btn-large green accent-4 pulse">
-                    <i class="material-icons left">android</i>Download
-                    <small style="position: absolute; bottom: 0; right: 10%; height: 36px; font-size: xx-small;">Versão 1.0</small>
-                </a>
+        <div class="row" style="background-color: #eeeeef;">
+            <div class="section">
+                <div class="container">
+                    <h1 class="center">Download ROP-E</h1>
+                    <div class="row center">
+                        <img src="{% static 'assets/images/android-phone.png' %}" id="android" class="responsive-img" />
+                    </div>
+                    <div class="row center">
+                        <a href='https://play.google.com/store/apps/details?id=org.ifbaiano.rop_e.rope&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                            <img class="responsive-img" alt='Disponível no Google Play' id="download" src='https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png'/>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -73,7 +51,7 @@
             <a id="sobre" class="center-align" style="padding:4px;">
                 <h4>SOBRE</h4>
             </a>
-			<div class="row">
+            <div class="row">
                 <div class="col s6 l6 m6">
                     <p class="flow-text light justify">O Sistema ROP-E (Relatório de Ocorrência Policial Eletrônico) é uma ferramenta desenvolvida por meio da parceria entre o Instituto Federal Baiano Campus Guanambi (IF Baiano), através dos docentes e alunos do curso de Análise de Desenvolvimento de Sistemas (ADS), juntamente com o 17° Batalhão de Polícia Militar da Bahia (17° BPM). Com o objetivo de proporcionar maior agilidade e facilitar a rastreabilidade das ocorrências policiais, o ROP-E poderá contribuir com as ações de segurança pública de Guanambi e toda a região.</p>
                 </div>
@@ -100,10 +78,10 @@
                             HIAGO FAGUNDES COUTO
                         </p>
                     </div>
-		        </div>
+                </div>
 
-				<div class="col s12 m6">
-		        	<div>
+                <div class="col s12 m6">
+                    <div>
                         <span class="center light-blue-text">
                             <h2><i class="material-icons">settings</i></h2>
                             <h5>COLABORADORES</h5>
@@ -116,10 +94,8 @@
                             <i>SD PM</i> OSEIAS UELDES DA SILVA SANTOS
                         </p>
                     </div>
-		        </div>
-
-			
-		</div>
+                </div>
+        </div>
         
         <script src="{% static 'assets/js/materialize.min.js' %}"></script>
         <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
