@@ -140,44 +140,52 @@
                     </tbody>
                 </table>
 
-                    {% if rats.has_other_pages %}
-                        <ul class="pagination center">
-                            {% if rats.has_previous %}
-                                <li class="waves-effect">
-                                    <a href="{% my_url rats.previous_page_number 'pagina' request.GET.urlencode %}">
-                                        <i class="material-icons">chevron_left</i>
-                                    </a>
+                {% if rats.has_other_pages %}
+                    <ul class="pagination center">
+                        {% if rats.has_previous %}
+                            <li class="waves-effect">
+                                <a href="{% my_url rats.previous_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_left</i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            </li>
+                        {% endif %}
+
+                        {% if rats.number|add:'-4' > 1 %}
+                            <li><a href="{% my_url rats.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
+
+                        {% for num in rats.paginator.page_range %}
+                            {% if rats.number == num %}
+                                <li class="active">
+                                    <a href="#!">{{ num }}</a>
                                 </li>
-                            {% else %}
-                                <li class="disabled">
-                                    <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            {% elif num > rats.number|add:'-5' and num < rats.number|add:'5' %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
                                 </li>
                             {% endif %}
+                        {% endfor %}
 
-                            {% for num in rats.paginator.page_range %}
-                                {% if rats.number == num %}
-                                    <li class="active">
-                                        <a href="#!">{{ num }}</a>
-                                    </li>
-                                {% else %}
-                                    <li class="waves-effect">
-                                        <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
+                        {% if rats.paginator.num_pages > rats.number|add:'4' %}
+                            <li><a href="{% my_url rats.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
 
-                            {% if rats.has_next %}
-                                <li class="waves-effect">
-                                    <a href="{% my_url rats.next_page_number 'pagina' request.GET.urlencode %}">
-                                        <i class="material-icons">chevron_right</i></a>
-                                    </li>
-                            {% else %}
-                                <li class="disabled">
-                                    <a href="#!"><i class="material-icons">chevron_right</i></a>
+                        {% if rats.has_next %}
+                            <li class="waves-effect">
+                                <a href="{% my_url rats.next_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_right</i></a>
                                 </li>
-                            {% endif %}
-                        </ul>
-                    {% endif %}
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_right</i></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
 
                 {% else %}
                     <p>Não existem RATs cadastradas.</p>

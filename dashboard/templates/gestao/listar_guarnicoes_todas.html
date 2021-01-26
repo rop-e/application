@@ -100,7 +100,7 @@
                 </div>
 
                 {% if guarnicoes %}
-                <table class="highlight responsive-table centered">
+                <table class="responsive-table highlight centered">
                     <thead>
                         <tr>
                             <th>Comandante/CIA</th>
@@ -122,7 +122,7 @@
                                 <span class="full-text">{% if guarnicao.datafechamento is None %}Sem finalizar!{% else %}{{ guarnicao.datafechamento }}{% endif %}</span>
                                 <span class="short-text center">{% if guarnicao.datafechamento is None %}Sem finalizar!{% else %}{{ guarnicao.datafechamento|date:"d/m/Y" }} - {{ guarnicao.datafechamento|time }}{% endif %}</span>
                             </td>
-                            <td>{% if guarnicao.relatorio is None %}Sem finalizar!{% else %}{{ guarnicao.relatorio }}{% endif %}</td>
+                            <td>{% if guarnicao.relatorio is None %}Sem finalizar!{% else %}{{ guarnicao.relatorio|truncatechars:20 }}{% endif %}</td>
                             <td>
                                 <a title="Visualizar" href="{% url 'guarnicao:visualizar_guarnicao' id=guarnicao.id %}" class="btn waves-effect waves-light btn-floating">
                                     <i class="material-icons right">description</i>
@@ -132,7 +132,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
-        
+
                 {% if guarnicoes.has_other_pages %}
                     <ul class="pagination center">
                         {% if guarnicoes.has_previous %}
@@ -147,17 +147,25 @@
                             </li>
                         {% endif %}
 
+                        {% if guarnicoes.number|add:'-4' > 1 %}
+                            <li><a href="{% my_url guarnicoes.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
+
                         {% for num in guarnicoes.paginator.page_range %}
                             {% if guarnicoes.number == num %}
                                 <li class="active">
                                     <a href="#!">{{ num }}</a>
                                 </li>
-                            {% else %}
+                            {% elif num > guarnicoes.number|add:'-5' and num < guarnicoes.number|add:'5' %}
                                 <li class="waves-effect">
                                     <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
+
+                        {% if guarnicoes.paginator.num_pages > guarnicoes.number|add:'4' %}
+                            <li><a href="{% my_url guarnicoes.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
 
                         {% if guarnicoes.has_next %}
                             <li class="waves-effect">

@@ -147,17 +147,25 @@
                             </li>
                         {% endif %}
 
+                        {% if opos.number|add:'-4' > 1 %}
+                            <li><a href="{% my_url opos.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
+
                         {% for num in opos.paginator.page_range %}
                             {% if opos.number == num %}
                                 <li class="active">
                                     <a href="#!">{{ num }}</a>
                                 </li>
-                            {% else %}
+                            {% elif num > opos.number|add:'-5' and num < opos.number|add:'5' %}
                                 <li class="waves-effect">
                                     <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
+
+                        {% if opos.paginator.num_pages > opos.number|add:'4' %}
+                            <li><a href="{% my_url opos.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
 
                         {% if opos.has_next %}
                             <li class="waves-effect">

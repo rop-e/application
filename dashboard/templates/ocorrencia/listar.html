@@ -47,7 +47,7 @@
                                     <label for="id_id_exato" class="active">Número</label>
                                 </div>
                                 
-                                <div class="col l3 m6 s12">
+                                <div class="col l4 m6 s12">
                                     <label>Infração</label>
                                     <select class="browser-default" name="infracao">
                                         <option value="" selected>---------</option>
@@ -61,12 +61,12 @@
                                     </select>
                                 </div>
 
-                                <div class="col l4 m12 s12">
-                                    <label>Comandante da guarnição</label>
-                                    <select class="browser-default" name="policial">
+                                <div class="col l3 m12 s12">
+                                    <label>Companhia</label>
+                                    <select class="browser-default" name="companhia">
                                         <option value="" selected>---------</option>
-                                        {% for policial in policiais %}
-                                            <option value="{{ policial.id }}">{{ policial }}</option>
+                                        {% for companhia in companhias %}
+                                            <option value="{{ companhia.id }}">{{ companhia }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -174,44 +174,52 @@
                     </tbody>
                 </table>
 
-                    {% if ocorrencias.has_other_pages %}
-                        <ul class="pagination center">
-                            {% if ocorrencias.has_previous %}
-                                <li class="waves-effect">
-                                    <a href="{% my_url ocorrencias.previous_page_number 'pagina' request.GET.urlencode %}">
-                                        <i class="material-icons">chevron_left</i>
-                                    </a>
+                {% if ocorrencias.has_other_pages %}
+                    <ul class="pagination center">
+                        {% if ocorrencias.has_previous %}
+                            <li class="waves-effect">
+                                <a href="{% my_url ocorrencias.previous_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_left</i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            </li>
+                        {% endif %}
+
+                        {% if ocorrencias.number|add:'-4' > 1 %}
+                            <li><a href="{% my_url ocorrencias.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
+
+                        {% for num in ocorrencias.paginator.page_range %}
+                            {% if ocorrencias.number == num %}
+                                <li class="active">
+                                    <a href="#!">{{ num }}</a>
                                 </li>
-                            {% else %}
-                                <li class="disabled">
-                                    <a href="#!"><i class="material-icons">chevron_left</i></a>
+                            {% elif num > ocorrencias.number|add:'-5' and num < ocorrencias.number|add:'5' %}
+                                <li class="waves-effect">
+                                    <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
                                 </li>
                             {% endif %}
+                        {% endfor %}
 
-                            {% for num in ocorrencias.paginator.page_range %}
-                                {% if ocorrencias.number == num %}
-                                    <li class="active">
-                                        <a href="#!">{{ num }}</a>
-                                    </li>
-                                {% else %}
-                                    <li class="waves-effect">
-                                        <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
+                        {% if ocorrencias.paginator.num_pages > ocorrencias.number|add:'4' %}
+                            <li><a href="{% my_url ocorrencias.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
 
-                            {% if ocorrencias.has_next %}
-                                <li class="waves-effect">
-                                    <a href="{% my_url ocorrencias.next_page_number 'pagina' request.GET.urlencode %}">
-                                        <i class="material-icons">chevron_right</i></a>
-                                    </li>
-                            {% else %}
-                                <li class="disabled">
-                                    <a href="#!"><i class="material-icons">chevron_right</i></a>
+                        {% if ocorrencias.has_next %}
+                            <li class="waves-effect">
+                                <a href="{% my_url ocorrencias.next_page_number 'pagina' request.GET.urlencode %}">
+                                    <i class="material-icons">chevron_right</i></a>
                                 </li>
-                            {% endif %}
-                        </ul>
-                    {% endif %}
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#!"><i class="material-icons">chevron_right</i></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
 
                 {% else %}
                     <p>Não existem ocorrências cadastradas.</p>

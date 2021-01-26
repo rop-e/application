@@ -126,17 +126,25 @@
                             </li>
                         {% endif %}
 
+                        {% if guarnicoes.number|add:'-4' > 1 %}
+                            <li><a href="{% my_url guarnicoes.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
+
                         {% for num in guarnicoes.paginator.page_range %}
                             {% if guarnicoes.number == num %}
                                 <li class="active">
                                     <a href="#!">{{ num }}</a>
                                 </li>
-                            {% else %}
+                            {% elif num > guarnicoes.number|add:'-5' and num < guarnicoes.number|add:'5' %}
                                 <li class="waves-effect">
                                     <a href="{% my_url num 'pagina' request.GET.urlencode %}">{{ num }}</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
+
+                        {% if guarnicoes.paginator.num_pages > guarnicoes.number|add:'4' %}
+                            <li><a href="{% my_url guarnicoes.number|add:'-5' 'pagina' request.GET.urlencode %}">&hellip;</a></li>
+                        {% endif %}
 
                         {% if guarnicoes.has_next %}
                             <li class="waves-effect">
