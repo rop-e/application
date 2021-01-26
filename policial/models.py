@@ -2,6 +2,20 @@ from django.db import models
 from contasdeusuario.models import Usuario
 from PIL import Image
 from batalhao.models import Batalhao
+import os
+from django.utils import timezone
+from ropd.settings import MEDIA_ROOT
+
+
+def caminho_imagens_perfil(instance, filename):
+    if not instance.dataatualizacao:
+        data = timezone.now()
+    else:
+        data = instance.dataatualizacao
+
+    filename = "PERFIL_USUARIO_" + str(instance.matricula.id) + "_" + str(data.strftime("%d-%m-%Y_%H-%M-%S")) + "." + filename.split('.')[-1]
+
+    return f"imagens_perfil/{filename}"
 
 
 class PostoGraduacao(models.Model):
@@ -83,9 +97,13 @@ class Policial(models.Model):
                  help_text='Informe o nome de guerra')
     dtpraca = models.DateField('Data de praça')
     foto = models.ImageField(
-           upload_to='imagens_perfil',
+           upload_to=caminho_imagens_perfil,
            null=True, blank=True,
            default='imagens_perfil/perfil.png')
+    
+    datacriacao = models.DateTimeField('Data de criação', auto_now_add=True)
+    dataatualizacao = models.DateTimeField(
+                      'Data de atualização', auto_now=True)
 
     class Meta:
         verbose_name = 'Policial'
@@ -96,11 +114,28 @@ class Policial(models.Model):
         return '{} {}'.format(self.postograduacao, self.nomeguerra)
 
     def save(self, *args, **kwargs):
+        if not self.foto:
+            self.foto = "imagens_perfil/perfil.png"
+
         super(Policial, self).save(*args, **kwargs)
 
         imagem = Image.open(self.foto.path)
 
         if imagem.height > 300 or imagem.width > 300:
             output_size = (300, 300)
-            imagem.thumbnail(output_size)
-            imagem.save(self.foto.path)
+            imagem.thumbnail(output_size, Image.ANTIALIAS)
+            imagem.save(self.foto.path, format="JPEG", quality=100)
+
+    def delete(self, *args, **kwargs):
+        if os.path.isfile(self.foto.path):
+            if not self.foto == "imagens_perfil/perfil.png":
+                os.remove(self.foto.path)
+        
+        path = MEDIA_ROOT + "imagens_perfil/"
+
+        for file in os.listdir(path):
+            if file.startswith("PERFIL_USUARIO_" + str(self.matricula.id) + "_"):
+                os.remove(path + file)
+
+        super(Policial, self).delete(*args,**kwargs)
+
