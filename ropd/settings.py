@@ -26,8 +26,9 @@ INSTALLED_APPS = [
 MY_APPS = [
     'core.apps.CoreConfig',
     'viatura.apps.ViaturaConfig',
-    'guarnicao.apps.GuarnicaoConfig',
+    'opo.apps.OpoConfig',
     'ocorrencia.apps.OcorrenciaConfig',
+    'guarnicao.apps.GuarnicaoConfig',
     'policial.apps.PolicialConfig',
     'policialviatura.apps.PolicialviaturaConfig',
     'observacao.apps.ObservacaoConfig',
@@ -42,7 +43,6 @@ MY_APPS = [
     'rat.apps.RatConfig',
     'pessoa.apps.PessoaConfig',
     'anexo.apps.AnexoConfig',
-    'opo.apps.OpoConfig'
 ]
 
 EXTERNAL_LIBRARYS = [
