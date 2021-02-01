@@ -73,19 +73,19 @@ class GuarnicaoTRAVSerializer(serializers.ModelSerializer):
 class AtivaGuarnicaoAITSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuarnicaoAIT
-        fields = ["id", "codigo", "tipoveiculo"]
+        exclude = ["guarnicao", "dataatualizacao"]
 
 
 class AtivaGuarnicaoRRDSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuarnicaoRRD
-        fields = ["id", "codigo", "tipoveiculo"]
+        exclude = ["guarnicao", "dataatualizacao"]
 
 
 class AtivaGuarnicaoTRAVSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuarnicaoTRAV
-        fields = ["id", "codigo", "tipoveiculo"]
+        exclude = ["guarnicao", "dataatualizacao"]
 
 
 class ListAtivaGuarnicaoSerializer(serializers.ModelSerializer):

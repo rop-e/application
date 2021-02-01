@@ -156,8 +156,8 @@ def listar(request):
     context = {
         "rats": paginador.get_page(numero_pagina),
         "filtros": filtros,
-        "tipoacidentes": TipoAcidente.objects.filter(id__in=id_tipoacidentes).distinct(),
-        "municipios": Municipios.objects.filter(codigo_ibge__in=id_municipios).distinct(),
+        "tipoacidentes": TipoAcidente.objects.filter(id__in=id_tipoacidentes).distinct().order_by("tipo"),
+        "municipios": Municipios.objects.filter(codigo_ibge__in=id_municipios).distinct().order_by("nome"),
         "checkbox": checkbox
     }
 
