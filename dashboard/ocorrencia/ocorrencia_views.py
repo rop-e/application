@@ -227,8 +227,8 @@ def listar(request):
 
     context = {
         "ocorrencias": paginador.get_page(numero_pagina),
-        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct(),
-        "infracoes": Infracao.objects.filter(id__in=id_infracoes).distinct(),
+        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct().order_by("companhia"),
+        "infracoes": Infracao.objects.filter(id__in=id_infracoes).distinct().order_by("tipo"),
         "filtros": filtros,
         "checkbox": checkbox
     }

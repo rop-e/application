@@ -20,7 +20,7 @@ def is_valid_queryparam(param):
 
 
 def filter(request):
-    qs = Ocorrencia.objects.filter(relatorio__isnull=False)
+    qs = Ocorrencia.objects.filter(relatorio__isnull=False).exclude(endereco__latitude=0, endereco__longitude=0)
 
     infracao = request.GET.get("infracao", "")
     municipio = request.GET.get("municipio", "")
@@ -52,8 +52,13 @@ def filter(request):
 def index(request):
     qs = filter(request)
 
-    infracoes = Infracao.objects.filter(ocorrencia__isnull=False, ocorrencia__relatorio__isnull=False).distinct().order_by("tipo")
-    municipios = Municipios.objects.filter(batalhaomunicipios__batalhao__batalhao=request.user.policial.batalhao, endereco__ocorrencia__isnull=False, endereco__ocorrencia__relatorio__isnull=False).distinct().order_by("batalhaomunicipios__municipio__nome")
+    infracoes = Infracao.objects.filter(
+        ocorrencia__isnull=False,
+        ocorrencia__relatorio__isnull=False).distinct().order_by("tipo")
+    municipios = Municipios.objects.filter(
+        batalhaomunicipios__batalhao__batalhao=request.user.policial.batalhao,
+        endereco__ocorrencia__isnull=False,
+        endereco__ocorrencia__relatorio__isnull=False).distinct().order_by("nome")
 
     filtros = QueryDict(mutable=True)
 

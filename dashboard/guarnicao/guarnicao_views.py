@@ -151,7 +151,7 @@ def listar_guarnicoes_todas(request):
     context = {
         "guarnicoes": paginador.get_page(numero_pagina),
         "status": STATUS_GUARNICAO,
-        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct(),
+        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct().order_by("companhia"),
         "filtros": filtros,
         "checkbox": checkbox
     }
@@ -201,8 +201,8 @@ def listar_guarnicoes_ativas(request):
 
     context = {
         "guarnicoes": paginador.get_page(numero_pagina),
-        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct(),
-        "municipios": Municipios.objects.filter(codigo_ibge__in=id_municipios).distinct(),
+        "companhias": Companhia.objects.filter(id__in=id_companhias).distinct().order_by("companhia"),
+        "municipios": Municipios.objects.filter(codigo_ibge__in=id_municipios).distinct().order_by("nome"),
         "filtros": filtros,
     }
 
