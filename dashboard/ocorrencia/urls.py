@@ -23,12 +23,15 @@ from .ocorrencia_views import (
     delete_anexo,
     geraemostrapdfocorrencia,
     vincular_ocorrencia,
-    post_vincular_ocorrencia
+    post_vincular_ocorrencia,
+    gerar_xls
 )
 
 app_name = "ocorrencia"
 
 urlpatterns = [
+    path(
+        "gerar_xls", gerar_xls, name="gerar_xls"),
     path(
         "listar/", listar, name="listar"),
     path(

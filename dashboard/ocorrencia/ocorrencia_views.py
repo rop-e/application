@@ -11,6 +11,7 @@ from ropd.settings import (
 )
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+import io
 
 # UTILS
 from django.utils import timezone
@@ -68,6 +69,7 @@ from guarnicao.models import (
     Guarnicao,
     Companhia
 )
+from endereco.models import Municipios
 
 # SERIALIZERS
 from ocorrencia.serializers import (
@@ -101,8 +103,14 @@ from dashboard.pessoa.forms import FormPessoa
 from dashboard.observacao.forms import FormObservacao
 
 # PDF
-import io
 from reportlab.pdfgen import canvas
+
+# EXCEL
+import xlwt
+
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.db.models import Count, Max, Min
+import itertools
 
 
 def is_valid_queryparam(param):
@@ -114,7 +122,8 @@ def filter(request):
     
     id_exato = request.GET.get("id_exato", "")
     infracao = request.GET.get("infracao", "")
-    policial = request.GET.get("policial", "")
+    cidade = request.GET.get("cidade", "")
+    companhia = request.GET.get("companhia", "")
     data_inicial = request.GET.get("data_inicial", "")
     data_final = request.GET.get("data_final", "")
 
@@ -133,9 +142,12 @@ def filter(request):
 
     if is_valid_queryparam(infracao):
         qs = qs.filter(infracao=infracao)
+    
+    if is_valid_queryparam(cidade):
+        qs = qs.filter(endereco__municipio__codigo_ibge=cidade)
 
-    if is_valid_queryparam(policial):
-        qs = qs.filter(guarnicao__comandante=policial)
+    if is_valid_queryparam(companhia):
+        qs = qs.filter(guarnicao__companhia=companhia)
 
     if is_valid_queryparam(data_inicial):
         dinicial = timezone.now().strptime(data_inicial, "%d/%m/%Y")
@@ -148,7 +160,7 @@ def filter(request):
     if envolvidos == "on":
         qs = qs.filter(envolvido_ocorrencia__isnull=False).distinct()
         if is_valid_queryparam(envolvido):
-            qs = qs.filter(envolvido__pessoa__nome__icontains=envolvido)
+            qs = qs.filter(envolvido_ocorrencia__pessoa__nome__icontains=envolvido)
 
     if armas == "on":
         qs = qs.filter(
@@ -185,10 +197,12 @@ def listar(request):
 
     paginador = Paginator(qs.order_by("-id"), 4)
 
+    id_cidades = []
     id_companhias = []
     id_infracoes = []
 
     for ocorrencia in Ocorrencia.objects.filter(infracao__isnull=False):
+        id_cidades.append(ocorrencia.endereco.municipio.codigo_ibge)
         id_companhias.append(ocorrencia.guarnicao.companhia.id)
         id_infracoes.append(ocorrencia.infracao.id)
 
@@ -201,9 +215,10 @@ def listar(request):
                 filtros.appendlist("Número", v)
             elif k == "infracao":
                 filtros.appendlist("Infração", Infracao.objects.get(id=v))
-            elif k == "policial":
-                filtros.appendlist(
-                    "Comandante da Guarnição", Policial.objects.get(id=v))
+            elif k == "cidade":
+                filtros.appendlist("Cidade", Municipios.objects.get(codigo_ibge=v))
+            elif k == "companhia":
+                filtros.appendlist("Companhia", Companhia.objects.get(id=v))
             elif k == "data_inicial":
                 filtros.appendlist("Data inicial", v)
             elif k == "data_final":
@@ -227,6 +242,7 @@ def listar(request):
 
     context = {
         "ocorrencias": paginador.get_page(numero_pagina),
+        "cidades": Municipios.objects.filter(codigo_ibge__in=id_cidades).distinct().order_by("nome"),
         "companhias": Companhia.objects.filter(id__in=id_companhias).distinct().order_by("companhia"),
         "infracoes": Infracao.objects.filter(id__in=id_infracoes).distinct().order_by("tipo"),
         "filtros": filtros,
@@ -250,7 +266,91 @@ def mostrar(request, id):
 
     return render(request, "ocorrencia/mostrar.html", context)
 
-from django.views.decorators.clickjacking import xframe_options_exempt
+
+def gerar_xls(request):
+    if request.method == "GET":
+        qs = filter(request)
+
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment;filename=RELATÓRIO_'+ timezone.localtime().strftime('%d_%m_%Y_%H_%M') +'.xls'
+
+        wb = xlwt.Workbook(encoding='utf8')
+        ws = wb.add_sheet('Relatório de Ocorrências', cell_overwrite_ok=True)
+
+        style_heading = xlwt.easyxf("""
+            font:
+                name Arial,
+                colour_index white,
+                bold on,
+                height 320;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            pattern:
+                pattern solid,
+                fore-colour 0x19;
+            """)
+        
+        ws.write_merge(0, 0, 0, 2, 'Relatório de Ocorrências', style_heading)
+
+        style_body = xlwt.easyxf("""
+            font:
+                name Arial,
+                bold on,
+                height 240;
+            align:
+                wrap on,
+                vert center,
+                horiz center;
+            """)
+        
+        try:
+            for i in itertools.count():
+                ws.col(i).width = 340 * 20
+        except ValueError:
+            pass
+
+        menor_data = qs.earliest('dataocorrencia').dataocorrencia
+        maior_data = qs.latest('dataocorrencia').dataocorrencia
+
+        ws.write_merge(1, 1, 0, 2, "Período: " + menor_data.strftime('%d/%m/%Y') + " até " + maior_data.strftime('%d/%m/%Y'), style_body)
+
+        r = 2
+        c = 0
+
+        data = qs.values_list('endereco__municipio__nome', 'infracao__tipo').annotate(Count('pk')).order_by('endereco__municipio__nome').distinct()
+        
+        columns_header = ['CIDADE', 'TIPO PENAL', 'QUANTIDADE']
+
+        for column_index in range(len(columns_header)):
+            ws.write(r, column_index, columns_header[column_index], style_body)
+        r += 1
+
+        for city, infracao, qtd in data:
+            c = 0
+            ws.write(r, c, city, style_body)
+            c += 1
+            ws.write(r, c, infracao, style_body)
+            c += 1
+            ws.write(r, c, qtd, style_body)
+            r += 1
+        
+        c = 0
+        
+        ws.write_merge(r, r, c, c+1, "TOTAL", style_body)
+        ws.write(r, c+2, xlwt.Formula("SUM(C4:C" + str(len(data) + 3) + ")"), style_body)
+
+        r += 1
+
+        ws.write_merge(r, r, c, c+2, "Gerado " + timezone.localtime().strftime('%d/%m/%Y %H:%M'), style_body)
+
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+        response.write(output.getvalue())
+    
+        return response
 
 
 @xframe_options_exempt

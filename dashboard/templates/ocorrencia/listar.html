@@ -40,17 +40,32 @@
                             {% endif %}
                         </span>
 
-                        <form method="GET">
+                        <form method="GET" id="search">
                             <div class="row l12 m12 s12">
-                                <div class="input-field col l1 m6 s12">
-                                    <input type="text" id="id_id_exato" name="id_exato" />
+                                <div class="input-field col l2 m6 s12">
+                                    <input type="number" id="id_id_exato" name="id_exato" />
                                     <label for="id_id_exato" class="active">Número</label>
                                 </div>
-                                
                                 <div class="col l4 m6 s12">
+                                    <label>Cidade</label>
+                                    <select class="browser-default" id="cidade" name="cidade">
+                                        <option value="" selected>TODAS</option>
+                                        {% for cidade in cidades %}
+                                            {% if cidade.codigo_ibge == request.GET.cidade %}
+                                                <option value="{{ cidade.codigo_ibge }}" selected>{{ cidade }}</option>
+                                            {% else %}
+                                                <option value="{{ cidade.codigo_ibge }}">{{ cidade }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row l12 m12 s12">                                
+                                <div class="col l5 m6 s12">
                                     <label>Infração</label>
                                     <select class="browser-default" name="infracao">
-                                        <option value="" selected>---------</option>
+                                        <option value="" selected>TODAS</option>
                                         {% for infracao in infracoes %}
                                             {% if infracao.id == request.GET.infracao %}
                                                 <option value="{{ infracao.id }}" selected>{{ infracao }}</option>
@@ -64,7 +79,7 @@
                                 <div class="col l3 m12 s12">
                                     <label>Companhia</label>
                                     <select class="browser-default" name="companhia">
-                                        <option value="" selected>---------</option>
+                                        <option value="" selected>TODAS</option>
                                         {% for companhia in companhias %}
                                             <option value="{{ companhia.id }}">{{ companhia }}</option>
                                         {% endfor %}
@@ -131,18 +146,28 @@
                                         <label for="id_envolvido" class="active">Envolvido</label>
                                     </div>
                                 </div>
-                                <div class="col s12 m6 l8 right-align">
+                                </form>
+                                <div class="col s12 m6 l12 right-align">
                                     <div class="input-field">
-                                        <button class="btn waves-effect waves-light" id="id_clear_reload_filter" type="reset">Limpar
+                                        <form method="GET" action="{% url 'ocorrencia:gerar_xls' %}" id="gerarExcel">
+                                        {% for x, v in request.GET.items %}
+                                            {% if x != "pagina" and v != "" %}
+                                                <input type="hidden" name="{{ x }}" value="{{ v }}" />
+                                            {% endif %}
+                                        {% endfor %}
+                                        <button class="btn waves-effect waves-light" type="button" id="btnGerarExcel">Gerar EXCEL
+                                            <i class="material-icons left">open_in_new</i>
+                                        </button>
+                                        </form>
+                                        <button class="btn waves-effect waves-light" type="button" id="id_clear_reload_filter">Limpar
                                             <i class="material-icons left">cancel</i>
                                         </button>
-                                        <button class="btn waves-effect waves-light" type="submit">Pesquisar
+                                        <button class="btn waves-effect waves-light" type="button" id="submitSearch">Pesquisar
                                             <i class="material-icons left">search</i>
                                         </button>
                                     </div>
                                 </div>
                               </div>
-                        </form>
                     </div>
                 </div>
 
@@ -151,7 +176,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Tipo</th>
+                            <th>Tipo Penal</th>
                             <th>Local</th>
                             <th>Data e Hora</th>
                             <th>Visualizar</th>
@@ -240,6 +265,27 @@
 {% block javascript %}
 <script>
 $(document).ready(function(){
+    $("#submitSearch").on("click", () => {
+        $("#search").submit();
+    });
+
+    $("#areaBatalhao").on("click", () => {
+        if($("#areaBatalhao").is(':checked')){
+            $("#cidade").attr("disabled", "");
+        } else {
+            $("#cidade").removeAttr("disabled");
+        }
+    });
+
+    btnGerarExcel = $("#btnGerarExcel");
+
+    btnGerarExcel.on("click", () => {
+        if(confirm("Gerar relatório com os seguintes filtros?\n"
+                 + "{% for x, v in filtros.items %}{% if x != 'Número' %}{{ x }}: {{ v }}\n{% endif %}{% endfor %}{% for value in checkbox %}{{ value }}\n{% endfor %}")){
+            $("#gerarExcel").submit();
+        }
+    });
+
     inputEnvolvido = $("#inputEnvolvido");
 
     $("#fill_envolvido").change(() => {
@@ -249,6 +295,7 @@ $(document).ready(function(){
     var buttonReset = $("#id_clear_reload_filter");
 
     buttonReset.attr("disabled", "");
+    btnGerarExcel.attr("disabled", "")
 
     buttonReset.on("click", () => reload());
 
@@ -256,8 +303,26 @@ $(document).ready(function(){
         window.location = window.location.pathname;
     }
 
+    var params = new URLSearchParams(document.location.search.substring(1));
+
+    var parametros = [];
+
+    params.forEach(function(value, key){
+        if(key != "pagina" && key != "id_exato"){
+            if(value != "") {
+                parametros.push({key, value});
+            }
+        }
+    });
+
     if($(".chip").length){
         buttonReset.removeAttr("disabled");
+
+        {% if ocorrencias %}
+            if(parametros.length){
+                btnGerarExcel.removeAttr("disabled");
+            }
+        {% endif %}
     }
 });
 </script>
