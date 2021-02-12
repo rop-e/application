@@ -52,7 +52,7 @@
                                 <div class="col l3 m6 s12">
                                     <label>Status</label>
                                     <select class="browser-default" name="status">
-                                        <option value="" selected>---------</option>
+                                        <option value="" selected>TODAS</option>
                                         {% for x, y in status %}
                                             {% if x == request.GET.status %}
                                                 <option value="{{ x }}" selected>{{ y }}</option>
@@ -65,7 +65,7 @@
                                 <div class="col l4 m12 s12">
                                     <label>Companhia</label>
                                     <select class="browser-default" name="companhia">
-                                        <option value="" selected>---------</option>
+                                        <option value="" selected>TODAS</option>
                                         {% for companhia in companhias %}
                                             <option value="{{ companhia.id }}">{{ companhia }}</option>
                                         {% endfor %}

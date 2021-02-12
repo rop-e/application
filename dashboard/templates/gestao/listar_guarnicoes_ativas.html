@@ -42,7 +42,7 @@
                                 <div class="col l4 m12 s12">
                                     <label>Companhia</label>
                                     <select class="browser-default" name="companhia">
-                                        <option value="" selected>---------</option>
+                                        <option value="" selected>TODAS</option>
                                         {% for companhia in companhias %}
                                             <option value="{{ companhia.id }}">{{ companhia }}</option>
                                         {% endfor %}
@@ -51,7 +51,7 @@
                                 <div class="col l4 m12 s12">
                                     <label>Município atuante</label>
                                     <select class="browser-default" name="municipio">
-                                        <option value="" selected>---------</option>
+                                        <option value="" selected>TODAS</option>
                                         {% for municipio in municipios %}
                                             <option value="{{ municipio.codigo_ibge }}">{{ municipio }}</option>
                                         {% endfor %}

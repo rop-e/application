@@ -16,13 +16,13 @@ class AuthTokenSerializer(serializers.Serializer):
         versao = attrs.get("versao")
 
         if versao:
-            aplicacao = Aplicacao.objects.filter(versao=versao)
+            aplicacao = Aplicacao.objects.filter(versao=versao, atual=True)
 
             if not aplicacao:
-                msg = f"Atualize a sua aplicação. Versão mais atual: {Aplicacao.objects.filter().last()}"
+                msg = f"Atualize a sua aplicação. Versão mais atual: {Aplicacao.objects.filter().last().versao}"
                 raise serializers.ValidationError(msg, code="version")
         else:
-            msg = "Informe a versão do aplicativo."
+            msg = f"Atualize a sua aplicação. Versão mais atual: {Aplicacao.objects.filter().last().versao}"
             raise serializers.ValidationError(msg, code="version")
 
 
