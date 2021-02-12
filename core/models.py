@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 class Aplicacao(models.Model):
     versao = models.CharField("Versão da aplicação", max_length=10, help_text="Informe a versão da aplicação")
-    datalancamento = models.DateTimeField("Data de lançamento", auto_now_add=True)
+    datalancamento = models.DateField("Data de lançamento")
     descricao = models.TextField("Descrição")
     atual = models.BooleanField(verbose_name="Atual", default=False)
 

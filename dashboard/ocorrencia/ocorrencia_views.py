@@ -269,7 +269,76 @@ def mostrar(request, id):
 
 def gerar_xls(request):
     if request.method == "GET":
-        qs = filter(request)
+        qs = Ocorrencia.objects.all()
+        
+        id_exato = request.GET.get("id_exato", "")
+        infracao = request.GET.get("infracao", "")
+        cidade = request.GET.get("cidade", "")
+        companhia = request.GET.get("companhia", "")
+        data_inicial = request.GET.get("data_inicial", "")
+        data_final = request.GET.get("data_final", "")
+
+        envolvidos = request.GET.get("envolvidos", "")
+        envolvido = request.GET.get("envolvido", "")
+
+        armas = request.GET.get("armas", "")
+        diversos = request.GET.get("diversos", "")
+        docs = request.GET.get("docs", "")
+        drogas = request.GET.get("drogas", "")
+        municoes = request.GET.get("municoes", "")
+        veiculos = request.GET.get("veiculos", "")
+
+        if is_valid_queryparam(id_exato):
+            qs = qs.filter(id=id_exato)
+
+        if is_valid_queryparam(infracao):
+            qs = qs.filter(infracao=infracao)
+        
+        if is_valid_queryparam(cidade):
+            qs = qs.filter(endereco__municipio__codigo_ibge=cidade)
+            filtro_por_cidade = True
+        else:
+            filtro_por_cidade = False
+
+        if is_valid_queryparam(companhia):
+            qs = qs.filter(guarnicao__companhia=companhia)
+
+        if is_valid_queryparam(data_inicial):
+            dinicial = timezone.now().strptime(data_inicial, "%d/%m/%Y")
+            qs = qs.filter(dataocorrencia__date__gte=dinicial)
+
+        if is_valid_queryparam(data_final):
+            dfinal = timezone.now().strptime(data_final, "%d/%m/%Y")
+            qs = qs.filter(dataocorrencia__date__lte=dfinal)
+
+        if envolvidos == "on":
+            qs = qs.filter(envolvido_ocorrencia__isnull=False).distinct()
+            if is_valid_queryparam(envolvido):
+                qs = qs.filter(envolvido_ocorrencia__pessoa__nome__icontains=envolvido)
+
+        if armas == "on":
+            qs = qs.filter(
+                acessoriosocorrencia_ocorrencia__armaacessorio_acessoriosocorrencia__isnull=False).distinct()
+
+        if diversos == "on":
+            qs = qs.filter(
+                acessoriosocorrencia_ocorrencia__diversosacessorio_acessoriosocorrencia__isnull=False).distinct()
+
+        if docs == "on":
+            qs = qs.filter(
+                acessoriosocorrencia_ocorrencia__docacessorio_acessoriosocorrencia__isnull=False).distinct()
+
+        if drogas == "on":
+            qs = qs.filter(
+                acessoriosocorrencia_ocorrencia__drogaacessorio_acessoriosocorrencia__isnull=False).distinct()
+
+        if municoes == "on":
+            qs = qs.filter(
+                acessoriosocorrencia_ocorrencia__municaoacessorio_acessoriosocorrencia__isnull=False).distinct()
+
+        if veiculos == "on":
+            qs = qs.filter(
+                acessoriosocorrencia_ocorrencia__veiculoacessorio_acessoriosocorrencia__isnull=False).distinct()
 
         response = HttpResponse(content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment;filename=RELATÓRIO_'+ timezone.localtime().strftime('%d_%m_%Y_%H_%M') +'.xls'
@@ -291,8 +360,10 @@ def gerar_xls(request):
                 pattern solid,
                 fore-colour 0x19;
             """)
-        
-        ws.write_merge(0, 0, 0, 2, 'Relatório de Ocorrências', style_heading)
+
+        c = 0
+
+        ws.write_merge(0, 0, c, c+1, 'Relatório de Ocorrências', style_heading)
 
         style_body = xlwt.easyxf("""
             font:
@@ -304,7 +375,7 @@ def gerar_xls(request):
                 vert center,
                 horiz center;
             """)
-        
+
         try:
             for i in itertools.count():
                 ws.col(i).width = 340 * 20
@@ -314,36 +385,40 @@ def gerar_xls(request):
         menor_data = qs.earliest('dataocorrencia').dataocorrencia
         maior_data = qs.latest('dataocorrencia').dataocorrencia
 
-        ws.write_merge(1, 1, 0, 2, "Período: " + menor_data.strftime('%d/%m/%Y') + " até " + maior_data.strftime('%d/%m/%Y'), style_body)
+        ws.write_merge(1, 1, 0, c+1, "Período: " + menor_data.strftime('%d/%m/%Y') + " até " + maior_data.strftime('%d/%m/%Y'), style_body)
 
         r = 2
         c = 0
 
-        data = qs.values_list('endereco__municipio__nome', 'infracao__tipo').annotate(Count('pk')).order_by('endereco__municipio__nome').distinct()
-        
-        columns_header = ['CIDADE', 'TIPO PENAL', 'QUANTIDADE']
+        columns_header = ['TIPO PENAL', 'QUANTIDADE']
 
         for column_index in range(len(columns_header)):
             ws.write(r, column_index, columns_header[column_index], style_body)
         r += 1
 
-        for city, infracao, qtd in data:
+        data = qs.values_list('infracao__tipo').annotate(Count('pk')).order_by('infracao__tipo').distinct()
+        
+        for infracao, qtd in data:
             c = 0
-            ws.write(r, c, city, style_body)
-            c += 1
-            ws.write(r, c, infracao, style_body)
+            if not infracao:
+                ws.write(r, c, "NÃO HÁ", style_body)
+            else:
+                ws.write(r, c, infracao, style_body)
             c += 1
             ws.write(r, c, qtd, style_body)
             r += 1
-        
+
         c = 0
         
-        ws.write_merge(r, r, c, c+1, "TOTAL", style_body)
-        ws.write(r, c+2, xlwt.Formula("SUM(C4:C" + str(len(data) + 3) + ")"), style_body)
+        ws.write(r, c, "TOTAL", style_body)
+        ws.write(r, c+1, xlwt.Formula("SUM(B3:B" + str(len(data) + 3) + ")"), style_body)
+
+        c = 0
+        r += 1
 
         r += 1
 
-        ws.write_merge(r, r, c, c+2, "Gerado " + timezone.localtime().strftime('%d/%m/%Y %H:%M'), style_body)
+        ws.write_merge(r, r, c, c+1, "Gerado " + timezone.localtime().strftime('%d/%m/%Y %H:%M'), style_body)
 
         output = io.BytesIO()
         wb.save(output)
