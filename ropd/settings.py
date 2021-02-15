@@ -119,10 +119,9 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost',
     'https://rop-e.com',
     'https://ropd.tk',
+]
 
-
-
-CORS_ALLOW_METHODS= [
+CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
     'OPTIONS',
@@ -131,7 +130,7 @@ CORS_ALLOW_METHODS= [
     'PUT',
 ]
 
-CORS_ALLOW_HEADERS= [
+CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
     'authorization',
@@ -145,7 +144,7 @@ CORS_ALLOW_HEADERS= [
 # END-OF CORS CONFIG
 
 if os.environ.get('DATABASE') == 'MYSQL':
-    DATABASES= {
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': os.environ.get('DB_NAME'),
@@ -156,7 +155,7 @@ if os.environ.get('DATABASE') == 'MYSQL':
         }
     }
 elif os.environ.get('DATABASE') == 'POSTGRESQL':
-    DATABASES= {
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ.get('DB_NAME'),
@@ -167,7 +166,7 @@ elif os.environ.get('DATABASE') == 'POSTGRESQL':
         }
     }
 else:
-    DATABASES= {
+    DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": os.path.join(BASE_DIR, 'db.sqlite3')
@@ -175,7 +174,7 @@ else:
     }
 
 
-AUTH_PASSWORD_VALIDATORS= [
+AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME':
         'django.contrib.auth.password_validation.'  # linha alterada
@@ -196,29 +195,29 @@ AUTH_PASSWORD_VALIDATORS= [
 ]
 
 
-LANGUAGE_CODE= 'pt-br'
-TIME_ZONE= 'America/Bahia'
-USE_I18N= True
-USE_L10N= True
-USE_TZ= True
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Bahia'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
 
-LOGIN_URL= '/contas/entrar/'  # URL para login
+LOGIN_URL = '/contas/entrar/'  # URL para login
 
-STATIC_URL= '/static/'
-STATICFILES_DIRS= [os.path.join(BASE_DIR, 'static_files')]
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
 
 # TODO: Verificar se realmente necessita desta variavel
-STATIC_ROOT= os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL= '/media/'
-MEDIA_ROOT= os.path.join(BASE_DIR, 'media/')
-PDF_ROOT= MEDIA_ROOT + '/pdf/'  # Path pdf url
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+PDF_ROOT = MEDIA_ROOT + '/pdf/'  # Path pdf url
 
-ENVIRONMENT= os.environ.get('ENVIRONMENT')
+ENVIRONMENT = os.environ.get('ENVIRONMENT')
 
 if ENVIRONMENT == 'production':
-    DEBUG= os.environ.get('DEBUG')
-    SECRET_KEY= os.environ.get('SECRET_KEY')
+    DEBUG = os.environ.get('DEBUG')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     # SESSION_COOKIE_SECURE = True
     # SECURE_BROWSER_XSS_FILTER = True
     # SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -228,5 +227,5 @@ if ENVIRONMENT == 'production':
     # SECURE_SSL_REDIRECT = True
     # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
-    DEBUG= True
-    SECRET_KEY= '123456789)*(&^%$#@'
+    DEBUG = True
+    SECRET_KEY = '123456789)*(&^%$#@'
