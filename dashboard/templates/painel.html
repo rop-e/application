@@ -86,7 +86,7 @@
                         <div class="row">
                             {% for infracao in infracoes %}
                                 <div class="item col l4 m4 s12">
-                                    <a href="{% url 'ocorrencia:listar' %}?infracao={{ infracao.id }}&data_inicial={% now 'd/m/yy' %}">
+                                    <a href="{% url 'ocorrencia:listar' %}?infracao={{ infracao.id }}&data_inicial={% now 'd/m/Y' %}">
                                         <div class="card app-count-badge">
                                             <div class="badge-content">
                                                 {% for qtd in ocorrencias_infracao %}
