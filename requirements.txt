@@ -1,7 +1,7 @@
 autopep8==1.4.4
 asgiref==3.2.7
 dj-database-url==0.5.0
-Django==3.0.5  # django
+Django==3.0.12  # django
 django-cors-headers==3.2.1  # django cors headers
 djangorestframework==3.11.0  # django rest framework
 
