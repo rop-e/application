@@ -12,7 +12,7 @@ pycodestyle==2.5.0  # flake8
 mccabe==0.6.1  # flake8
 pyflakes==2.1.1  # flake8
 
-Pillow==7.1.1  # foto do usuario
+Pillow==8.3.2  # foto do usuario
 reportlab==3.5.42
 webencodings==0.5.1
 html5lib==1.0.1
