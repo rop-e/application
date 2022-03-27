@@ -13,7 +13,7 @@ mccabe==0.6.1  # flake8
 pyflakes==2.1.1  # flake8
 
 Pillow==9.0.1  # foto do usuario
-reportlab==3.5.42
+reportlab==3.5.55
 webencodings==0.5.1
 html5lib==1.0.1
 PyPDF2==1.26.0
