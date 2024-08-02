@@ -13,3 +13,4 @@ media
 !.travis.yml
 /.env
 /.vscode
+static/
