@@ -12,3 +12,4 @@ venv
 !.travis.yml
 /.env
 /.vscode
+static/
