@@ -26,7 +26,7 @@
             <a class="collapsible-header waves-effect header-opo" tabindex="0" style="padding-left: 32px"><i class="material-icons">assignment</i>OPO </a>
             <div class="collapsible-body">
                 <ul id="OPOMenu">
-                {% if request.user|has_group:"CPO" %}
+                {% if request.user %}
                     <style>
                         .opo { display: block; }
                     </style>
@@ -68,7 +68,7 @@
                 <a class="collapsible-header waves-effect" id="menuGuarnicoes" tabindex="0" style="padding-left: 32px"><i class="material-icons">adjust</i>Guarnições</a>
                 <div class="collapsible-body">
                     <ul>
-                        {% if request.user|has_group:"CPO" %}
+                        {% if request.user %}
                         <li><a class="waves-effect" href="{% url 'guarnicao:listar_guarnicoes_todas' %}"><i class="material-icons">list</i>Listar</a></li>
                         {% endif %}
                         <li><a class="waves-effect" href="{% url 'guarnicao:listar_guarnicoes_ativas' %}" id="menuGuarnicoesAtivas"><i class="material-icons">adjust</i>Ativas</a></li>
